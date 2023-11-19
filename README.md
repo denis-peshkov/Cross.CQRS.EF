@@ -13,11 +13,11 @@ Main Features:
 
 * **PaginatedQueries and PaginatedModels**.
 
-  Implemented base patterns to work with Commands. The Commands used to modify entities.
+  These classes represent basic requirements to Paginated queries, models and so on.
 
-* **.NET Standard 2.1 and Source Linking**.
+* **.NET 6, .NET 7 and Source Linking**.
 
-  From version 1.0 repository contains .NET Standard 2.0, .NET 6, .NET 7 and .NET 8 projects.
+  From version 7.0 repository contains .NET 6 and .NET 7 projects.
   Source linking enabled and symbol package is published to nuget symbols server, making debugging easier.
 
 ## Install with nuget.org:
@@ -43,4 +43,4 @@ Please use [Wiki](https://github.com/denis-peshkov/Cross.CQRS.EF/wiki) for docum
 Note - test project is not a part of nuget package. You have to clone repository.
 
 ## Roadmap:
--
+- Refactor the Paginated Queries and Paginated Models.

@@ -11,8 +11,7 @@
     <projectUrl>https://github.com/denis-peshkov/Cross.CQRS.EF</projectUrl>
     <icon>icon.png</icon>
     <releaseNotes>
-      Documentation updated.
-      Icon updated.
+      Latest source from original repository.
     </releaseNotes>
     <description>Simple .NET MediatR base Query, Command, Event. Event Queue and Validation behaviors. Written on C#.</description>
     <tags>.NET Mediatr Query QueryHandler Command CommandHandler Event EventHandler EventQueueBehavior Validation ValidationBehavior SyntaxNotes NetCore</tags>
@@ -36,6 +35,6 @@
     <file src="..\Cross.CQRS.EF\bin\Release\net6.0\Cross.CQRS.EF*.* " target="lib\net6.0" />
     <file src="..\Cross.CQRS.EF\bin\Release\net7.0\Cross.CQRS.EF*.* " target="lib\net7.0" />
     <file src="..\README.md" target="docs\" />
-    <file src="..\icon.png" target="" />
+    <file src="..\icon.png" target="\" />
   </files>
 </package>
