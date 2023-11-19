@@ -1,6 +1,6 @@
 [![Nuget](https://img.shields.io/nuget/v/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/)
 
-# Cross.CQRS
+# Cross.CQRS.EF
 
 Simple .NET MediatR base EF Transactional Behavior, Paginated Queries, Paginated Models.
 
