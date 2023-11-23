@@ -9,14 +9,16 @@ Written on C#.
 Main Features:
 * **TransactionalBehavior and ExplicitTransaction**.
 
-  When added wrap every CommandHandler into EF Transaction, so only whole CommandHandler instructions will be commited or rejected. To switch off this wrapper on specific CommandHandler have to use ExplicitTransaction attribute on the command handler.
+  When added wrap every CommandHandler into EF Transaction, so only whole CommandHandler instructions will be commited or rejected. 
+  To switch off this wrapper on specific CommandHandler have to use ExplicitTransaction attribute on the command handler.
 
 * **PaginatedQueries and PaginatedModels**.
 
   These classes represent basic requirements to Paginated queries, models and so on.
 
-* **.NET 6, .NET 7 and Source Linking**.
+* **.NET 6, .NET 7, .NET 8 and Source Linking**.
 
+  From version 8.0 repository contains additional .NET 8 projects.
   From version 7.0 repository contains .NET 6 and .NET 7 projects.
   Source linking enabled and symbol package is published to nuget symbols server, making debugging easier.
 
