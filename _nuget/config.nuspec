@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Cross.CQRS.EF</id>
-    <version>8.0.0</version>
+    <version>8.0.1</version>
     <authors>denis-peshkov</authors>
     <owners>denis-peshkov</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <projectUrl>https://github.com/denis-peshkov/Cross.CQRS.EF</projectUrl>
     <icon>icon.png</icon>
     <releaseNotes>
-      Added support for .NET 8.
+      Upgraded packages.
     </releaseNotes>
     <description>Simple .NET MediatR base Query, Command, Event. Event Queue and Validation behaviors. Written on C#.</description>
     <tags>.NET Mediatr Query QueryHandler Command CommandHandler Event EventHandler EventQueueBehavior Validation ValidationBehavior SyntaxNotes NetCore</tags>
@@ -26,7 +26,7 @@
         <dependency id="Microsoft.EntityFrameworkCore" version="7.0.14" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Cross.CQRS" version="8.0.0" />
+        <dependency id="Cross.CQRS" version="8.0.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="8.0.0" />
       </group>    </dependencies>
     <frameworkAssemblies>

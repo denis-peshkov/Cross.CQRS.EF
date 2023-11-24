@@ -3,3 +3,6 @@ Latest source from original repository.
 
 8.0.0 - 23 Nov 2023
 Added support for .NET 8.
+
+8.0.1 - 24 Nov 2023
+Upgraded packages.
