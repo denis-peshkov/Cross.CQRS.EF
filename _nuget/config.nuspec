@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Cross.CQRS.EF</id>
-    <version>8.1.0</version>
+    <version>8.1.1</version>
     <authors>denis-peshkov</authors>
     <owners>denis-peshkov</owners>
     <license type="expression">MIT</license>
@@ -28,8 +28,6 @@
       <group targetFramework="net8.0">
         <dependency id="Cross.CQRS" version="8.0.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="8.0.0" />
-      </group>
-      <group>
         <dependency id="Scrutor" version="4.2.2" />
       </group>
     </dependencies>
