@@ -2,6 +2,12 @@
 
 public static class CqrsRegistrationSyntaxExtensions
 {
+    /// <summary>
+    /// Registers required services from the specified assemblies to the
+    /// specified <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="syntax"></param>
+    /// <returns>A reference to this instance after the operation has completed.</returns>
     public static CqrsRegistrationSyntax AddEntityFrameworkIntegration<TDbContext>(this CqrsRegistrationSyntax syntax)
         where TDbContext : DbContext
     {
