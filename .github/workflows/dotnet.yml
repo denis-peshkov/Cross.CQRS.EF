@@ -23,7 +23,7 @@ jobs:
 
     env:
       BUILD_CONFIG: 'Release'
-      SOLUTION: '${{ LIB_NAME }}.sln'
+      SOLUTION: '${{ env.LIB_NAME }}.sln'
 
     runs-on: ubuntu-latest
 
