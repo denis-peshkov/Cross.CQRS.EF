@@ -15,15 +15,12 @@ on:
     branches:
       - master
 
-env:
-  LIB_NAME: 'Cross.CQRS.EF'
-
 jobs:
   build:
 
     env:
       BUILD_CONFIG: 'Release'
-      SOLUTION: '${{ env.LIB_NAME }}.sln'
+      SOLUTION: 'Cross.CQRS.EF.sln'
 
     runs-on: ubuntu-latest
 
