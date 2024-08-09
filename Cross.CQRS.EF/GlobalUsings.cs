@@ -7,6 +7,7 @@ global using System.Linq;
 global using System.Linq.Expressions;
 global using System.Reflection;
 global using System.Threading;
+global using System.Transactions;
 global using Cross.CQRS.Commands;
 global using Cross.CQRS.EF.Behaviors;
 global using Cross.CQRS.EF.Extensions;

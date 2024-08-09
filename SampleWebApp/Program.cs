@@ -9,7 +9,11 @@ builder.Services.TryAddScoped<Context>();
 //MediatR
 builder.Services
     .AddCQRS(typeof(Program).Assembly)
-    .AddEntityFrameworkIntegration<Context>();
+    .AddEntityFrameworkIntegration<Context>(TransactionBehaviorEnum.ScopeBehavior);
+
+// services.AddDbContext<MyDbContext>(options => options.UseSqlServer(...));
+// services.AddScoped<IGenericRepository<MyModel>, GenericRepository<MyModel>>();
+// services.AddScoped<IMyDbContext, MyDbContext>();
 
 var app = builder.Build();
 
@@ -19,5 +23,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("/somescope", (IMediator mediator ) =>
+    {
+        var forecast = mediator.Send(new SomeScopeExternalCommand());
+        return forecast;
+    })
+    .WithName("RunSomeScope");
 
 app.Run();
