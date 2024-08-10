@@ -1,4 +1,6 @@
-﻿namespace Cross.CQRS.EF;
+﻿using Cross.CQRS.EF.Enums;
+
+namespace Cross.CQRS.EF;
 
 public static class CqrsRegistrationSyntaxExtensions
 {
@@ -7,13 +9,24 @@ public static class CqrsRegistrationSyntaxExtensions
     /// specified <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="syntax"></param>
+    /// <param name="transactionBehavior"></param>
     /// <returns>A reference to this instance after the operation has completed.</returns>
-    public static CqrsRegistrationSyntax AddEntityFrameworkIntegration<TDbContext>(this CqrsRegistrationSyntax syntax)
+    public static CqrsRegistrationSyntax AddEntityFrameworkIntegration<TDbContext>(this CqrsRegistrationSyntax syntax, TransactionBehaviorEnum transactionBehavior = TransactionBehaviorEnum.TransactionalBehavior)
         where TDbContext : DbContext
     {
         // Registration order is important, it works like ASP.NET Core middleware
         // Behaviors registered earlier will be executed earlier
-        syntax.Behaviors.AddBehavior(typeof(TransactionalBehavior<,>), order: 10);
+        switch (transactionBehavior)
+        {
+            case TransactionBehaviorEnum.TransactionalBehavior:
+                syntax.Behaviors.AddBehavior(typeof(TransactionalBehavior<,>), order: 10);
+                break;
+            case TransactionBehaviorEnum.ScopeBehavior:
+                syntax.Behaviors.AddBehavior(typeof(ScopeBehavior<,>), order: 10);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(transactionBehavior), transactionBehavior, null);
+        }
 
         // Filters
         syntax.Services.Scan(scan =>
