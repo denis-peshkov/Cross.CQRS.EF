@@ -24,6 +24,9 @@ public static class CqrsRegistrationSyntaxExtensions
             case TransactionBehaviorEnum.ScopeBehavior:
                 syntax.Behaviors.AddBehavior(typeof(ScopeBehavior<,>), order: 10);
                 break;
+            case TransactionBehaviorEnum.TransactionalScopeBehavior:
+                syntax.Behaviors.AddBehavior(typeof(TransactionalScopeBehavior<,>), order: 10);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(transactionBehavior), transactionBehavior, null);
         }
