@@ -18,6 +18,8 @@ public static class CqrsRegistrationSyntaxExtensions
         // Behaviors registered earlier will be executed earlier
         switch (transactionBehavior)
         {
+            case TransactionBehaviorEnum.NoBehavior:
+                break;
             case TransactionBehaviorEnum.TransactionalBehavior:
                 syntax.Behaviors.AddBehavior(typeof(TransactionalBehavior<,>), order: 10);
                 break;

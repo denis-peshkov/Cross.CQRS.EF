@@ -41,9 +41,9 @@ internal sealed class TransactionalBehavior<TRequest, TResponse> : IPipelineBeha
 
         await executionStrategy.ExecuteAsync(async () =>
         {
-            using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
             response = await next();
-            transaction.Commit();
+            await transaction.CommitAsync(cancellationToken);
         });
 
         // Clean-up tracked entries
