@@ -1,12 +1,12 @@
 namespace Cross.CQRS.EF.Behaviors;
 
-internal sealed class TransactionalBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed class TransactionalScopeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class, IRequest<TResponse>
 {
     private readonly IDbContextProvider _dbContextProvider;
     private readonly IHandlerLocator _handlerLocator;
 
-    public TransactionalBehavior(IHandlerLocator handlerLocator, IDbContextProvider dbContextProvider)
+    public TransactionalScopeBehavior(IHandlerLocator handlerLocator, IDbContextProvider dbContextProvider)
     {
         _handlerLocator = handlerLocator;
         _dbContextProvider = dbContextProvider;
@@ -41,9 +41,9 @@ internal sealed class TransactionalBehavior<TRequest, TResponse> : IPipelineBeha
 
         await executionStrategy.ExecuteAsync(async () =>
         {
-            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             response = await next();
-            await transaction.CommitAsync(cancellationToken);
+            transactionScope.Complete();
         });
 
         // Clean-up tracked entries

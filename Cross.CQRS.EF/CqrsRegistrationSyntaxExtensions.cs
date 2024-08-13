@@ -18,11 +18,16 @@ public static class CqrsRegistrationSyntaxExtensions
         // Behaviors registered earlier will be executed earlier
         switch (transactionBehavior)
         {
+            case TransactionBehaviorEnum.NoBehavior:
+                break;
             case TransactionBehaviorEnum.TransactionalBehavior:
                 syntax.Behaviors.AddBehavior(typeof(TransactionalBehavior<,>), order: 10);
                 break;
             case TransactionBehaviorEnum.ScopeBehavior:
                 syntax.Behaviors.AddBehavior(typeof(ScopeBehavior<,>), order: 10);
+                break;
+            case TransactionBehaviorEnum.TransactionalScopeBehavior:
+                syntax.Behaviors.AddBehavior(typeof(TransactionalScopeBehavior<,>), order: 10);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(transactionBehavior), transactionBehavior, null);
