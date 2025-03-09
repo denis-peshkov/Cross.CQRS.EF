@@ -28,6 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
 
       - name: Setup .NET
@@ -56,6 +57,21 @@ jobs:
 
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@v4.0.0 # Ex: v4.0.0, See the latest version at https://github.com/marketplace/actions/sonarcloud-scan
+        with:
+          #projectBaseDir: app/
+          args: >
+            -Dsonar.organization=peshkov
+            -Dsonar.projectKey=Cross.CQRS.EF
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.sources=Cross.CQRS.EF/
+            -Dsonar.tests=tests/
+            -Dsonar.test.exclusions=tests/**
+            -Dsonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Nuget Pack
         run: nuget pack _nuget/config.nuspec -Symbols -Version ${{ env.semVer }}
