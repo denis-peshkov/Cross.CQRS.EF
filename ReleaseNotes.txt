@@ -15,7 +15,7 @@ Upgraded packages.
 Upgraded packages.
 
 8.2.1 - 9 Mar 2024
-Upgraded packages.
+Connect to Sonar Cloud.
 
 8.3.0 - 17 Jun 2025
 Transaction Configuration & Behavior Refactor
