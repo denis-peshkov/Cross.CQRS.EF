@@ -1,5 +1,6 @@
 namespace SampleWebApp.Modules.Some.Handlers;
 
+// [ExactTransaction(TransactionBehaviorEnum.ScopeBehavior)]
 public class SomeScopeExternalCommandHandler : CommandHandler<SomeScopeExternalCommand>
 {
 

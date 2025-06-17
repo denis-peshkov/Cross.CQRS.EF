@@ -13,3 +13,19 @@ Upgraded packages.
 
 8.2.0 - 16 Apr 2024
 Upgraded packages.
+
+8.3.0 - 17 Огт 2025
+Transaction Configuration & Behavior Refactor
+1.	Centralized Configuration
+•	Introduced TransactionBehaviorOptions for unified transaction settings
+•	Added support for configurable isolation levels via DI (registered as singleton)
+2.	Unified Transaction Handling
+•	Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
+•	Removed switch-based logic in favor of internal strategy selection
+3.	Improved Documentation
+•	Enhanced public API docs and parameter descriptions
+•	Clarified registration order and execution logic
+4.	Structural Improvements
+•	Reorganized code into feature folders (e.g., Extensions)
+•	Added project icon and minor formatting updates
+Goal: Simplify transaction management, improve configurability, maintainability, and clarity.
