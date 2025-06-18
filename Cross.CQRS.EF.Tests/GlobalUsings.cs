@@ -2,6 +2,7 @@
 
 global using System;
 global using System.Collections.Generic;
+global using System.Data;
 global using System.Globalization;
 global using System.IO;
 global using System.Linq;
@@ -21,7 +22,16 @@ global using Bogus;
 global using Bogus.Extensions;
 global using Bogus.Extensions.Extras;
 global using Bogus.Extensions.UnitedStates;
+global using Cross.CQRS.Commands;
+global using Cross.CQRS.EF.Enums;
+global using Cross.CQRS.EF.Tests.Common;
+global using Cross.CQRS.EF.Tests.Modules;
+global using Cross.CQRS.EF.Tests.Modules.Entities;
+global using Cross.CQRS.EF.Tests.Tests;
+global using Cross.CQRS.Events;
 global using FluentAssertions;
+global using Microsoft.Data.Sqlite;
+global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 global using Moq;

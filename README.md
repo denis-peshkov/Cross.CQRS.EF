@@ -52,7 +52,7 @@ Note - test project is not a part of nuget package. You have to clone repository
 
 ## Roadmap:
 - Refactor the Paginated Queries and Paginated Models
-- Add support for distributed transactions
+- Add support for distributed transactions and SAGAs
 - Implement transaction timeout configuration
 - Add monitoring and metrics for transactions
 - Provide more examples and documentation for transaction configurations

@@ -5,7 +5,7 @@ public abstract class PaginationQueryHandler<TQuery, TFilter, TResult> : QueryHa
 {
     private readonly IEnumerable<IQueryableFilter<TQuery, TResult>> _filters;
 
-    protected PaginationQueryHandler(IEnumerable<IQueryableFilter<TQuery, TResult>> filters)
+    protected PaginationQueryHandler(ILogger<PaginationQueryHandler<TQuery, TFilter, TResult>> logger, IEnumerable<IQueryableFilter<TQuery, TResult>> filters) : base(logger)
     {
         _filters = filters;
     }
