@@ -14,21 +14,33 @@ Upgraded packages.
 8.2.0 - 16 Apr 2024
 Upgraded packages.
 
-8.2.1 - 9 Mar 2024
+8.2.1 - 16 May 2024
+Add build pipeline.
+
+8.3.0 - 10 Aug 2024
+Added ScopeBehavior.
+Added SampleProject.
+
+8.4.0 - 13 Aug 2024
+Added NoBehavior.
+Added TransactionalScopeBehavior.
+
+8.4.1 - 9 Mar 2025
 Connect to Sonar Cloud.
 
-8.3.0 - 17 Jun 2025
+9.0.0 - 17 Jun 2025
 Transaction Configuration & Behavior Refactor
 1.	Centralized Configuration
-•	Introduced TransactionBehaviorOptions for unified transaction settings
-•	Added support for configurable isolation levels via DI (registered as singleton)
+    •	Introduced TransactionBehaviorOptions for unified transaction settings
+    •	Added support for configurable isolation levels via DI (registered as singleton)
 2.	Unified Transaction Handling
-•	Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
-•	Removed switch-based logic in favor of internal strategy selection
+    •	Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
+    •	Removed switch-based logic in favor of internal strategy selection
 3.	Improved Documentation
-•	Enhanced public API docs and parameter descriptions
-•	Clarified registration order and execution logic
+    •	Enhanced public API docs and parameter descriptions
+    •	Clarified registration order and execution logic
 4.	Structural Improvements
-•	Reorganized code into feature folders (e.g., Extensions)
-•	Added project icon and minor formatting updates
+    •	Reorganized code into feature folders (e.g., Extensions)
+    •	Added project icon and minor formatting updates
+5.  Added IntegrationTests
 Goal: Simplify transaction management, improve configurability, maintainability, and clarity.
