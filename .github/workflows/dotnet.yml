@@ -49,11 +49,16 @@ jobs:
         with:
           useConfigFile: true
 
+      - name: Show version
+        run: |
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore -p:Version=${{ env.semVer }}
 
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal

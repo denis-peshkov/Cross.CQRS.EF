@@ -2,7 +2,7 @@ next-version: 7.0.0 #...
 branches:
   master:
     regex: ^master$|^main$
-    mode: ContinuousDelivery
+    mode: Mainline  # нужен для поддержки bump по commit
     tag: ''
     increment: Inherit
     source-branches:
