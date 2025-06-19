@@ -49,10 +49,15 @@ jobs:
         with:
           useConfigFile: true
 
+      - name: Export version as environment variable
+        run: |
+          echo "GITVERSION_VERSION=${{ steps.gitversion.outputs.fullSemVer }}" >> $GITHUB_ENV
+          echo "GITVERSION_NUGETVERSION=${{ steps.gitversion.outputs.nuGetVersionV2 }}" >> $GITHUB_ENV
+
       - name: Show version
         run: |
-          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
-          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+          echo "FullSemVer=GITVERSION_VERSION"
+          echo "NuGetVersionV2=GITVERSION_NUGETVERSION"          
 
       - name: Restore dependencies
         run: dotnet restore
