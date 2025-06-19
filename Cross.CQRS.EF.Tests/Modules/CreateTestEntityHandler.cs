@@ -1,3 +1,5 @@
+using Cross.CQRS.EF.Tests.Modules.Events;
+
 namespace Cross.CQRS.EF.Tests.Modules;
 
 public class CreateTestEntityHandler : CommandHandler<CreateTestEntityCommand>

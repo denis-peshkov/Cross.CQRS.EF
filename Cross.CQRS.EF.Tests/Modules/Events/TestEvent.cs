@@ -1,4 +1,4 @@
-namespace Cross.CQRS.EF.Tests.Modules.Entities;
+namespace Cross.CQRS.EF.Tests.Modules.Events;
 
 public class TestEvent : ICommandEvent
 {
