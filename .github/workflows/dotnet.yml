@@ -54,10 +54,13 @@ jobs:
           echo "GITVERSION_VERSION=${{ steps.gitversion.outputs.fullSemVer }}" >> $GITHUB_ENV
           echo "GITVERSION_NUGETVERSION=${{ steps.gitversion.outputs.nuGetVersionV2 }}" >> $GITHUB_ENV
 
+      - name: Show env variables
+        run: env
+
       - name: Show version
         run: |
-          echo "FullSemVer=GITVERSION_VERSION"
-          echo "NuGetVersionV2=GITVERSION_NUGETVERSION"          
+          echo "FullSemVer=$GITVERSION_VERSION"
+          echo "NuGetVersionV2=$GITVERSION_NUGETVERSION"          
 
       - name: Restore dependencies
         run: dotnet restore
