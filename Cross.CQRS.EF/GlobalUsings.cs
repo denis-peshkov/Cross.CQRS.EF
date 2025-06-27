@@ -12,8 +12,6 @@ global using Cross.CQRS.Commands;
 global using Cross.CQRS.EF.Behaviors;
 global using Cross.CQRS.EF.Enums;
 global using Cross.CQRS.EF.Extensions;
-global using Cross.CQRS.EF.Filters;
-global using Cross.CQRS.EF.Models;
 global using Cross.CQRS.EF.Options;
 global using Cross.CQRS.EF.Services;
 global using Cross.CQRS.Queries;

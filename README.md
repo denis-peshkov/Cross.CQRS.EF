@@ -2,7 +2,7 @@
 
 # Cross.CQRS.EF
 
-Simple .NET MediatR base EF Transactional Behavior, Paginated Queries, Paginated Models.
+Simple .NET MediatR base EF Transactional Behavior.
 
 Written on C#.
 
@@ -17,10 +17,6 @@ Main Features:
 
   The ExactTransaction attribute supports for custom isolation levels and transaction behavior configuration on both global and per-handler basis through the Attribute.
   To switch off transaction behavior wrapper on specific CommandHandler or change isolation level have to use ExactTransaction attribute on the command handler.
-
-* **PaginatedQueries and PaginatedModels**.
-
-  These classes represent basic requirements to Paginated queries, models and so on.
 
 * **.NET 6, .NET 7, .NET 8 and Source Linking**.
 
@@ -51,7 +47,6 @@ Please use [Wiki](https://github.com/denis-peshkov/Cross.CQRS.EF/wiki) for docum
 Note - test project is not a part of nuget package. You have to clone repository.
 
 ## Roadmap:
-- Refactor the Paginated Queries and Paginated Models
 - Add support for distributed transactions and SAGAs
 - Implement transaction timeout configuration
 - Add monitoring and metrics for transactions

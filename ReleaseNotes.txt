@@ -43,4 +43,5 @@ Transaction Configuration & Behavior Refactor
     •	Reorganized code into feature folders (e.g., Extensions)
     •	Added project icon and minor formatting updates
 5.  Added IntegrationTests
+6.  Move PaginationQuery and PaginationQueryHandler into separate library.
 Goal: Simplify transaction management, improve configurability, maintainability, and clarity.

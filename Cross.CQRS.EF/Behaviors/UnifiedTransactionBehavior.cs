@@ -63,7 +63,6 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         return response;
     }
 
-
     private async Task<TResponse> HandleScopeBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel)
     {
         TResponse response = default;
