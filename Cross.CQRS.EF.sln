@@ -12,6 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{3AF739
 		GitVersion.yml = GitVersion.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_nuget", "_nuget", "{19139CCD-70F4-4554-BD55-F4F087EF56AB}"
+	ProjectSection(SolutionItems) = preProject
+		_nuget\config.nuspec = _nuget\config.nuspec
+		_nuget\pkg.bat = _nuget\pkg.bat
+		_nuget\pushSymbols.bat = _nuget\pushSymbols.bat
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cross.CQRS.EF", "Cross.CQRS.EF\Cross.CQRS.EF.csproj", "{C952E31D-7B0A-4E52-8076-6D4ED23AE96C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "SampleWebApp\SampleWebApp.csproj", "{B8BBE402-1E13-43EE-BD6E-6A2536E1A0BC}"

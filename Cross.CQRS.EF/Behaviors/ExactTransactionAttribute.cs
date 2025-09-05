@@ -6,12 +6,12 @@ namespace Cross.CQRS.EF.Behaviors;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public sealed class ExactTransactionAttribute : Attribute
 {
-    public TransactionBehaviorEnum Value { get; }
+    public TransactionBehaviorEnum TransactionBehavior { get; }
     public IsolationLevel IsolationLevel { get; }
 
-    public ExactTransactionAttribute(TransactionBehaviorEnum value, IsolationLevel isolationLevel = IsolationLevel.Serializable)
+    public ExactTransactionAttribute(TransactionBehaviorEnum transactionBehavior, IsolationLevel isolationLevel = IsolationLevel.Serializable)
     {
-        Value = value;
+        TransactionBehavior = transactionBehavior;
         IsolationLevel = isolationLevel;
     }
 }

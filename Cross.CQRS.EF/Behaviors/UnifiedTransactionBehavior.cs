@@ -33,7 +33,8 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
             if (exactTransactionAttribute != null)
             {
-                behavior = exactTransactionAttribute.Value;
+                behavior = exactTransactionAttribute.TransactionBehavior;
+                isolationLevel = exactTransactionAttribute.IsolationLevel;
             }
         }
 
@@ -54,28 +55,10 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         var trackedEntries = dbContext.ChangeTracker.Entries()
             .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
             .ToArray();
-
         foreach (var entry in trackedEntries)
         {
             entry.State = EntityState.Detached;
         }
-
-        return response;
-    }
-
-    private async Task<TResponse> HandleScopeBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel)
-    {
-        TResponse response = default;
-
-        var transactionOptions = new TransactionOptions
-        {
-            IsolationLevel = (System.Transactions.IsolationLevel)isolationLevel,
-            Timeout = TimeSpan.FromSeconds(60)
-        };
-
-        using var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-        response = await next();
-        scope.Complete();
 
         return response;
     }
@@ -91,11 +74,28 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
             await dbContext.Database.OpenConnectionAsync(cancellationToken);
             await using var transaction = await dbContext.Database
                 .GetDbConnection()
-                .BeginTransactionAsync(isolationLevel, cancellationToken);
+                .BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken);
             await dbContext.Database.UseTransactionAsync(transaction, cancellationToken);
             response = await next();
             await transaction.CommitAsync(cancellationToken);
         });
+
+        return response;
+    }
+
+    private async Task<TResponse> HandleScopeBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel)
+    {
+        TResponse response = default;
+
+        var transactionOptions = new TransactionOptions
+        {
+            IsolationLevel = isolationLevel,
+            Timeout = TimeSpan.FromSeconds(60)
+        };
+
+        using var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
+        response = await next();
+        scope.Complete();
 
         return response;
     }
@@ -110,7 +110,7 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         {
             var transactionOptions = new TransactionOptions
             {
-                IsolationLevel = (System.Transactions.IsolationLevel)isolationLevel,
+                IsolationLevel = isolationLevel,
                 Timeout = TimeSpan.FromSeconds(60)
             };
 
