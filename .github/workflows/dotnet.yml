@@ -14,6 +14,7 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:   # <-- вот это даёт ручной запуск
 
 jobs:
   build:
@@ -55,8 +56,24 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+#      - name: Build
+#        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore -p:Version=${{ env.semVer }}
+
       - name: Build
-        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore -p:Version=${{ env.semVer }}
+        run: |
+          dotnet build "$SOLUTION" --configuration "$BUILD_CONFIG" --no-restore \
+            -p:Configuration=$BUILD_CONFIG \
+            -p:Version=${GitVersion_SemVer} \
+            -p:AssemblyVersion=${GitVersion_AssemblySemVer} \
+            -p:FileVersion=${GitVersion_AssemblySemFileVer} \
+            -p:InformationalVersion="${GitVersion_InformationalVersion}" \
+            -p:Company="Denis Peshkov" \
+            -p:Product="Cross.CQRS.EF" \
+            -p:Description="Simple .NET MediatR base EF Transactional Behavior and Paginated Queries and Paginated Models. Published on Nuget at https://www.nuget.org/packages/Cross.CQRS.EF" \
+            -p:RepositoryUrl="https://github.com/denis-peshkov/Cross.CQRS.git" \
+            -p:RepositoryType=git \
+            -p:CLSCompliant=true \
+            -p:NeutralLanguage=en
 
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
