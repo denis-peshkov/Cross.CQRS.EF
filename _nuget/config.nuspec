@@ -13,29 +13,29 @@
     <readme>docs\README.md</readme>
     <icon>icon.png</icon>
     <releaseNotes>
-      Transaction Configuration and Behavior Refactor
-      1.	Centralized Configuration
-        •	Introduced TransactionBehaviorOptions for unified transaction settings
-        •	Added support for configurable isolation levels via DI (registered as singleton)
-      2.	Unified Transaction Handling
-        •	Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
-        •	Removed switch-based logic in favor of internal strategy selection
-      3.	Improved Documentation
-        •	Enhanced public API docs and parameter descriptions
-        •	Clarified registration order and execution logic
-      4.	Structural Improvements
-        •	Reorganized code into feature folders (e.g., Extensions)
-        •	Added project icon and minor formatting updates
-        •	Renamed "Solution Items" folder to "assets"
-        •	Added new `icon.svg` file to the project
-      5.  Updated `SomeScopeExternalCommandHandler` implementation:
-        •	Modified constructor parameters
-        •	Changed `Events.Write` to `CommandEvents.Write`
-        •	Added support for logging
-      6.  Added IntegrationTests
-      7.  Move PaginationQuery and PaginationQueryHandler into separate library.
-      8.  Removed `PaginationResult.cs` class from the project
-      Goal: Simplify transaction management, improve configurability, maintainability, and clarity.
+Transaction Configuration and Behavior Refactor
+1. Centralized Configuration
+   • Introduced TransactionBehaviorOptions for unified transaction settings
+   • Added support for configurable isolation levels via DI (registered as singleton)
+2. Unified Transaction Handling
+   • Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
+   • Removed switch-based logic in favor of internal strategy selection
+3. Improved Documentation
+   • Enhanced public API docs and parameter descriptions
+   • Clarified registration order and execution logic
+4.	Structural Improvements
+   • Reorganized code into feature folders (e.g., Extensions)
+   • Added project icon and minor formatting updates
+   • Renamed "Solution Items" folder to "assets"
+   • Added new `icon.svg` file to the project
+5. Updated `SomeScopeExternalCommandHandler` implementation:
+   • Modified constructor parameters
+   • Changed `Events.Write` to `CommandEvents.Write`
+   • Added support for logging
+6. Added IntegrationTests
+7. Move PaginationQuery and PaginationQueryHandler into separate library.
+8. Removed `PaginationResult.cs` class from the project
+Goal: Simplify transaction management, improve configurability, maintainability, and clarity.
     </releaseNotes>
     <description>Simple .NET MediatR base EF Transactional Behavior, Paginated Queries, Paginated Models. Written on C#.</description>
     <tags>.NET Mediatr EF TransactionalBehavior Paginated PaginatedQueries PaginatedModels Queries Models SyntaxNotes NetCore</tags>
