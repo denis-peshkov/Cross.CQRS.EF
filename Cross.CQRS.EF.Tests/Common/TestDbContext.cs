@@ -17,7 +17,7 @@ public class TestDbContext : DbContext
             return new NoopTransaction();
         }
 
-        return await Database.BeginTransactionAsync(isolationLevel, cancellationToken);
+        return await Database.BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken);
     }
 
     // Конфигурация модели (опционально — можно без этого)

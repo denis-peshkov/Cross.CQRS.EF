@@ -2,34 +2,56 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Cross.CQRS.EF</id>
-    <version>8.0.0</version>
-    <authors>denis-peshkov</authors>
-    <owners>denis-peshkov</owners>
+    <version>0.0.0</version>
+    <authors>Denis Peshkov</authors>
+    <owners>Denis Peshkov</owners>
     <copyright>Copyright 2025</copyright>
     <license type="expression">MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/denis-peshkov/Cross.CQRS.EF</projectUrl>
-    <repository type="git" url="https://github.com/denis-peshkov/Cross.CQRS.EF" />
+    <repository type="git" url="https://github.com/denis-peshkov/Cross.CQRS.EF.git" />
     <readme>docs\README.md</readme>
     <icon>icon.png</icon>
     <releaseNotes>
-      Upgraded packages.
+      Transaction Configuration and Behavior Refactor
+      1.	Centralized Configuration
+        •	Introduced TransactionBehaviorOptions for unified transaction settings
+        •	Added support for configurable isolation levels via DI (registered as singleton)
+      2.	Unified Transaction Handling
+        •	Replaced multiple behaviors (TransactionalBehavior, ScopeBehavior, etc.) with a single UnifiedTransactionBehavior
+        •	Removed switch-based logic in favor of internal strategy selection
+      3.	Improved Documentation
+        •	Enhanced public API docs and parameter descriptions
+        •	Clarified registration order and execution logic
+      4.	Structural Improvements
+        •	Reorganized code into feature folders (e.g., Extensions)
+        •	Added project icon and minor formatting updates
+        •	Renamed "Solution Items" folder to "assets"
+        •	Added new `icon.svg` file to the project
+      5.  Updated `SomeScopeExternalCommandHandler` implementation:
+        •	Modified constructor parameters
+        •	Changed `Events.Write` to `CommandEvents.Write`
+        •	Added support for logging
+      6.  Added IntegrationTests
+      7.  Move PaginationQuery and PaginationQueryHandler into separate library.
+      8.  Removed `PaginationResult.cs` class from the project
+      Goal: Simplify transaction management, improve configurability, maintainability, and clarity.
     </releaseNotes>
     <description>Simple .NET MediatR base EF Transactional Behavior, Paginated Queries, Paginated Models. Written on C#.</description>
     <tags>.NET Mediatr EF TransactionalBehavior Paginated PaginatedQueries PaginatedModels Queries Models SyntaxNotes NetCore</tags>
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="Cross.CQRS" version="7.0.0" />
+        <dependency id="Cross.CQRS" version="10.1.4-preview.19" />
         <dependency id="Microsoft.EntityFrameworkCore" version="6.0.25" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="6.0.25" />
       </group>
       <group targetFramework="net7.0">
-        <dependency id="Cross.CQRS" version="7.0.0" />
+        <dependency id="Cross.CQRS" version="10.1.4-preview.19" />
         <dependency id="Microsoft.EntityFrameworkCore" version="7.0.14" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="7.0.14" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Cross.CQRS" version="8.2.0" />
+        <dependency id="Cross.CQRS" version="10.1.4-preview.19" />
         <dependency id="Microsoft.EntityFrameworkCore" version="8.0.0" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="8.0.0" />
       </group>

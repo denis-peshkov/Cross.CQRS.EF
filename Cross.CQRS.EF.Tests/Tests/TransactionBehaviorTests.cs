@@ -23,7 +23,7 @@ public class TransactionBehaviorTests : HandlerTestsBase
         // Act
         await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
             try
             {
                 await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
@@ -54,7 +54,7 @@ public class TransactionBehaviorTests : HandlerTestsBase
         // Act & Assert
         await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
             try
             {
                 var handler = new FailingCreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext);
@@ -87,7 +87,7 @@ public class TransactionBehaviorTests : HandlerTestsBase
         // Act
         await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
             try
             {
                 await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
@@ -120,7 +120,7 @@ public class TransactionBehaviorTests : HandlerTestsBase
         // Act
         await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
         {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(isolationLevel);
+            await using var transaction = await DbContext.Database.BeginTransactionAsync(isolationLevel.ToDataIsolation());
             try
             {
                 await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)

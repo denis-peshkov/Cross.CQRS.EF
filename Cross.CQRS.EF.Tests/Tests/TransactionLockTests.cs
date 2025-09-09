@@ -60,7 +60,7 @@ public class TransactionLockTests : HandlerTestsBase
         // Act
         var updateTask = Task.Run(async () =>
         {
-            using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
             try
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
@@ -103,7 +103,7 @@ public class TransactionLockTests : HandlerTestsBase
         // Act
         var updateTask = Task.Run(async () =>
         {
-            using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
+            using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
             try
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
@@ -124,7 +124,7 @@ public class TransactionLockTests : HandlerTestsBase
         // Assert - проверяем, что чтение блокируется
         var readTask = Task.Run(async () =>
         {
-            using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
+            using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
             return await _dbContext2.TestEntities.FirstOrDefaultAsync(x => x.Id == entity.Id);
         });
 
