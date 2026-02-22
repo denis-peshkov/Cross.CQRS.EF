@@ -18,6 +18,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
 
     env:
       BUILD_CONFIG: 'Release'
@@ -35,7 +37,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: |
+            6.x
+            7.x
+            8.x
 
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2.0.0
