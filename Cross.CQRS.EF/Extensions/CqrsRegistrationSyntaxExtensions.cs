@@ -1,4 +1,4 @@
-﻿namespace Cross.CQRS.EF.Extensions;
+namespace Cross.CQRS.EF.Extensions;
 
 public static class CqrsRegistrationSyntaxExtensions
 {
@@ -15,6 +15,7 @@ public static class CqrsRegistrationSyntaxExtensions
     /// This method performs the following registrations:
     /// <list type="bullet">
     /// <item><description>Registers transaction behavior options</description></item>
+    /// <item><description>Adds EfLicenseCheckBehavior with order 0 (runs on every MediatR request after core license check)</description></item>
     /// <item><description>Adds UnifiedTransactionBehavior with order 10</description></item>
     /// <item><description>Registers all implementations of IQueryableFilter from specified assemblies</description></item>
     /// <item><description>Registers DbContextProvider for the specified DbContext type</description></item>
@@ -35,9 +36,13 @@ public static class CqrsRegistrationSyntaxExtensions
 
         // Registration order is important, it works like ASP.NET Core middleware
         // Behaviors registered earlier will be executed earlier
+        syntax.Behaviors.AddBehavior(typeof(EfLicenseCheckBehavior<,>), order: -1);
         syntax.Behaviors.AddBehavior(typeof(UnifiedTransactionBehavior<,>), order: 10);
 
         syntax.Services.TryAddScoped<IDbContextProvider, DbContextProvider<TDbContext>>();
+
+        syntax.Services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<IHostedService, EfLicenseHostedValidator>());
 
         return syntax;
     }

@@ -8,7 +8,7 @@ builder.Services.TryAddScoped<Context>();
 
 //MediatR
 builder.Services
-    .AddCQRS(typeof(Program).Assembly)
+    .AddCQRS(cfg => cfg.RegisterFromAssemblies(typeof(Program).Assembly))
     .AddEntityFrameworkIntegration<Context>(TransactionBehaviorEnum.ScopeBehavior);
 
 // builder.Services
