@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
     <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -10,24 +10,56 @@
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
-  <Target Name="DeleteBinObjFolders" BeforeTargets="Clean">
-    <RemoveDir Directories=".\bin" />
-    <Delete Files=".\obj\**\*.cs" />
-  </Target>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <MicrosoftDataSqliteVersion>7.0.20</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>7.0.20</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>7.0.20</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftNETTestSdkVersion>17.13.0</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <MicrosoftDataSqliteVersion>7.0.20</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>7.0.20</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>7.0.20</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftNETTestSdkVersion>17.13.0</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <MicrosoftDataSqliteVersion>8.0.25</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>8.0.25</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>8.0.25</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <MicrosoftDataSqliteVersion>9.0.14</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>9.0.14</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>9.0.14</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>9.0.14</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <MicrosoftDataSqliteVersion>10.0.5</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.5</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>10.0.5</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>10.0.5</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
+  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.20" Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.24" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.20" Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0'" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.13" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="$(MicrosoftDataSqliteVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(MicrosoftEntityFrameworkCoreInMemoryVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftEntityFrameworkCoreSqliteVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationVersion)" />
 
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0'" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="NUnit.Analyzers" Version="4.11.2" />
@@ -36,7 +68,7 @@
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
-    <PackageReference Include="coverlet.msbuild " Version="6.0.4" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4" />
     <PackageReference Include="opencover" Version="4.7.1221" />
   </ItemGroup>
 

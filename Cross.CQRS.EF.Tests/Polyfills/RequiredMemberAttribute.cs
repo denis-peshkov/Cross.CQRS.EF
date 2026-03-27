@@ -1,4 +1,4 @@
-#if NET6_0
+﻿#if NET6_0
 
 namespace System.Runtime.CompilerServices;
 
