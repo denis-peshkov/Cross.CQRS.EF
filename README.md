@@ -1,4 +1,17 @@
-[![Nuget](https://img.shields.io/nuget/v/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/) [![Documentation](https://img.shields.io/badge/docs-wiki-yellow.svg)](https://github.com/denis-peshkov/Cross.CQRS.EF/wiki)
+[![License](https://img.shields.io/github/license/denis-peshkov/Cross.CQRS.EF)](LICENSE)
+[![GitHub Release Date](https://img.shields.io/github/release-date/denis-peshkov/Cross.CQRS.EF?label=released)](https://github.com/denis-peshkov/Cross.CQRS.EF/releases)
+[![NuGetVersion](https://img.shields.io/nuget/v/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/)
+[![NugetDownloads](https://img.shields.io/nuget/dt/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Cross.CQRS.EF&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Cross.CQRS.EF)
+[![issues](https://img.shields.io/github/issues/denis-peshkov/Cross.CQRS.EF)](https://github.com/denis-peshkov/Cross.CQRS.EF/issues)
+[![.NET PR](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/dotnet.yml/badge.svg?event=pull_request)](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/dotnet.yml)
+
+![Size](https://img.shields.io/github/repo-size/denis-peshkov/Cross.CQRS.EF)
+[![GitHub contributors](https://img.shields.io/github/contributors/denis-peshkov/Cross.CQRS.EF)](https://github.com/denis-peshkov/Cross.CQRS.EF/contributors)
+[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/denis-peshkov/Cross.CQRS.EF/latest?label=new+commits)](https://github.com/denis-peshkov/Cross.CQRS.EF/commits/master)
+![Activity](https://img.shields.io/github/commit-activity/w/denis-peshkov/Cross.CQRS.EF)
+![Activity](https://img.shields.io/github/commit-activity/m/denis-peshkov/Cross.CQRS.EF)
+![Activity](https://img.shields.io/github/commit-activity/y/denis-peshkov/Cross.CQRS.EF)
 
 # Cross.CQRS.EF
 
@@ -18,21 +31,24 @@ Main Features:
   The ExactTransaction attribute supports for custom isolation levels and transaction behavior configuration on both global and per-handler basis through the Attribute.
   To switch off transaction behavior wrapper on specific CommandHandler or change isolation level have to use ExactTransaction attribute on the command handler.
 
-* **.NET 6, .NET 7, .NET 8 and Source Linking**.
+* **.NET frameworks and Source Linking**.
 
   From version 8.0 repository contains additional .NET 8 projects.
   From version 7.0 repository contains .NET 6 and .NET 7 projects.
   Source linking enabled and symbol package is published to nuget symbols server, making debugging easier.
 
-## Install with nuget.org:
+**Supported frameworks:** .NET 6, .NET 7, .NET 8, .NET 9, .NET 10
 
-https://www.nuget.org/packages/Cross.CQRS.EF
+## Install NuGet package
 
-## Installation
+Install the _Cross.CQRS.EF_ [NuGet package](https://www.nuget.org/packages/Cross.CQRS.EF/) into your .NET project:
 
-Clone repository or Install Nuget Package
-```
+```powershell
 Install-Package Cross.CQRS.EF
+```
+or
+```bash
+dotnet add package Cross.CQRS.EF
 ```
 
 ## Issues and Pull Request

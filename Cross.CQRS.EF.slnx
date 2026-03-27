@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/dotnet.yml" />
+  </Folder>
+  <Folder Name="/assets/">
+    <File Path=".gitignore" />
+    <File Path="GitVersion.yml" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="ReleaseNotes.txt" />
+  </Folder>
+  <Project Path="Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj" />
+  <Project Path="Cross.CQRS.EF/Cross.CQRS.EF.csproj" />
+  <Project Path="SampleWebApp/SampleWebApp.csproj" />
+</Solution>
