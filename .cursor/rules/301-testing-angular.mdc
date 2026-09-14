@@ -64,7 +64,7 @@ it('should handle async operation', (done: DoneFn) => {
 
 **Важно**: Всегда указывать тип `DoneFn` для параметра `done` в асинхронных тестах, чтобы избежать TypeScript TS7006 (Parameter 'done' implicitly has an 'any' type).
 
-## Локальный запуск и coverage в PR
+## Локальный запуск и coverage
 
 - Jasmine + Karma; `describe` / `it` / `beforeEach`.
 - Standalone component в `TestBed.configureTestingModule({ imports: [Component] })`.

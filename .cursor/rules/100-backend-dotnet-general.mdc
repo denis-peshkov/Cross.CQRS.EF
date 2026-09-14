@@ -18,7 +18,7 @@ alwaysApply: false
 
 - **`Nullable`** — `enable` в library/test проектах, где это конвенция репозитория.
 - **Async методы** — суффикс `Async`.
-- **Библиотечный код** — `ConfigureAwait(false)` где применим CA2007; ASP.NET host / sample / tests могут отличаться (см. `106`).
+- **Библиотечный код** — `ConfigureAwait(false)` где применим CA2007; ASP.NET host / sample / tests могут отличаться.
 
 ## Архитектура
 

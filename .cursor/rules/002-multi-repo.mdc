@@ -1,6 +1,11 @@
 ---
 description: Мульти-репо, client/server пути, согласованность API
-alwaysApply: true
+globs:
+  - "client/**"
+  - "server/**"
+  - "apps/**"
+  - "libs/**"
+alwaysApply: false
 ---
 
 # Правила работы с мульти-репозиторием
