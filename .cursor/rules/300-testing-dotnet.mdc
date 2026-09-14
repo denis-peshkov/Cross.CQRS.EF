@@ -1,0 +1,122 @@
+---
+description: Канонические правила тестирования .NET / NUnit (именование, структура, категории).
+globs:
+  - "**/*Tests.cs"
+  - "**/*Test.cs"
+  - "**/*Tests/**/*.cs"
+alwaysApply: false
+---
+
+# Тестирование .NET
+
+**Канонический источник** соглашений по .NET-тестам. Документацию проекта и чеклисты triage держать согласованными с этим файлом — не изобретать второй стиль именования.
+
+Стек: **NUnit** (константы категорий адаптировать к общим хелперам тестового проекта, если они есть).
+
+## Документация
+
+- **Не требовать** XML `/// <summary>` (или другие API-doc комментарии) на тестовых классах, `[SetUp]`/`[TearDown]` или методах `[Test]`.
+- Описательного имени `Given[X]_When[Y]_Then[Z]` достаточно; **не** отмечать отсутствие XML-документации на тестах как замечание ревью.
+- Опциональный XML на общих тестовых хелперах/базовых классах допустим, когда проясняет неочевидные fixtures — не обязателен.
+
+## Именование тестов
+
+- **Паттерн:** `Given[X]_When[Y]_Then[Z]`
+  - **Given** — контекст / предусловия (`[X]`)
+  - **When** — действие под тестом (`[Y]`)
+  - **Then** — ожидаемый результат (`[Z]`)
+- **Асинхронные тесты:** имя метода **должно** заканчиваться на `Async` (то же правило, что и для production async API).
+- **Не** использовать `Method_Should_Expected_When_Condition` или другие legacy-стили для новых или переименованных тестов.
+- Имена должны быть описательными; `[X]` / `[Y]` / `[Z]` — фразы в PascalCase без пробелов.
+
+Примеры:
+
+```csharp
+[Test]
+public void GivenValidInput_WhenHandlerRuns_ThenReturnsSuccess()
+{
+    // Arrange / Act / Assert
+}
+
+[Test]
+public async Task GivenValidInput_WhenHandlerRuns_ThenReturnsSuccessAsync()
+{
+    // Arrange / Act / Assert
+}
+```
+
+## Структура тестов
+
+- **Arrange–Act–Assert (AAA)** — структурировать каждый тест таким образом.
+- Предпочитать читаемый setup вместо хитрых хелперов; делить fixtures через базовые классы или test fixtures, когда проект уже так делает.
+
+Пример:
+
+```csharp
+[Test]
+public async Task GivenValidResume_WhenSubmitResume_ThenReturnsSuccessAsync()
+{
+    // Arrange
+    var dto = new SubmitResumeDto
+    {
+        Name = "Test User",
+        Email = "test@example.com"
+    };
+
+    // Act
+    var result = await _handler.Handle(new SubmitResumeCommand { Dto = dto }, CancellationToken.None);
+
+    // Assert
+    Assert.True(result);
+}
+```
+
+## Категории (NUnit)
+
+Ставить `[Category(…)]` **только на каждый метод `[Test]`** — никогда на тестовый класс, `[TestFixture]` или базовый класс (например, `EFTestsBase`). Использовать константы `TestCategory` проекта, когда они есть.
+
+| Категория | Назначение |
+|----------|---------|
+| `Unit` | Изолированный unit под тестом; mocks; без реального I/O / DB |
+| `Integration` | Компоненты вместе (например, InMemory DB, HTTP mocks, end-to-end in-process потоки) |
+| `Functional` | Более широкий E2E / TestServer / внешние зависимости (использовать редко) |
+
+Классифицировать по тому, что делает **метод** (DB / несколько компонентов → `Integration`; чистая логика / только mocks → `Unit`), а не по папке или базовому fixture.
+
+```csharp
+[Test]
+[Category(TestCategory.UNIT)]
+public void GivenValidInput_WhenParse_ThenReturnsValue() { /* … */ }
+
+[Test]
+[Category(TestCategory.INTEGRATION)]
+public async Task GivenPersistedToken_WhenValidate_ThenReturnsTrueAsync() { /* … */ }
+```
+
+```bash
+dotnet test --filter "Category=Unit"
+dotnet test --filter "Category=Integration"
+```
+
+## Раскладка
+
+- Зеркалировать production-области в тестовом проекте (например, по фиче или слою: services, handlers, UI).
+- Предпочитать отдельные папки для unit и integration, когда набор тестов большой.
+- Новое поведение в PR **должно** иметь соответствующие тесты; покрывать failure-пути для auth, security и money-sensitive логики.
+- Никогда не коммитить реальные secrets, токены или production-учётные данные в fixtures.
+
+## Локальная проверка
+
+```bash
+dotnet build
+dotnet test
+```
+
+С OpenCover (когда pipeline его использует):
+
+```bash
+dotnet test path/to/Tests.csproj \
+  --collect:"XPlat Code Coverage" \
+  --results-directory ./TestResults \
+  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+```

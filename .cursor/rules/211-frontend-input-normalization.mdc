@@ -1,0 +1,37 @@
+---
+globs:
+  - "client/**/*.ts"
+alwaysApply: false
+---
+
+# Нормализация пользовательского ввода (клиент)
+
+## Матрица политик
+
+| Тип поля | Клиент (форма) | Бэкенд |
+|----------|----------------|--------|
+| Email | `noWhitespaceOnly` + `Validators.email` | `Trim` в `RequestFilter` |
+| OTP / code | `noWhitespaceOnly` | `Trim` |
+| Имя, компания | `noWhitespaceOnly` | `Trim` |
+| Пароль | **не изменять** | **не изменять** |
+
+## Приоритет слоёв
+
+1. **Формы** — `client/src/app/core/validators/form.validators.ts` (`noWhitespaceOnly`, пресеты `emailValidators`, `codeValidators`, `textValidators`).
+2. **Сервисы** — передают значения из формы как есть, без silent-normalize (`AuthService`).
+3. **Бэкенд** — `RequestFilter` + `InputNormalizer` (обязательно).
+
+## Где что лежит
+
+- Валидаторы: `form.validators.ts` (`noWhitespaceOnly`, пресеты `emailValidators`, `codeValidators`, `textValidators`)
+- Ошибки в UI: стандартный `FormErrorService` из `@guru/shared`
+- Компоненты auth: login, register, forgot/reset password, resend/email confirmation
+
+## Пример
+
+```typescript
+email: this.fb.control('', emailValidators),
+
+// AuthService — без normalize*
+post$(API_ENDPOINTS.IDENTITY.TOKEN, { email, password, rememberMe });
+```

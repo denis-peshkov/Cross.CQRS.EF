@@ -1,0 +1,86 @@
+# Output formatting rules
+
+## Code comments
+
+- **In English** - all comments should be in English
+- **Explain "why"** - comments should explain the reason, not describe the obvious
+- **Brevity** - comments should be brief and to the point
+
+Example:
+```typescript
+// ❌ Bad
+// Get ID from route
+const id = this.route.snapshot.paramMap.get('id');
+
+// ✅ Good
+// Get ID from route to look up vacancy in the array
+const vacancyId = this.route.snapshot.paramMap.get('id');
+```
+
+## Error messages
+
+- **Via translations** - all user-facing error messages should use translations
+- **Use TranslationService** - get messages via `TranslationService.get()`
+- **Logs in English** - technical logs may be in English
+
+Example:
+```typescript
+// For the user
+alert(this.translationService.get('common_resume_error'));
+
+// For the developer
+console.error('Error submitting resume:', error);
+```
+
+## Documentation
+
+- **JSDoc comments** - use JSDoc for public methods and properties
+- **In English** - documentation should be in English
+
+Example:
+```typescript
+/**
+ * Loads translations for the specified resource
+ * @param resource - path to translation resource (e.g. 'vacancies/strings')
+ * @returns Observable with array of translations
+ */
+loadResource$(resource: string): Observable<Translation[]> {
+  // ...
+}
+```
+
+## Variable and method naming
+
+- **Meaningful names** - names should be clear and describe purpose
+- **Code in English** - code in English, comments in English
+- **Avoid abbreviations** - use full words instead of abbreviations
+
+Example:
+```typescript
+// ❌ Bad
+const v = vacancies.find(v => v.id === id);
+
+// ✅ Good
+const vacancy = vacancies.find(v => v.id === vacancyId);
+```
+
+## Code formatting
+
+- **Follow EditorConfig** - follow rules from `.editorconfig`
+- **2 spaces** - use 2 spaces for indentation
+- **Single quotes** - use single quotes for strings
+- **Space after colon** - `{ a: 1 }` not `{a:1}`
+
+## Git commit messages
+
+- **In English** - commit messages should be in English
+- **Descriptive** - messages should describe what changed and why
+
+Example:
+```
+Add vacancy ID passing via routing
+
+- Extended Vacancy interface for detail page
+- Updated vacancy.component to fetch data by ID
+- Changed link in row16 to pass ID via routing
+```

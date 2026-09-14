@@ -1,0 +1,39 @@
+---
+globs:
+  - "server/Web.Api/**/*.cs"
+alwaysApply: false
+---
+
+# Нормализация пользовательского ввода (бэкенд)
+
+Source of truth для всех входящих команд и запросов. Клиент может дублировать для UX, но сервер обязан нормализовать сам.
+
+## Матрица политик
+
+| Тип поля | Бэкенд |
+|----------|--------|
+| Email | `Trim` (в фильтре; lower case — по политике API в фильтре или домене) |
+| OTP / code | `Trim` |
+| Имя, компания, provider | `Trim` |
+| Пароль | **не изменять** |
+| Route id | N/A на уровне `InputNormalizer` (если нужно — в handler или валидаторе) |
+
+## Где нормализовать
+
+1. **Примитивы** — `server/Web.Api/Common/InputNormalizer.cs` (`NormalizeTrimmedText` и расширения по мере надобности).
+2. **Применение** — `IRequestFilter<TCommand>` / `*CommandRequestFilter` рядом с командой; цепочка Cross.CQRS: `RequestFilterBehavior` **до** `ValidationBehavior`.
+3. **Не в handler** — нормализация до валидации, чтобы `NotEmpty` / `EmailAddress` видели уже очищенные строки.
+
+## Исключения
+
+- Domain (`UserService`, `CodeService`) может дублировать нормализацию идентификаторов как страховку.
+- Пароли в `InputNormalizer` не трогать — явно в комментарии к классу.
+
+## Пример
+
+```csharp
+// *CommandRequestFilter.cs
+dto.Email = InputNormalizer.NormalizeTrimmedText(dto.Email);
+dto.Code = InputNormalizer.NormalizeTrimmedText(dto.Code);
+// dto.Password — не нормализовать
+```
