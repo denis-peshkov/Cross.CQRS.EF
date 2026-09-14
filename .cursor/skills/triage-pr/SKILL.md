@@ -208,7 +208,12 @@ git diff "$BASE_REF...$BRANCH_REF"
 # or uncommitted: git diff && git diff --cached
 ```
 
-Checklist: `references/dotnet-checklist.md` (and `docs/BREAKING.md` when public API changes).
+Repository context for the agent (from README / tree, not hard-coded paths):
+
+- Library / `src/` — public API, DI, pipeline
+- `*Tests*/` — automated tests
+- Documentation: `README.md`, `docs/BREAKING.md`, `docs/CHANGELOG.md` (when present)
+- Checklists: `.cursor/triage/post-pr-triage.mjs` (`loadReviewChecklists` → `references/*-checklist.md`)
 
 Response structure: Critical 🔴 / Important 🟠 / Suggestions 🟡 / What's Good ✅.
 

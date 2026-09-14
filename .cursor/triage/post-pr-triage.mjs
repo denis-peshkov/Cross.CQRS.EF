@@ -20,6 +20,7 @@ const ROOT = join(__dirname, '../..');
 const GH = join(ROOT, '.cursor/triage/gh-wrapper.sh');
 const CHECKLISTS_DIR = join(ROOT, '.cursor/skills/triage-pr/references');
 const DOTNET_CHECKLIST = join(CHECKLISTS_DIR, 'dotnet-checklist.md');
+const DOTNET_EF_CHECKLIST = join(CHECKLISTS_DIR, 'dotnet-ef-checklist.md');
 const ANGULAR_CHECKLIST = join(CHECKLISTS_DIR, 'angular-checklist.md');
 
 const prNumber = process.env.PR_NUMBER || process.argv[2];
@@ -221,19 +222,24 @@ function fetchPrDiff(repo, prNumber, pr) {
 
 function loadReviewChecklists(files) {
   const paths = (files || []).map((f) => f.path ?? f.filename ?? '');
-  const hasDotnet = paths.some((p) => /\.(cs|csproj)$/i.test(p));
+  const hasDotnet = paths.some((p) => /\.(cs|csproj|nuspec)$/i.test(p));
   const hasFrontend = paths.some((p) => /\.(ts|tsx|html|scss|css)$/i.test(p));
 
   const sections = [];
   const wantDotnet =
-    existsSync(DOTNET_CHECKLIST) &&
+    (existsSync(DOTNET_EF_CHECKLIST) || existsSync(DOTNET_CHECKLIST)) &&
     (paths.length === 0 || hasDotnet || !hasFrontend);
   const wantAngular =
     existsSync(ANGULAR_CHECKLIST) &&
     (paths.length === 0 || hasFrontend || !hasDotnet);
 
   if (wantDotnet) {
-    sections.push(readFileSync(DOTNET_CHECKLIST, 'utf8'));
+    // Prefer EF package checklist in this repo; fall back to core Cross.CQRS checklist.
+    if (existsSync(DOTNET_EF_CHECKLIST)) {
+      sections.push(readFileSync(DOTNET_EF_CHECKLIST, 'utf8'));
+    } else if (existsSync(DOTNET_CHECKLIST)) {
+      sections.push(readFileSync(DOTNET_CHECKLIST, 'utf8'));
+    }
   }
   if (wantAngular) {
     sections.push(readFileSync(ANGULAR_CHECKLIST, 'utf8'));
@@ -244,7 +250,9 @@ function loadReviewChecklists(files) {
   }
 
   // Neither signal matched, but files may exist — include whatever is present.
-  if (existsSync(DOTNET_CHECKLIST)) {
+  if (existsSync(DOTNET_EF_CHECKLIST)) {
+    sections.push(readFileSync(DOTNET_EF_CHECKLIST, 'utf8'));
+  } else if (existsSync(DOTNET_CHECKLIST)) {
     sections.push(readFileSync(DOTNET_CHECKLIST, 'utf8'));
   }
   if (existsSync(ANGULAR_CHECKLIST)) {
