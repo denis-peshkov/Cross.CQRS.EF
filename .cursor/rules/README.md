@@ -7,24 +7,6 @@
 - `001-team-workflow.mdc` - Правила командной работы
 - `002-multi-repo.mdc` - Правила работы с мульти-репозиторием
 
-### Триаж GitHub (issues / PRs)
-
-Актуальная документация — skills + скрипты (правила `003-triage.mdc` больше нет):
-
-- `.cursor/skills/triage/` - оркестратор триажа issue + PR
-- `.cursor/skills/triage-issue/` - GitHub issues
-- `.cursor/skills/triage-pr/` - GitHub PRs (`references/dotnet-checklist.md`, `references/angular-checklist.md`)
-- `.cursor/triage/` - обёртка `gh`, CI-раннеры (`collect-data.sh`, `post-pr-triage.mjs`); обзор: [`.cursor/triage/docs/README.md`](../triage/docs/README.md)
-
-### Skills Cursor (проект)
-
-- `.cursor/skills/release-plan/` - планы версий, `TO-DO.md`, `BREAKING.md`; скрипты: `resolve-target-version.sh`, `scaffold-breaking-section.sh`, `collect-release-delta.sh`, `release-plan-summary.mjs`
-- `.cursor/skills/coderabbit/` - review CodeRabbit CLI → план текущей версии
-- `.cursor/skills/db-scripts/` - пути DbUp этого репозитория (`Infrastructure/Scripts/` multi-provider, symlinks, BREAKING); соглашения в `102-backend-efcore`
-- `.cursor/skills/stripe-accounts/` - Stripe accounts (dev/prod)
-- `.cursor/skills/stripe-products/` - Stripe catalog
-- `.cursor/skills/translate-resources/` - синхронизация i18n JSON
-
 ### 100-199: Backend (.NET)
 - `100-backend-dotnet-general.mdc` - Общие правила .NET бэкенда
 - `101-backend-architecture.mdc` - Архитектура бэкенда
@@ -56,6 +38,7 @@
 
 ### 400-499: Output Format
 - `400-output-format.mdc` - Правила форматирования вывода
+- `401-markdown.mdc` - Форматирование Markdown-таблиц
 
 ## Использование
 

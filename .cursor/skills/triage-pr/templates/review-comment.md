@@ -43,7 +43,7 @@ Comments in **English**. Resolve `{repository_name}` / `{repository_url}` from `
 
 ## Checks (mention when relevant)
 
-- No logging of secrets / license keys (see checklists via `.cursor/triage/post-pr-triage.mjs`)
+- No logging of secrets / license keys (see `.cursor/rules/*.mdc`)
 - Auth/licensing/pipeline security (core and EF extension slots as designed)
 - EF registration, transaction pipeline, and DbContext integration contracts
 - `docs/BREAKING.md` / README / `config.nuspec` updated for public API or pack changes

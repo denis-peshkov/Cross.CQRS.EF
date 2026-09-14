@@ -78,7 +78,7 @@ Size bands + hotspots: same as `triage-pr` Phase 1. CI / mergeable / reviews →
 
 ### Phase L3 — Optional deep (`deep` or user asks)
 
-`triage-pr` Phase 2 checklists via `.cursor/triage/post-pr-triage.mjs`. Optional `Task` bugbot.
+`triage-pr` Phase 2 via `.cursor/rules/*.mdc` (`post-pr-triage.mjs` → `loadMatchedRules`). Optional `Task` bugbot.
 
 ### Phase L4 — Output + save
 
