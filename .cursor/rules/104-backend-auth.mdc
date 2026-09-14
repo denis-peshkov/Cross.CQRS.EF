@@ -1,3 +1,13 @@
+---
+description: Аутентификация и авторизация — OAuth, JWT, Authorize, permissions и scopes
+globs:
+  - "**/*Auth*.cs"
+  - "**/*Authorize*.cs"
+  - "**/*Permission*.cs"
+  - "**/Program.cs"
+alwaysApply: false
+---
+
 # Аутентификация и авторизация
 
 ## Аутентификация

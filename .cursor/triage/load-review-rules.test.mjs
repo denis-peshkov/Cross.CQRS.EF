@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, readdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { globToRegExp, matchGlob, parseMdcFrontmatter, ruleMatchesPaths, loadMatchedRules } from './load-review-rules.mjs';
 
@@ -11,6 +12,8 @@ test('globToRegExp matches ** and *', () => {
   assert.equal(matchGlob('client/**/*.ts', 'client/app/x.ts'), true);
   assert.equal(matchGlob('client/**/*.ts', 'server/x.ts'), false);
   assert.equal(matchGlob('**/MainContext.cs', 'src/MainContext.cs'), true);
+  assert.equal(matchGlob('**/Modules/**/*.cs', 'SampleWebApp/Modules/Some/Handlers/SomeQuery.cs'), true);
+  assert.equal(matchGlob('**/*Test/**/*.cs', 'Foo.Test/Bar.cs'), true);
   assert.ok(globToRegExp('a/b').test('a/b'));
 });
 
@@ -99,5 +102,19 @@ test('loadMatchedRules returns empty when no rule matches', () => {
     assert.equal(hit.text, '');
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('every project .mdc has frontmatter with alwaysApply or globs', () => {
+  const rulesDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'rules');
+  const names = readdirSync(rulesDir).filter((name) => name.endsWith('.mdc'));
+  assert.ok(names.length > 0);
+  for (const name of names) {
+    const meta = parseMdcFrontmatter(readFileSync(join(rulesDir, name), 'utf8'));
+    assert.equal(meta.hasFrontmatter, true, name);
+    assert.equal(typeof meta.alwaysApply, 'boolean', name);
+    if (meta.alwaysApply !== true) {
+      assert.ok(meta.globs.length > 0, name);
+    }
   }
 });

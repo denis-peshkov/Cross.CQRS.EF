@@ -1,5 +1,5 @@
 ---
-description: Backend security — validation, secrets, CORS, HTTPS; license JWTs
+description: Безопасность бэкенда — валидация, секреты, CORS, HTTPS, license JWT
 globs:
   - "**/*.cs"
   - "**/appsettings*.json"
@@ -11,10 +11,9 @@ alwaysApply: false
 
 ## Валидация входных данных
 
-- **FluentValidation** - использовать FluentValidation для валидации DTOs
-- **Валидация на уровне контроллера** - проверять валидность данных перед обработкой
+- FluentValidation для валидации DTOs
+- проверять валидность данных на уровне контроллера до обработки
 
-Пример:
 ```csharp
 if (!ModelState.IsValid)
 {
@@ -29,33 +28,31 @@ if (!ModelState.IsValid)
 
 ## Санитизация данных
 
-- **Санитизация входных данных** - санитизировать все пользовательские данные перед использованием
-- **Защита от XSS** - экранировать HTML/JavaScript в пользовательском вводе
-- **Защита от SQL Injection** - использовать параметризованные запросы, не использовать строковую конкатенацию
+- санитизировать все пользовательские данные перед использованием
+- защита от XSS — экранировать HTML/JavaScript в пользовательском вводе
+- защита от SQL Injection — параметризованные запросы, не строковая конкатенация
 
 ## Логирование чувствительных данных
 
-- **Не логировать чувствительные данные** - не логировать пароли, токены, JWT license keys, персональные данные
-- **Маскирование данных** - маскировать чувствительные данные в логах (например, `****` вместо пароля)
-- **Структурированное логирование** - использовать параметризованные сообщения для логирования
-- **Sample hosts** - не активировать / не коммитить live license keys в примерах
+- не логировать пароли, токены, JWT license keys, персональные данные
+- маскировать чувствительные данные в логах (например, `****` вместо пароля)
+- структурированные (параметризованные) сообщения
+- sample hosts — не активировать и не коммитить live license keys в примерах
 
-Пример:
 ```csharp
-// ❌ Неправильно
+// ❌
 _logger.LogInformation("User login: {Username}, Password: {Password}", username, password);
 
-// ✅ Правильно
+// ✅
 _logger.LogInformation("User login attempt: {Username}", username);
 ```
 
 ## CORS
 
-- **Настройка CORS** - настраивать CORS политику для разрешенных источников
-- **Порядок middleware** - CORS должен быть настроен до middleware, которые читают заголовки
-- **AllowCredentials** - использовать `AllowCredentials()` для поддержки cookies
+- настраивать CORS-политику для разрешённых источников
+- CORS до middleware, которые читают заголовки
+- `AllowCredentials()` для поддержки cookies
 
-Пример:
 ```csharp
 services.AddCors(o =>
 {
@@ -70,17 +67,16 @@ services.AddCors(o =>
     });
 });
 
-// В ConfigureApp - CORS должен быть до других middleware
+// В ConfigureApp — CORS до других middleware
 app.UseCors("ui");
 ```
 
 ## HTTPS
 
-- **HTTPS в production** - использовать HTTPS в production окружении
-- **HSTS** - использовать HTTP Strict Transport Security (HSTS) в production
-- **HTTPS Redirection** - перенаправлять HTTP на HTTPS в production
+- HTTPS в production
+- HSTS в production
+- перенаправление HTTP → HTTPS в production
 
-Пример:
 ```csharp
 if (!app.Environment.IsDevelopment())
 {
@@ -91,11 +87,10 @@ if (!app.Environment.IsDevelopment())
 
 ## Защита от атак
 
-- **Rate Limiting** - использовать rate limiting для защиты от DDoS атак
-- **Request Size Limits** - ограничивать размер запросов (особенно для загрузки файлов)
-- **Timeout** - устанавливать таймауты для долгих операций
+- rate limiting против DDoS
+- ограничивать размер запросов (особенно загрузка файлов)
+- таймауты для долгих операций
 
-Пример ограничения размера:
 ```csharp
 services.Configure<FormOptions>(options =>
 {
@@ -104,13 +99,13 @@ services.Configure<FormOptions>(options =>
 });
 ```
 
-## Безопасность заголовков
+## Заголовки
 
-- **Security Headers** - задавать security headers (X-Content-Type-Options, X-Frame-Options и т.д.)
-- **Custom Headers** - использовать middleware для установки кастомных заголовков безопасности
+- security headers (X-Content-Type-Options, X-Frame-Options и т.д.)
+- middleware для кастомных заголовков безопасности
 
 ## Защита API
 
-- **API Versioning** - использовать версионирование API для контроля изменений
-- **Rate Limiting per User** - ограничивать количество запросов на пользователя
-- **IP Whitelisting** - использовать whitelist IP адресов для критичных endpoints (если необходимо)
+- версионирование API для контроля изменений
+- rate limiting per user
+- whitelist IP для критичных endpoints, если необходимо

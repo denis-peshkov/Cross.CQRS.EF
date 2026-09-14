@@ -27,7 +27,7 @@
 `post-pr-triage.mjs` → `loadMatchedRules`:
 
 1. Матчит `.cursor/rules/*.mdc` по frontmatter (`alwaysApply: true` или `globs` ↔ пути файлов PR).
-2. Если ни одно rule не совпало — placeholder в промпте. Доп. пункты в `100`/`105`/`106`/`300`; Angular `200`/`203`/`210`/`301`.
+2. Если ни одно rule не совпало — placeholder в промпте. Доп. пункты в `100`/`105`/`300`; Angular `200`/`203`/`210`/`301`.
 
 Логика: [`triage/load-review-rules.mjs`](triage/load-review-rules.mjs).
 

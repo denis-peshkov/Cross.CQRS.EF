@@ -1,9 +1,10 @@
 ---
+description: RxJS — Observable вместо Promise, подписки и отписка
 globs:
-- "apps/**/*.ts"
-- "libs/**/*.ts"
-- "client/**/*.ts"
-- "client/**/*.tsx"
+  - "apps/**/*.ts"
+  - "libs/**/*.ts"
+  - "client/**/*.ts"
+  - "client/**/*.tsx"
 alwaysApply: false
 ---
 

@@ -1,0 +1,285 @@
+---
+description: Язык и формат C# — GlobalUsings, naming, Nullable, async, EditorConfig, логи
+globs:
+  - "**/*.cs"
+  - "**/*.csproj"
+  - "**/.editorconfig"
+alwaysApply: false
+---
+
+# Язык и формат C#
+
+## Global usings
+
+- **Только `GlobalUsings.cs`** — не ставить file-scoped `using` в файлах `.cs`; все импорты идут в `GlobalUsings.cs` проекта.
+- **`ImplicitUsings`** — `disable` в `.csproj`; не включать неявные usings SDK.
+- **Новое пространство имён** — при добавлении типов обновлять `GlobalUsings.cs`, не локальные `using`.
+- **Порядок в `GlobalUsings.cs`** — сначала `System.*`, затем остальные.
+
+## Nullable и async
+
+- **`Nullable`** — `enable` в library/test проектах, где это конвенция репозитория.
+- **Суффикс `Async`** — у всех async-методов.
+- **`CancellationToken`** — принимать и передавать во все async-операции.
+- **`ConfigureAwait`**
+  - библиотечный NuGet-код — `ConfigureAwait(false)`, где применим CA2007; tests/sample могут NoWarn CA2007
+  - ASP.NET host / sample — обычно не требовать `ConfigureAwait(false)`
+
+```csharp
+public async Task<ApiEnvelope<bool>> SubmitResumeAsync(
+    [FromForm] SubmitResumeDto request,
+    CancellationToken cancellationToken)
+{
+    var htmlBody = await File.ReadAllTextAsync(htmlTemplatePath, cancellationToken);
+    await _emailSenderService.SendAsync(recipientName, recipientEmail, subject, textBody, htmlBody, cancellationToken);
+}
+```
+
+## Именование типов
+
+- **Controllers** — PascalCase с суффиксом `Controller` (например, `VacanciesController`)
+- **Handlers** — PascalCase с суффиксом `Handler` или `CommandHandler`/`QueryHandler`
+- **DTOs** — PascalCase с суффиксом `Dto` (например, `SubmitResumeDto`)
+- **Commands/Queries** — PascalCase с суффиксом `Command`/`Query` (например, `SubmitResumeCommand`)
+
+## EditorConfig
+
+- **Отступ**: 4 пробела (`indent_size = 4`)
+- **Кодировка**: UTF-8-BOM (`charset = utf-8-bom`)
+- **Конец строки**: LF (`end_of_line = lf`)
+- **Trailing whitespace**: удалять (`trim_trailing_whitespace = true`)
+- **Конец файла**: пустая строка (`insert_final_newline = true`)
+
+## var
+
+- **`var` везде** для локальных переменных, если тип очевиден из контекста
+- явный тип — только если тип не очевиден
+
+```csharp
+// ✅
+var request = command.Dto;
+var recipientEmail = _configuration.GetValue<string>("EmailOptions:NotificationEmail");
+var htmlBody = string.Empty;
+
+// ❌
+SubmitResumeDto request = command.Dto;
+string recipientEmail = _configuration.GetValue<string>("EmailOptions:NotificationEmail");
+string htmlBody = string.Empty;
+```
+
+## Поля, свойства, константы
+
+- **private поля** — префикс `_` и camelCase; `readonly` тоже с `_`
+- **public свойства и методы** — PascalCase
+- **константы** — PascalCase или ALL_UPPER с подчёркиваниями
+
+```csharp
+private readonly IMediator _mediator;
+private readonly ILogger<VacanciesController> _logger;
+private readonly string[] _requiredPermissions;
+
+public string Name { get; set; }
+public async Task<bool> HandleAsync(SubmitResumeCommand command, CancellationToken cancellationToken)
+
+private const string DefaultLanguage = "en";
+private const int MAX_RETRY_COUNT = 3;
+```
+
+## Модификаторы доступа
+
+- всегда указывать явно (`private`, `public`, `protected`, `internal`)
+- порядок: `public`, `private`, `protected`, `internal`, `static`, `readonly`, `async`
+
+```csharp
+public class VacanciesController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    protected override async Task<bool> HandleAsync(...)
+}
+```
+
+## Скобки и управляющие конструкции
+
+- фигурные скобки даже для однострочных блоков
+- открывающая скобка на новой строке
+- `else` / `catch` / `finally` на новой строке
+
+```csharp
+// ✅
+if (!ModelState.IsValid)
+{
+    foreach (var error in ModelState)
+    {
+        _logger.LogWarning("Error: {Key}", error.Key);
+    }
+}
+
+// ❌
+if (!ModelState.IsValid)
+    _logger.LogWarning("Invalid");
+
+if (!ModelState.IsValid) {
+    _logger.LogWarning("Invalid");
+}
+
+if (condition)
+{
+    DoSomething();
+}
+else
+{
+    DoSomethingElse();
+}
+
+try
+{
+    DoSomething();
+}
+catch (Exception ex)
+{
+    HandleError(ex);
+}
+finally
+{
+    Cleanup();
+}
+```
+
+## Expression-bodied members
+
+- простые однострочные методы и get-only свойства — expression-bodied
+- конструкторы — не expression-bodied
+
+```csharp
+// ✅
+public static string ToCamelCase(this string input)
+    => Regex.Replace(input, "^[A-Z]", m => m.Value.ToLowerInvariant());
+
+public string Name { get; set; } = string.Empty;
+
+// ❌ для конструкторов
+public MyClass(string name) => _name = name;
+```
+
+## Современный C#
+
+- pattern matching вместо `is` с приведением
+- `?.` и `??` для nullable
+- object и collection initializers вместо цепочки присваиваний
+
+```csharp
+var notSpecified = language switch
+{
+    "en" => "Not specified",
+    "ru" => "Не указано",
+    _ => "Not specified"
+};
+
+var email = _configuration.GetValue<string>("EmailOptions:NotificationEmail")
+             ?? _configuration.GetValue<string>("EmailOptions:FromUserAddress");
+var permissions = headersContextAccessor.UserPermissions?
+    .Any(claim => claim.Contains(permission)) ?? false;
+
+var command = new SubmitResumeCommand
+{
+    Dto = request ?? new SubmitResumeDto()
+};
+
+var parameters = new Dictionary<string, string>
+{
+    { "name", request.Name },
+    { "email", request.Email }
+};
+```
+
+## Пробелы
+
+- пробел после `if`, `for`, `while`, `catch`
+- пробелы вокруг бинарных операторов
+- без пробела после приведения типа: `(Type)variable`
+- без пробелов внутри скобок параметров: `Method(param1, param2)`
+
+```csharp
+// ✅
+if (condition && otherCondition)
+{
+    var result = (string)value;
+    DoSomething(param1, param2);
+}
+
+// ❌
+if(condition&&otherCondition)
+{
+    var result = ( string )value;
+    DoSomething( param1, param2 );
+}
+```
+
+## Комментарии
+
+- комментарии на русском
+- XML-комментарии для public методов и свойств
+- объяснять «почему», не «что»
+
+```csharp
+/// <summary>
+/// Конвертирует PascalCase/TitleCase в camelCase.
+/// Умно обрабатывает начальные акронимы.
+/// </summary>
+public static string ToCamelCase(this string s)
+{
+    // Локализованные значения по умолчанию
+    var notSpecified = language switch
+    {
+        "en" => "Not specified",
+        "ru" => "Не указано",
+        _ => "Not specified"
+    };
+}
+```
+
+## Структура файла
+
+- namespace в начале файла
+- file-scoped namespaces, если поддерживается (C# 10+)
+- `using` не в файле типа — только в `GlobalUsings.cs`
+
+```csharp
+namespace Web.Api.Modules.Vacancies.Controllers;
+
+[ApiController]
+public class VacanciesController : ControllerBase
+{
+}
+```
+
+## Логи
+
+- типизированный `ILogger<T>`, где T — класс
+- структурированные (параметризованные) сообщения
+- уровни: `LogInformation`, `LogWarning`, `LogError`
+
+```csharp
+_logger.LogInformation("Received SubmitResume request. ModelState.IsValid: {IsValid}", ModelState.IsValid);
+_logger.LogWarning("ModelState error for {Key}: {Errors}", error.Key, string.Join(", ", errors));
+_logger.LogError(ex, "Failed to send email notification");
+_logger.LogError("Error processing request: {Error}", exception);
+```
+
+## Мониторинг
+
+- **Metrics** — метрики производительности
+- **Tracing** — трассировка запросов
+
+## Исключения
+
+- конкретные типы вместо голого `Exception`
+- сообщения исключений на английском (технические детали)
+
+```csharp
+if (string.IsNullOrWhiteSpace(htmlBody))
+    throw new Exception("Email templates are not found");
+
+if (!permissionsAuthorized)
+    throw new ForbiddenException("Access denied");
+```

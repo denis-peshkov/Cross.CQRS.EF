@@ -1,5 +1,5 @@
 ---
-description: NuGet packaging, multi-targeting, BREAKING/CHANGELOG/nuspec sync for library PRs
+description: NuGet pack — multi-targeting, nuspec, BREAKING и CHANGELOG
 globs:
   - "**/*.nuspec"
   - "**/*.csproj"

@@ -1,0 +1,136 @@
+---
+description: CQRS и модули — handlers, DTO, DI, нормализация ввода до валидации
+globs:
+  - "**/Modules/**/*.cs"
+  - "**/Behaviors/**/*.cs"
+  - "**/Extensions/**/*.cs"
+  - "**/*Handler*.cs"
+  - "**/*Command*.cs"
+  - "**/*Query*.cs"
+  - "**/*Filter*.cs"
+  - "**/*Normalizer*.cs"
+alwaysApply: false
+---
+
+# CQRS и модули
+
+## Модули
+
+Код организовывать по модулям в `Web.Api/Modules/{ModuleName}/` (или эквивалент `Modules/` у library/sample).
+
+Структура модуля:
+
+- `Controllers/` — контроллеры API
+- `Dtos/` — Data Transfer Objects
+- `Handlers/` — обработчики команд и запросов
+
+```
+Modules/
+└─ Vacancies/
+   ├─ Controllers/
+   │  └─ VacanciesController.cs
+   ├─ Dtos/
+   │  └─ SubmitResumeDto.cs
+   └─ Handlers/
+      └─ Create
+      │  └─ SubmitResumeCommand.cs
+      │  └─ SubmitResumeCommandHandler.cs
+      │  └─ SubmitResumeCommandValidator.cs
+      └─ Read
+         └─ GetByIdQuery.cs
+         └─ GetByIdQueryHandler.cs
+         └─ GetByIdQueryValidator.cs
+```
+
+- контроллеры только для маршрутизации, логика в handlers
+- CQRS с MediatR
+
+## CQRS с MediatR
+
+- отдельные классы для команд (изменение данных) и запросов (чтение)
+- вся бизнес-логика в обработчиках, не в контроллерах
+- взаимодействие через `IMediator.Send()` и `IMediator.Send<T>()`
+
+```csharp
+public class SubmitResumeCommand : Command<bool>
+{
+    public SubmitResumeDto Dto { get; set; }
+}
+
+public class SubmitResumeCommandHandler : CommandHandler<SubmitResumeCommand, bool>
+{
+    protected override async Task<bool> HandleAsync(SubmitResumeCommand command, CancellationToken cancellationToken)
+    {
+        // Бизнес-логика
+        return true;
+    }
+}
+```
+
+## DTOs
+
+- отдельные классы для запросов и ответов
+- FluentValidation для валидации DTOs
+- суффикс `Dto`
+
+```csharp
+public class SubmitResumeDto
+{
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public IFormFile Resume { get; set; }
+}
+```
+
+## Dependency Injection
+
+- constructor injection
+- интерфейсы для всех зависимостей
+- зависимости — `readonly`
+
+```csharp
+public class VacanciesController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    private readonly ILogger<VacanciesController> _logger;
+
+    public VacanciesController(
+        IMediator mediator,
+        ILogger<VacanciesController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+}
+```
+
+## Нормализация ввода
+
+Сервер — источник истины для входящих команд и запросов. Клиент может дублировать для UX, сервер обязан нормализовать сам.
+
+| Тип поля | Бэкенд |
+|---|---|
+| Email | `Trim` (в фильтре; lower case — по политике API в фильтре или домене) |
+| OTP / code | `Trim` |
+| Имя, компания, provider | `Trim` |
+| Пароль | **не изменять** |
+| Route id | N/A на уровне `InputNormalizer` (если нужно — в handler или валидаторе) |
+
+Где нормализовать:
+
+1. **Примитивы** — `InputNormalizer` (`NormalizeTrimmedText` и расширения по мере надобности). Типичный путь хоста: `server/Web.Api/Common/InputNormalizer.cs`.
+2. **Применение** — `IRequestFilter<TCommand>` / `*CommandRequestFilter` рядом с командой; цепочка Cross.CQRS: `RequestFilterBehavior` **до** `ValidationBehavior`.
+3. **Не в handler** — нормализация до валидации, чтобы `NotEmpty` / `EmailAddress` видели уже очищенные строки.
+
+Исключения:
+
+- domain (`UserService`, `CodeService`) может дублировать нормализацию идентификаторов как страховку
+- пароли в `InputNormalizer` не трогать — явно в комментарии к классу
+
+```csharp
+// *CommandRequestFilter.cs
+dto.Email = InputNormalizer.NormalizeTrimmedText(dto.Email);
+dto.Code = InputNormalizer.NormalizeTrimmedText(dto.Code);
+// dto.Password — не нормализовать
+```

@@ -9,16 +9,13 @@
 - `003-cursor-rules.mdc` - Как писать правила в `.cursor/rules`
 
 ### 100-199: Backend (.NET)
-- `100-backend-dotnet-general.mdc` - Общие правила .NET бэкенда
-- `101-backend-architecture.mdc` - Архитектура бэкенда
+- `100-backend-dotnet.mdc` - Язык и формат C# (usings, naming, async, EditorConfig, логи)
+- `101-backend-cqrs.mdc` - CQRS, модули, DTO, нормализация ввода
 - `102-backend-efcore.mdc` - EF Core + SQL-миграции DbUp (не Code First Migrations): слои, именование, append-only, идемпотентные скрипты
-- `103-backend-api-style.mdc` - Стиль API
+- `103-backend-http.mdc` - HTTP-контракт API
 - `104-backend-auth.mdc` - Аутентификация и авторизация
 - `105-backend-security.mdc` - Безопасность бэкенда (валидация, санитизация, CORS, HTTPS)
-- `106-backend-formatting-and-style.mdc` - Форматирование и стиль кода бэкенда
-- `107-backend-observability.mdc` - Наблюдаемость бэкенда
-- `108-backend-input-normalization.mdc` - Нормализация пользовательского ввода на бэкенде (trim, политики полей)
-- `109-backend-nuget-packaging.mdc` - NuGet multi-targeting, nuspec, BREAKING/CHANGELOG
+- `106-backend-nuget.mdc` - NuGet multi-targeting, nuspec, BREAKING/CHANGELOG
 
 ### 200-299: Frontend (Angular)
 - `200-frontend-angular-general.mdc` - Общие правила Angular

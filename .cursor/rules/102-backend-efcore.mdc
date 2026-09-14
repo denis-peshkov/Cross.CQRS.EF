@@ -2,6 +2,8 @@
 description: EF Core + SQL-миграции DbUp (не Code First Migrations) — именование, слои, append-only, идемпотентные скрипты
 globs:
   - "**/*EntityTypeConfiguration*.cs"
+  - "**/*Context.cs"
+  - "**/*DbContext*.cs"
   - "**/MainContext.cs"
   - "**/ConfigurationContext.cs"
   - "**/PoliciesContext.cs"
@@ -138,7 +140,6 @@ GO
 - На PostgreSQL / MySQL использовать эквивалентные проверки/вставки провайдера.
 - Предпочтительно делать create + journal insert в **одном** PreDeployment-скрипте, чтобы частичный сбой не оставил таблицу без строки журнала (или наоборот).
 
-## Этот репозиторий
+## Хост
 
-Пути DbUp, symlinks `compose/Identity/` → `server/Web.Api/Infrastructure/Scripts/`, схема `auth` и `docs/BREAKING.md`: skill **`db-scripts`** (`.cursor/skills/db-scripts/SKILL.md`).
-Соглашения по слоям/именованию — в этом правиле (`102-backend-efcore`).
+Пути DbUp часто `**/Infrastructure/Scripts/`; на части продуктов symlink `compose/Identity/` → `server/Web.Api/Infrastructure/Scripts/`. Схема `auth` и consumer breaking — `docs/BREAKING.md`. Операционные детали скриптов — skill `db-scripts` (`.cursor/skills/db-scripts/SKILL.md`), если он есть в репозитории.

@@ -1,6 +1,10 @@
 ---
+description: Нормализация пользовательского ввода на клиенте — trim, политики полей
 globs:
+  - "apps/**/*.ts"
+  - "libs/**/*.ts"
   - "client/**/*.ts"
+  - "client/**/*.tsx"
 alwaysApply: false
 ---
 

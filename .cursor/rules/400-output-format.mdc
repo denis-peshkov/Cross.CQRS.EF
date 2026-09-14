@@ -1,3 +1,12 @@
+---
+description: Формат вывода агента — комментарии и имена на английском, отступ и кавычки TS
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+alwaysApply: false
+---
+
 # Output formatting rules
 
 ## Code comments
