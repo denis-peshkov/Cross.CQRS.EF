@@ -8,7 +8,7 @@ alwaysApply: true
 ## Ветки и pull requests
 
 | Кто | Создать ветку | Открыть PR в |
-|-----|---------------|--------------|
+|---|---|---|
 | **Contributors** | `feature/*`, `fix/*`, `chore/*` | **только `dev`** |
 | **Repository owner** | любая, включая `release/*`, `hotfix/*` | `dev`, `master`, release/hotfix по необходимости |
 

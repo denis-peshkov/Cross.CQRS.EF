@@ -168,3 +168,11 @@ protected row_16_items(): Vacancy[] {
   return vacancies;
 }
 ```
+
+## Review / PR (на что смотреть)
+
+- Новые компоненты: `standalone: true`, явный `imports`, обязательные `template`/`styles` (не пустые `styles: []`).
+- `private readonly` для DI; `protected` для template API; без `any` в публичных DTO.
+- Hotspots при изменениях: `core/` (HTTP, guards, runtime-config, validators), identity/account flows, checkout/Stripe UI — не логировать payment data; корректные return URLs.
+- Изменения публичных routes / API contracts — согласовать с backend и README.
+- i18n keys — синхронизировать все локали (см. `205`, `001`).

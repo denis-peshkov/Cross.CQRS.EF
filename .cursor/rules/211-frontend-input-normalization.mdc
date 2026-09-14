@@ -9,7 +9,7 @@ alwaysApply: false
 ## Матрица политик
 
 | Тип поля | Клиент (форма) | Бэкенд |
-|----------|----------------|--------|
+|---|---|---|
 | Email | `noWhitespaceOnly` + `Validators.email` | `Trim` в `RequestFilter` |
 | OTP / code | `noWhitespaceOnly` | `Trim` |
 | Имя, компания | `noWhitespaceOnly` | `Trim` |

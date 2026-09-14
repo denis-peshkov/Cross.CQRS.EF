@@ -86,6 +86,10 @@ this.apiService.post$(endpoint, formData, {
   .subscribe();
 ```
 
+## Auth / session cookies
+
+- Где API требует cookie-session (identity flows) — передавать `withCredentials` / cookies через `ApiService` options, не обходить через сырой `HttpClient`.
+
 ## Заголовки и параметры
 
 - **Использовать interceptors** - для общих заголовков (например, `X-Language-Code`, `X-Correlation-ID`) использовать interceptors

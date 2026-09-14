@@ -196,3 +196,12 @@ export class GlobalErrorHandler implements ErrorHandler {
   }
 }
 ```
+
+## Secrets / PII в UI (review)
+
+- Не логировать пароли, tokens, PII в `console.*` и пользовательском UI.
+- Auth-формы: `withCredentials` / cookies там, где API требует session (см. `203`).
+- Не хранить secrets/tokens в `localStorage` без явной необходимости и review.
+- UGC/HTML: `DomSanitizer` для пользовательского HTML; без `[innerHTML]` на сыром вводе.
+- Runtime config / env: без hardcode production keys в `environment.ts`.
+- Пользователю — только переведённые сообщения; не показывать stack traces / технические детали.

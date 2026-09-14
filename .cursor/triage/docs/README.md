@@ -70,7 +70,7 @@ Workflow `triage.yml` → job **PR automated comment**:
 - Prompt always lists every commit in the PR; category/priority/labels must reflect the cumulative delta
 - Checkout uses `fetch-depth: 0` so local agent tools are not limited to a shallow tip
 - Posts an automated triage comment (category, priority, confidence, summary, files)
-- Review guidance: matched `.cursor/rules/*.mdc` via `alwaysApply` / `globs` (`load-review-rules.mjs`); checklist fallback under `skills/triage-pr/references/` — see [`.cursor/README.md`](../../README.md)
+- Review guidance: matched `.cursor/rules/*.mdc` via `alwaysApply` / `globs` (`load-review-rules.mjs`) — see [`.cursor/README.md`](../../README.md)
 - Syncs GitHub labels `{category}` / `priority:{priority}` by default when confidence ≥ `TRIAGE_LABEL_MIN_CONFIDENCE` (default `70`); set `TRIAGE_APPLY_LABELS=false` to disable. Allowlisted values only
 - On a new push **updates** the same comment (marker `<!-- triage -->` + author `github-actions[bot]`) and re-evaluates labels on the **same full** base...head scope
 

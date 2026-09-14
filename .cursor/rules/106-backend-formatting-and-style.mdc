@@ -1,3 +1,12 @@
+---
+description: .NET formatting — EditorConfig, UTF-8 BOM, naming, library vs host ConfigureAwait
+globs:
+  - "**/*.cs"
+  - "**/*.csproj"
+  - "**/.editorconfig"
+alwaysApply: false
+---
+
 # Форматирование и стиль кода бэкенда (.NET)
 
 ## EditorConfig правила
@@ -283,7 +292,9 @@ public class VacanciesController : ControllerBase
 
 - **Суффикс Async** - все async методы должны иметь суффикс `Async`
 - **Использовать CancellationToken** - передавать `CancellationToken` в async методы
-- **ConfigureAwait** - не использовать `ConfigureAwait(false)` в ASP.NET Core (не требуется)
+- **ConfigureAwait**
+  - **ASP.NET Core host / sample** — обычно не требовать `ConfigureAwait(false)`
+  - **Библиотечный NuGet-код** — использовать `ConfigureAwait(false)`, где применим CA2007; tests/sample могут NoWarn CA2007
 
 Пример:
 ```csharp

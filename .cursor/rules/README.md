@@ -17,6 +17,7 @@
 - `106-backend-formatting-and-style.mdc` - Форматирование и стиль кода бэкенда
 - `107-backend-observability.mdc` - Наблюдаемость бэкенда
 - `108-backend-input-normalization.mdc` - Нормализация пользовательского ввода на бэкенде (trim, политики полей)
+- `109-backend-nuget-packaging.mdc` - NuGet multi-targeting, nuspec, BREAKING/CHANGELOG
 
 ### 200-299: Frontend (Angular)
 - `200-frontend-angular-general.mdc` - Общие правила Angular

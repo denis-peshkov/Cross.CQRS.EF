@@ -1,3 +1,11 @@
+---
+description: Общие правила .NET — GlobalUsings, naming, MediatR, Nullable, async
+globs:
+  - "**/*.cs"
+  - "**/*.csproj"
+alwaysApply: false
+---
+
 # Общие правила .NET бэкенда
 
 ## Global usings
@@ -5,6 +13,12 @@
 - **Только `GlobalUsings.cs`** — не использовать file-scoped `using` в файлах `.cs`; все импорты идут в `GlobalUsings.cs` проекта.
 - **`ImplicitUsings`** — `disable` в `.csproj`; не включать неявные usings SDK.
 - **Новое пространство имён** — при добавлении типов из нового пространства имён обновлять `GlobalUsings.cs`, а не локальные `using` в файлах.
+
+## Nullable и async
+
+- **`Nullable`** — `enable` в library/test проектах, где это конвенция репозитория.
+- **Async методы** — суффикс `Async`.
+- **Библиотечный код** — `ConfigureAwait(false)` где применим CA2007; ASP.NET host / sample / tests могут отличаться (см. `106`).
 
 ## Архитектура
 
