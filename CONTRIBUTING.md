@@ -1,35 +1,38 @@
-﻿# Contributing to Cross.CQRS
+﻿# Contributing to Cross.CQRS.EF
 
 Thank you for your interest in the project.
 
 ## Quick links
 
-- [Report an issue](https://github.com/denis-peshkov/Cross.CQRS/issues/new/choose)
-- [Open PRs](https://github.com/denis-peshkov/Cross.CQRS/pulls)
-- [CI (.NET)](https://github.com/denis-peshkov/Cross.CQRS/actions/workflows/dotnet.yml)
-- [CI (back-merge master → dev)](https://github.com/denis-peshkov/Cross.CQRS/actions/workflows/backmerge-master-to-dev.yml)
-- [Branch policy](https://github.com/denis-peshkov/Cross.CQRS/actions/workflows/branch-policy.yml)
-- [Triage](https://github.com/denis-peshkov/Cross.CQRS/actions/workflows/triage.yml)
-- [SonarCloud](https://sonarcloud.io/summary/new_code?id=Cross.CQRS)
-- [NuGet](https://www.nuget.org/packages/Cross.CQRS/)
+- [Report an issue](https://github.com/denis-peshkov/Cross.CQRS.EF/issues/new/choose)
+- [Open PRs](https://github.com/denis-peshkov/Cross.CQRS.EF/pulls)
+- [CI (.NET)](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/dotnet.yml)
+- [CI (back-merge master → dev)](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/backmerge-master-to-dev.yml)
+- [Branch policy](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/branch-policy.yml)
+- [Triage](https://github.com/denis-peshkov/Cross.CQRS.EF/actions/workflows/triage.yml)
+- [SonarCloud](https://sonarcloud.io/summary/new_code?id=Cross.CQRS.EF)
+- [NuGet](https://www.nuget.org/packages/Cross.CQRS.EF/)
 - [README](README.md)
 - [Release notes](docs/CHANGELOG.md)
 - Breaking changes: [`docs/BREAKING.md`](docs/BREAKING.md)
 - Release readiness: [`docs/RELEASE-PLAN-to-master.md`](docs/RELEASE-PLAN-to-master.md)
 - Open backlog: [`docs/TO-DO.md`](docs/TO-DO.md)
+- Sibling core library: [Cross.CQRS](https://github.com/denis-peshkov/Cross.CQRS)
 
 ---
 
-## What is Cross.CQRS?
+## What is Cross.CQRS.EF?
 
-**Cross.CQRS** is a NuGet library for .NET MediatR-based CQRS:
+**Cross.CQRS.EF** is a NuGet extension for [Cross.CQRS](https://github.com/denis-peshkov/Cross.CQRS):
 
-- Queries / Commands / CommandEvents and pipeline behaviors;
-- FluentValidation, request/result filters;
-- optional JWT licensing (`CqrsServiceConfiguration.LicenseKey`, `ILicenseProductInfo`);
-- fluent registration via `services.AddCQRS(cfg => …)`.
+- EF Core transactional behavior around **commands** (`UnifiedTransactionBehavior`);
+- isolation / strategy options (`TransactionBehaviorOptions`) and per-handler `ExactTransaction`;
+- DbContext provider wiring via `CqrsRegistrationSyntax.AddEntityFrameworkIntegration<TDbContext>(…)`;
+- EF license pipeline slot (`EfLicenseCheckBehavior`) and hosted license gate (`EfLicenseHostedValidator`).
 
-Consumers call `AddCQRS` and send requests through MediatR (`IMediator` / `ISender`).
+Supported TFMs: **net6.0–net10.0**.
+
+Consumers register core (`AddCQRS`) and this extension, then send requests through MediatR (`IMediator` / `ISender`).
 
 ---
 
@@ -38,9 +41,9 @@ Consumers call `AddCQRS` and send requests through MediatR (`IMediator` / `ISend
 | Type | Examples |
 |---|---|
 | **Report** | Bug with repro steps, expected/actual behavior, package version and TFM |
-| **Fix** | Pipeline behavior regression, registration bug, licensing validation |
-| **Build** | New filter/behavior, tests, SampleWebApp improvements |
-| **Review** | PR review, especially licensing and DI registration |
+| **Fix** | Transaction regression, `ExactTransaction`, registration bug, EF licensing slot |
+| **Build** | New option/behavior, tests, SampleWebApp improvements |
+| **Review** | PR review, especially licensing, DI registration, and transactions |
 | **Document** | README, `docs/CHANGELOG.md`, `docs/BREAKING.md`, release plans |
 
 ---
@@ -49,11 +52,11 @@ Consumers call `AddCQRS` and send requests through MediatR (`IMediator` / `ISend
 
 ### Licensing and security first
 
-Any change to licensing, pipeline behaviors, or DI registration is **high-priority review**. Do not log or commit license JWTs, private keys, or production secrets. Prefer placeholders in samples and issues. For security-related issues/PRs, include package version and a minimal repro — never real keys or live tokens.
+Any change to licensing, pipeline behaviors, transactions, or DI registration is **high-priority review**. Do not log or commit license JWTs, private keys, or production secrets. Prefer placeholders in samples and issues. For security-related issues/PRs, include package version and a minimal repro — never real keys or live tokens.
 
 ### Public surface is a contract
 
-Registration (`AddCQRS`), public types, and documented pipeline order are contracts for NuGet consumers. Breaking changes require an entry in `docs/BREAKING.md` only (`config.nuspec` `releaseNotes` links there and must not duplicate the list).
+`AddEntityFrameworkIntegration`, public types, transaction enums/options/attributes, and documented pipeline order are contracts for NuGet consumers. Breaking changes require an entry in `docs/BREAKING.md` only (`config.nuspec` `releaseNotes` links there and must not duplicate the list).
 
 ### Minimal diff
 
@@ -61,10 +64,11 @@ Do not mix refactoring, formatting untouched files, and a feature in one PR. Dri
 
 ### Repository conventions
 
-- `.editorconfig` — style source (UTF-8 BOM, CRLF, 4 spaces for `.cs`).
-- `GlobalUsings.cs` — prefer shared usings; `ImplicitUsings` = `disable`.
+- `.editorconfig` — style source (**UTF-8 BOM**, **LF**, 4 spaces for `.cs`).
+- Prefer `GlobalUsings.cs` for imports (no file-scoped `using` in type files). Library project currently uses `ImplicitUsings` = `enable`; test project uses `disable` — follow the project you edit.
 - New `.cs` / `.csproj` / `.sln` / `.slnx` files — **UTF-8 with BOM**.
 - Tests — **NUnit** + FluentAssertions; prefer method names `Given[X]_When[Y]_Then[Z]` (async → `…Async`); add/update tests with behavior changes.
+- Library awaits: `ConfigureAwait(false)` where CA2007 applies; sample/tests may differ (see `.editorconfig`).
 
 ---
 
@@ -72,14 +76,15 @@ Do not mix refactoring, formatting untouched files, and a feature in one PR. Dri
 
 ### In scope
 
-- `Cross.CQRS/` — library (commands, queries, events, behaviors, licensing, DI);
-- `Cross.CQRS.Tests/` — unit / pipeline / licensing tests;
+- `Cross.CQRS.EF/` — library (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Hosting/`);
+- `Cross.CQRS.EF.Tests/` — unit / pipeline / integration tests;
 - `SampleWebApp/` — smoke host example;
-- `README.md`, `docs/CHANGELOG.md`, `docs/BREAKING.md`, `Cross.CQRS/config.nuspec`;
+- `README.md`, `docs/CHANGELOG.md`, `docs/BREAKING.md`, `Cross.CQRS.EF/config.nuspec`;
 - CI: `.github/workflows/dotnet.yml`, `branch-policy.yml`, `triage.yml`, `backmerge-master-to-dev.yml`.
 
 ### Out of scope (without maintainer discussion)
 
+- Changes that belong in **Cross.CQRS** core (`AddCQRS`, FluentValidation scan, core license behavior, request/result filters);
 - Large architecture refactors “for aesthetics”;
 - New external dependencies without a strong reason;
 - Consumer-breaking changes without a `docs/BREAKING.md` entry;
@@ -140,9 +145,9 @@ Examples:
 
 ```
 release/11.0.0-short-name
-hotfix/critical-license-check
-feature/license-product-info-docs
-fix/validation-behavior-order
+hotfix/critical-transaction-scope
+feature/exact-transaction-docs
+fix/query-must-not-wrap-transaction
 chore/editorconfig-and-templates
 ```
 
@@ -153,9 +158,9 @@ chore/editorconfig-and-templates
 Use **clear English** messages in imperative/descriptive style:
 
 ```
-Add LicenseCheckBehavior coverage tests
-Fix FluentValidation scan for multiple assemblies
-Update README licensing section
+Add ExactTransaction coverage tests
+Fix UnifiedTransactionBehavior for nested scopes
+Update README transaction options section
 ```
 
 For breaking changes, explicitly include `BREAKING:` in the commit body or PR title/description.
@@ -176,7 +181,7 @@ git checkout -b feature/short-description
 
 ### 2. Changes
 
-- Follow existing folder layout (`Behaviors/`, `Licensing/`, `Extensions/`, …).
+- Follow existing folder layout (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Hosting/`, …).
 - Do not touch unrelated files.
 - Breaking change → `docs/BREAKING.md` only (nuspec keeps a link, not a duplicate list).
 
@@ -189,14 +194,14 @@ See [Testing](#testing).
 - **Base branch:** `dev` (required for contributors)
 - **Do not** open PRs into `master`, `release/*`, or `hotfix/*` unless you are the repository owner
 - Description: what, why, how to verify (**English** — for GitHub history and the triage bot)
-- For licensing / security — explicitly note risks
+- For licensing / security / transactions — explicitly note risks
 - Breaking consumer change → prefix the **PR title** with `BREAKING:`
 
 ### 5. CI
 
 Must pass:
 
-- `.NET` workflow (`dotnet build` + `dotnet test`)
+- `.NET` workflow (`dotnet build` + `dotnet test` on `Cross.CQRS.EF.slnx`)
 - Branch policy (`.github/workflows/branch-policy.yml`) — contributors cannot PR to `master` or push `release/*` / `hotfix/*`
 - SonarCloud quality gate on PR (`sonar.qualitygate.wait=true` when enabled)
 - Triage PR comment job when enabled (`CURSOR_API_KEY`) — must not fail on large diffs
@@ -218,14 +223,14 @@ After approval — merge into `dev`. Release to `master` and NuGet publish is a 
 ### Local run
 
 ```bash
-dotnet build Cross.CQRS.slnx
-dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj
+dotnet build Cross.CQRS.EF.slnx
+dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj
 ```
 
 With coverage (OpenCover), as in CI:
 
 ```bash
-dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj \
+dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj \
   --collect:"XPlat Code Coverage" \
   --results-directory ./TestResults \
   -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
@@ -235,9 +240,9 @@ dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj \
 
 - [ ] Tests added/updated for changed behavior (`Given[X]_When[Y]_Then[Z]`; async → `Async`)
 - [ ] `dotnet build` / `dotnet test` — green locally
-- [ ] For licensing / pipeline — not only happy path
+- [ ] For licensing / transactions / registration — prefer pipeline/integration coverage, not only happy path
 - [ ] No secrets in code, samples, or test data
-- [ ] README / `docs/BREAKING.md` / `config.nuspec` updated when the public surface changes
+- [ ] README / `docs/BREAKING.md` / `Cross.CQRS.EF/config.nuspec` updated when the public surface changes
 
 ---
 
@@ -248,7 +253,7 @@ dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj \
 | Public API / registration | `README.md` |
 | Breaking change for consumers | `docs/BREAKING.md` only (`config.nuspec` `releaseNotes` = link, no duplicate list) |
 | Released behavior | **`docs/CHANGELOG.md` (maintainers, on release work)** and short `config.nuspec` `releaseNotes` (+ link to BREAKING) |
-| Packaging / dependencies | `Cross.CQRS/config.nuspec` |
+| Packaging / dependencies | `Cross.CQRS.EF/config.nuspec` |
 | Release readiness | `docs/RELEASE-PLAN-*.md` |
 | Deferred findings | `docs/TO-DO.md` |
 
@@ -264,6 +269,7 @@ There is no separate CLA — merging a PR means agreement with the repository li
 
 ## Questions?
 
-- Bugs and features: [GitHub Issues](https://github.com/denis-peshkov/Cross.CQRS/issues)
+- Bugs and features: [GitHub Issues](https://github.com/denis-peshkov/Cross.CQRS.EF/issues)
+- Core CQRS / `AddCQRS` issues: [Cross.CQRS](https://github.com/denis-peshkov/Cross.CQRS/issues)
 
-**Thank you for contributing to Cross.CQRS.**
+**Thank you for contributing to Cross.CQRS.EF.**
