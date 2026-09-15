@@ -1,4 +1,4 @@
-namespace Cross.CQRS.EF.Extensions;
+﻿namespace Cross.CQRS.EF.Extensions;
 
 public static class CqrsRegistrationSyntaxExtensions
 {
@@ -14,8 +14,8 @@ public static class CqrsRegistrationSyntaxExtensions
     /// <remarks>
     /// This method performs the following registrations:
     /// <list type="bullet">
-    /// <item><description>Registers EF licensing services (same pattern as core <c>AddCQRS</c>: <c>LicenseAccessor</c>, <c>LicenseValidator</c>, <c>ILicenseProductInfo</c>)</description></item>
-    /// <item><description>Adds EfLicenseCheckBehavior with order −1 (after core LicenseCheckBehavior at −2)</description></item>
+    /// <item><description>Registers EF <c>ILicenseProductInfo</c> (<c>EfLicenseProductInfo</c>) into core licensing DI (<c>InternalsVisibleTo</c>)</description></item>
+    /// <item><description>Adds EfLicenseCheckBehavior with order −1 (after core LicenseCheckBehavior at −2); uses core <c>CheckLicense</c></description></item>
     /// <item><description>Adds UnifiedTransactionBehavior with order 10</description></item>
     /// <item><description>Registers DbContextProvider for the specified DbContext type</description></item>
     /// <item><description>Registers EfLicenseHostedValidator as hosted service</description></item>
@@ -34,11 +34,11 @@ public static class CqrsRegistrationSyntaxExtensions
         };
         syntax.Services.AddSingleton(options);
 
-        // Same DI shape as Cross.CQRS AddCQRS licensing — types from Cross.CQRS.EF.Licensing (global using)
+        // Core AddCQRS already registers LicenseAccessor / LicenseValidator / default LicenseProductInfo.
+        // EF adds a second ILicenseProductInfo so CheckLicense validates Cross.CQRS.EF SKU rules.
         LicenseCheckExtensions.ResetLicenseCheckForTests();
-        syntax.Services.AddSingleton<LicenseAccessor>();
-        syntax.Services.AddSingleton<LicenseValidator>();
-        syntax.Services.AddSingleton<ILicenseProductInfo, LicenseProductInfo>();
+        syntax.Services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<ILicenseProductInfo, EfLicenseProductInfo>());
 
         // Registration order is important, it works like ASP.NET Core middleware
         // Behaviors registered earlier will be executed earlier
