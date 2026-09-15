@@ -15,7 +15,7 @@
     <description>Simple .NET MediatR base EF Transactional Behavior for Cross.CQRS.</description>
     <tags>.NET MediatR EF Core TransactionalBehavior ExactTransaction DbContext CQRS NetCore</tags>
     <releaseNotes><![CDATA[
-Cross.CQRS.EF — AddEntityFrameworkIntegration: UnifiedTransactionBehavior, TransactionBehaviorOptions / ExactTransaction, EfLicenseProductInfo (core CheckLicense). Pagination APIs removed from this package. TFMs net6–net10.
+Cross.CQRS.EF — AddEntityFrameworkIntegration: UnifiedTransactionBehavior, TransactionBehaviorOptions / ExactTransaction, EfLicenseProductInfo. Pagination APIs removed from this package. TFMs net6–net10.
 
 Changelog: https://github.com/denis-peshkov/Cross.CQRS.EF/blob/master/docs/CHANGELOG.md
 Breaking: https://github.com/denis-peshkov/Cross.CQRS.EF/blob/master/docs/BREAKING.md

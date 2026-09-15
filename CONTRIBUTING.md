@@ -28,7 +28,7 @@ Thank you for your interest in the project.
 - EF Core transactional behavior around **commands** (`UnifiedTransactionBehavior`);
 - isolation / strategy options (`TransactionBehaviorOptions`) and per-handler `ExactTransaction`;
 - DbContext provider wiring via `CqrsRegistrationSyntax.AddEntityFrameworkIntegration<TDbContext>(…)`;
-- EF license pipeline slot (`EfLicenseCheckBehavior`) and hosted license gate (`EfLicenseHostedValidator`); product metadata via `EfLicenseProductInfo` on core licensing (`InternalsVisibleTo`).
+- EF license product metadata (`EfLicenseProductInfo`).
 
 Supported TFMs: **net6.0–net10.0**.
 

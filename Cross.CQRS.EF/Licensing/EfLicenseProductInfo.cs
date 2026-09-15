@@ -1,9 +1,7 @@
 ﻿namespace Cross.CQRS.EF.Licensing;
 
 /// <summary>
-/// EF package product metadata registered into core licensing DI
-/// (<see cref="ILicenseProductInfo"/> from Cross.CQRS via InternalsVisibleTo).
-/// Requires <see cref="ProductTypeEnum.Cross_CQRS_EF"/> in the JWT type claim.
+/// Product metadata for this package. Requires <see cref="ProductTypeEnum.Cross_CQRS_EF"/> in the JWT type claim.
 /// </summary>
 internal sealed class EfLicenseProductInfo : ILicenseProductInfo
 {

@@ -14,7 +14,7 @@ public static class CqrsRegistrationSyntaxExtensions
     /// <remarks>
     /// This method performs the following registrations:
     /// <list type="bullet">
-    /// <item><description>Registers EF <c>ILicenseProductInfo</c> (<c>EfLicenseProductInfo</c>) into core licensing DI (<c>InternalsVisibleTo</c>)</description></item>
+    /// <item><description>Registers <c>EfLicenseProductInfo</c></description></item>
     /// <item><description>Adds UnifiedTransactionBehavior with order 10</description></item>
     /// <item><description>Registers DbContextProvider for the specified DbContext type</description></item>
     /// </list>
@@ -32,8 +32,6 @@ public static class CqrsRegistrationSyntaxExtensions
             configured.IsolationLevel = isolationLevel;
         });
 
-        // Core AddCQRS already registers LicenseAccessor / LicenseValidator / default LicenseProductInfo.
-        // EF adds a second ILicenseProductInfo so CheckLicense validates Cross.CQRS.EF SKU rules.
         LicenseCheckExtensions.ResetLicenseCheckForTests();
         syntax.Services.TryAddEnumerable(
             ServiceDescriptor.Singleton<ILicenseProductInfo, EfLicenseProductInfo>());

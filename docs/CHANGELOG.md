@@ -21,11 +21,11 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Licensing
 
 - Package depends on Cross.CQRS **11.1.2**.
-- Registers `EfLicenseProductInfo`, `EfLicenseCheckBehavior` (order −1), and `EfLicenseHostedValidator`.
+- Registers `EfLicenseProductInfo` (JWT type `Cross_CQRS_EF`).
 
 ### Target frameworks
 
-- Added `net9.0` and `net10.0`; EF Core / Hosting abstractions versioned per TFM (`net6.0`–`net10.0`).
+- Added `net9.0` and `net10.0`; EF Core versioned per TFM (`net6.0`–`net10.0`).
 
 ### Tests
 

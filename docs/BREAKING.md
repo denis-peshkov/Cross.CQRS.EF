@@ -39,10 +39,10 @@ Removed from this package: `PaginationQuery`, `PaginationQueryHandler`, `Paginat
 | Area | Was | Now |
 |---|---|---|
 | Cross.CQRS | 7.x / 8.2.0 per TFM | **11.1.2** all TFMs |
-| License | none in EF | `EfLicenseProductInfo` + `EfLicenseCheckBehavior` order **−1** + `EfLicenseHostedValidator` |
+| License | none in EF | `EfLicenseProductInfo` |
 | Product claim | n/a | when a license key is supplied, JWT `type` must include `Cross_CQRS_EF` |
 
-**Action:** upgrade the host to Cross.CQRS 11.1.2; follow core optional-license rules in that package’s README. Extensions register their own `ILicenseProductInfo`.
+**Action:** upgrade the host to Cross.CQRS 11.1.2.
 
 ### Target frameworks / packaging
 

@@ -40,8 +40,7 @@ reviews:
         Prefer findings on EF integration: AddEntityFrameworkIntegration,
         UnifiedTransactionBehavior (commands only), ExactTransactionAttribute,
         TransactionBehaviorOptions / TransactionBehaviorEnum / isolation mapping,
-        IDbContextProvider, EfLicenseCheckBehavior (pipeline order -1 after core
-        LicenseCheckBehavior at -2), and EfLicenseHostedValidator.
+        IDbContextProvider, and EfLicenseProductInfo.
         Flag stale XML remarks (e.g. IQueryableFilter, wrong behavior orders).
         Require XML docs only on public host-facing contracts. Do not require
         docstrings/XML on internal helpers or private members.
@@ -51,9 +50,9 @@ reviews:
       instructions: |
         Prefer findings on multi-targeting (net6.0–net10.0): TargetFrameworks /
         lib groups / dependency groups must stay aligned between Cross.CQRS.EF.csproj
-        and config.nuspec (Cross.CQRS, EF Core, EF Relational, Hosting.Abstractions
-        versions per TFM). Do not reintroduce removed Paginated APIs without an
-        explicit product decision and docs sync.
+        and config.nuspec (Cross.CQRS, EF Core, EF Relational versions per TFM).
+        Do not reintroduce removed Paginated APIs without an explicit product
+        decision and docs sync.
     - path: "**/*Tests*/**"
       instructions: |
         Do not require docstrings or XML documentation on tests. Prefer asserting
