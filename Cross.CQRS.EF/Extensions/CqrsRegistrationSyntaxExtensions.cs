@@ -32,7 +32,6 @@ public static class CqrsRegistrationSyntaxExtensions
             configured.IsolationLevel = isolationLevel;
         });
 
-        LicenseCheckExtensions.ResetLicenseCheckForTests();
         syntax.Services.TryAddEnumerable(
             ServiceDescriptor.Singleton<ILicenseProductInfo, EfLicenseProductInfo>());
 

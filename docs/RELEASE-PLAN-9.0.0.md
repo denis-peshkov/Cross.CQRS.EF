@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H8 M7 L6
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H8 M6 L6
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -57,10 +57,6 @@ CR: сверить `docs/BREAKING.md`, `RELEASE-PLAN-9.0.0.md` и `CHANGELOG.md`
 ---
 
 ## Средний (противоречия / баги контрактов)
-
-### ⬜ M11. `ResetLicenseCheckForTests()` в production-регистрации
-
-`AddEntityFrameworkIntegration` вызывает `ResetLicenseCheckForTests()` при каждом хост-setup.
 
 ### ⬜ M12. Switch `_ => default` без `next()`
 
@@ -144,6 +140,7 @@ Q1/Q2/Q5/N1/G2 ссылаются на закрытый H8 — обновить 
 | ✅ #H8 IOptions registration | `Configure<TransactionBehaviorOptions>`; pipeline резолвит options (triage 2026-09-15) |
 | ✅ #M10 pipeline transaction tests | `UnifiedTransactionBehaviorTests` + `SqlitePipelineHost.SendAsync` (triage 2026-09-15) |
 | ✅ #L19 чужие plan 11.1.x | файлы `docs/RELEASE-PLAN-11.1.*` в дереве отсутствуют (triage 2026-09-15) |
+| ✅ #M11 ResetLicenseCheckForTests | убран из `AddEntityFrameworkIntegration`; на EF-регистрации reset не нужен |
 
 ---
 
@@ -164,6 +161,6 @@ Q1/Q2/Q5/N1/G2 ссылаются на закрытый H8 — обновить 
 3. **H10** — CA2007 / ConfigureAwait в library.
 4. **H16** / **L24** / **L25** — docs consistency (BREAKING/CHANGELOG/to-master).
 5. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
-6. **M11** / **M13** / **L20** / **L23**.
+6. **M13** / **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
