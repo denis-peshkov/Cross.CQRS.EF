@@ -1,6 +1,6 @@
-namespace Cross.CQRS.EF.Tests.Modules;
+﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class FailingCreateTestEntityHandler : CommandHandler<CreateTestEntityCommand>
+public class FailingCreateTestEntityHandler : CommandHandler<FailingCreateTestEntityCommand>
 {
     private readonly TestDbContext _dbContext;
 
@@ -10,7 +10,7 @@ public class FailingCreateTestEntityHandler : CommandHandler<CreateTestEntityCom
         _dbContext = dbContext;
     }
 
-    protected override async Task HandleAsync(CreateTestEntityCommand command, CancellationToken cancellationToken)
+    protected override async Task HandleAsync(FailingCreateTestEntityCommand command, CancellationToken cancellationToken)
     {
         var entity = new TestEntity
         {
@@ -21,6 +21,6 @@ public class FailingCreateTestEntityHandler : CommandHandler<CreateTestEntityCom
         await _dbContext.TestEntities.AddAsync(entity, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        throw new InvalidOperationException("Симулируем ошибку для проверки отката транзакции");
+        throw new InvalidOperationException("Simulated handler failure to verify transaction rollback");
     }
 }

@@ -1,4 +1,4 @@
-namespace Cross.CQRS.EF.Tests.Tests;
+﻿namespace Cross.CQRS.EF.Tests.Tests;
 
 [TestFixture]
 public class TransactionEventTests : HandlerTestsBase
@@ -45,7 +45,7 @@ public class TransactionEventTests : HandlerTestsBase
     public async Task TransactionWithEvents_Failure_ShouldNotPublishEvents()
     {
         // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
+        var command = new FailingCreateTestEntityCommand { Name = Faker.Company.CompanyName() };
         var loggerMock = new Mock<ILogger<FailingCreateTestEntityHandler>>();
 
         // Act & Assert

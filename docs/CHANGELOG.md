@@ -6,6 +6,49 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
+## v9.0.0 — 15 Sep 2026
+
+### Transactions
+
+- Replaced `TransactionalBehavior` / `ScopeBehavior` / `TransactionalScopeBehavior` with a single `UnifiedTransactionBehavior` (pipeline order 10).
+- Renamed `ExplicitTransactionAttribute` (empty opt-out marker) to `ExactTransactionAttribute(behavior, isolation)`.
+- `AddEntityFrameworkIntegration` moved to namespace `Cross.CQRS.EF.Extensions` and accepts `isolationLevel` (default `Serializable`).
+
+### Pagination
+
+- Removed `PaginationQuery` / `PaginationQueryHandler`, pagination models (`PaginationRequest`, `PaginationResult`, `SortParameter`, `SortDirectionEnum`), `QueryableExtensions`, and `IQueryableFilter` assembly scan.
+
+### Licensing
+
+- Package depends on Cross.CQRS **11.1.2**.
+- Registers `EfLicenseProductInfo`, `EfLicenseCheckBehavior` (order −1), and `EfLicenseHostedValidator`.
+
+### Target frameworks
+
+- Added `net9.0` and `net10.0`; EF Core / Hosting abstractions versioned per TFM (`net6.0`–`net10.0`).
+
+### Tests
+
+- Added `Cross.CQRS.EF.Tests` (handler fixtures, transaction/lock cases, licensing registration).
+
+### CI / release process
+
+- `GitVersion.yml` `next-version: 9.0.0`; branch-policy, back-merge, and triage workflows; GitHub issue/PR templates and rulesets.
+
+### Packaging
+
+- Solution `Cross.CQRS.EF.sln` → `Cross.CQRS.EF.slnx`; pack via `Cross.CQRS.EF/config.nuspec` (`_nuget/` helpers removed).
+
+### Documentation
+
+- Consumer notes in `docs/CHANGELOG.md` and `docs/BREAKING.md` (`8.4.1` → `9.0.0`); `CONTRIBUTING.md`.
+
+### Repository tooling
+
+- Maintainer kit: `.cursor` rules / skills / triage, CodeRabbit config.
+
+---
+
 ## v8.4.1 — 9 Mar 2025
 
 ### CI / release process

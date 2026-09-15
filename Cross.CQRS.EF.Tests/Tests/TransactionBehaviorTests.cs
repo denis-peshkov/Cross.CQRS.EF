@@ -1,4 +1,4 @@
-namespace Cross.CQRS.EF.Tests.Tests;
+﻿namespace Cross.CQRS.EF.Tests.Tests;
 
 [TestFixture]
 public class TransactionBehaviorTests : HandlerTestsBase
@@ -48,7 +48,7 @@ public class TransactionBehaviorTests : HandlerTestsBase
     public async Task TransactionalBehavior_Error_ShouldRollbackChanges()
     {
         // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
+        var command = new FailingCreateTestEntityCommand { Name = Faker.Company.CompanyName() };
         var loggerMock = new Mock<ILogger<FailingCreateTestEntityHandler>>();
 
         // Act & Assert

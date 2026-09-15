@@ -27,12 +27,12 @@ public static class CqrsRegistrationSyntaxExtensions
         IsolationLevel isolationLevel = IsolationLevel.Serializable)
         where TDbContext : DbContext
     {
-        var options = new TransactionBehaviorOptions
+        // UnifiedTransactionBehavior resolves IOptions<T>, not the options type itself.
+        syntax.Services.Configure<TransactionBehaviorOptions>(configured =>
         {
-            Behavior = transactionBehavior,
-            IsolationLevel = isolationLevel,
-        };
-        syntax.Services.AddSingleton(options);
+            configured.Behavior = transactionBehavior;
+            configured.IsolationLevel = isolationLevel;
+        });
 
         // Core AddCQRS already registers LicenseAccessor / LicenseValidator / default LicenseProductInfo.
         // EF adds a second ILicenseProductInfo so CheckLicense validates Cross.CQRS.EF SKU rules.
