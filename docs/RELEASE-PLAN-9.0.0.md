@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H8 M6 L5
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H7 M6 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H9. Default isolation `Serializable` vs 8.4.x / `TransactionBehaviorOptions`
-
-В 8.4.x `BeginTransactionAsync` без isolation (дефолт провайдера, обычно ReadCommitted). В 9.0.0 публичный default `AddEntityFrameworkIntegration(..., isolationLevel: Serializable)`, при этом `TransactionBehaviorOptions.IsolationLevel` по умолчанию `ReadCommitted`. После апгрейда хосты получат более жёсткие блокировки, плюс два разных «дефолта» в одном API.
 
 ### ⬜ H10. `CA2007` в `NoWarn` библиотеки
 
@@ -94,10 +90,6 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 В `SampleWebApp/Program.cs` закомментирован полный JWT license key. Даже в комментарии это секрет/PII в git. (triage 2026-09-15)
 
-### ⬜ L22. Default `Behavior` в options vs extension
-
-`TransactionBehaviorOptions.Behavior` по умолчанию `TransactionalScopeBehavior`, параметр `AddEntityFrameworkIntegration` — `TransactionalBehavior`. Config-bind без явного enum получит другой режим, чем вызов extension «как есть».
-
 ### ⬜ L23. Тело PR #9 устарело относительно дерева
 
 Синхронизировать body с `Configure<TransactionBehaviorOptions>`, актуальным BREAKING и закрытыми H8/M10. (triage 2026-09-15)
@@ -138,6 +130,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #L19 чужие plan 11.1.x | файлы `docs/RELEASE-PLAN-11.1.*` в дереве отсутствуют (triage 2026-09-15) |
 | ✅ #M11 ResetLicenseCheckForTests | убран из `AddEntityFrameworkIntegration`; на EF-регистрации reset не нужен |
 | ✅ #L25 to-master без H8 gates | Q1/Q2/Q5/N1/G2 без ссылок на закрытый H8; B2 = PR #9 |
+| ✅ #H9 isolation defaults | `TransactionBehaviorOptions.IsolationLevel` = `Serializable` (как у extension / `ExactTransaction`) |
+| ✅ #L22 behavior defaults | `TransactionBehaviorOptions.Behavior` = `TransactionalBehavior` (как у extension) |
 
 ---
 
@@ -154,10 +148,9 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 ## Приоритет фиксов
 
 1. **H11** / **H12** / **M12** — transaction behavior correctness (finally, BeginTransactionAsync, unknown enum).
-2. **H9** / **L22** — выровнять defaults isolation/behavior.
-3. **H10** — CA2007 / ConfigureAwait в library.
-4. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
-5. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
-6. **M13** / **L20** / **L23**.
+2. **H10** — CA2007 / ConfigureAwait в library.
+3. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
+4. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
+5. **M13** / **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

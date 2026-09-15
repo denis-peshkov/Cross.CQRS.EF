@@ -22,6 +22,16 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.UNIT)]
+    public void GivenTransactionBehaviorOptionsDefaults_WhenConstructed_ThenMatchExtensionParameters()
+    {
+        var options = new TransactionBehaviorOptions();
+
+        options.Behavior.Should().Be(TransactionBehaviorEnum.TransactionalBehavior);
+        options.IsolationLevel.Should().Be(IsolationLevel.Serializable);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
     public void GivenAddEntityFrameworkIntegration_WhenBehaviorAndIsolationPassed_ThenOptionsMatchArguments()
     {
         var services = new ServiceCollection();

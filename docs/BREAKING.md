@@ -23,7 +23,7 @@ Release: [v9.0.0](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9
 |---|---|---|
 | Pipeline | one of `TransactionalBehavior` / `ScopeBehavior` / `TransactionalScopeBehavior` | single `UnifiedTransactionBehavior` (order 10) |
 | Opt-out attribute | `ExplicitTransactionAttribute` (empty; skip wrapper) | `ExactTransactionAttribute(behavior, isolation)` |
-| Isolation | EF `BeginTransactionAsync` without explicit isolation | `AddEntityFrameworkIntegration(..., isolationLevel)` default `Serializable` |
+| Isolation | EF `BeginTransactionAsync` without explicit isolation | `AddEntityFrameworkIntegration(..., isolationLevel)` and `TransactionBehaviorOptions.IsolationLevel` default `Serializable` |
 | Extension namespace | `Cross.CQRS.EF` | `Cross.CQRS.EF.Extensions` |
 
 **Action:** replace `[ExplicitTransaction]` with `[ExactTransaction(TransactionBehaviorEnum.NoBehavior)]` to keep opt-out. Add `using Cross.CQRS.EF.Extensions`. Re-evaluate isolation: 9.0.0 default is `Serializable` (stricter than typical 8.4.x provider default).

@@ -13,6 +13,7 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 - Replaced `TransactionalBehavior` / `ScopeBehavior` / `TransactionalScopeBehavior` with a single `UnifiedTransactionBehavior` (pipeline order 10).
 - Renamed `ExplicitTransactionAttribute` (empty opt-out marker) to `ExactTransactionAttribute(behavior, isolation)`.
 - `AddEntityFrameworkIntegration` moved to namespace `Cross.CQRS.EF.Extensions` and accepts `isolationLevel` (default `Serializable`).
+- `TransactionBehaviorOptions` defaults match the extension: `TransactionalBehavior` and `Serializable`.
 
 ### Pagination
 
