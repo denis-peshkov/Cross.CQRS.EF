@@ -1,4 +1,4 @@
-namespace Cross.CQRS.Licensing;
+namespace Cross.CQRS.EF.Licensing;
 
 internal interface ILicenseProductInfo
 {

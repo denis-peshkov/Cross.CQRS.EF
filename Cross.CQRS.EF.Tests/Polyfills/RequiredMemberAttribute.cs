@@ -1,6 +1,6 @@
 ﻿#if NET6_0
 
-namespace System.Runtime.CompilerServices;
+namespace Cross.CQRS.EF.Tests.Polyfills;
 
 [AttributeUsage(
     AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Field | AttributeTargets.Property,
