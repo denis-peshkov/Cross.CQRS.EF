@@ -14,11 +14,11 @@ public static class CqrsRegistrationSyntaxExtensions
     /// <remarks>
     /// This method performs the following registrations:
     /// <list type="bullet">
-    /// <item><description>Registers transaction behavior options</description></item>
-    /// <item><description>Adds EfLicenseCheckBehavior with order 0 (runs on every MediatR request after core license check)</description></item>
+    /// <item><description>Registers EF licensing services (same pattern as core <c>AddCQRS</c>: <c>LicenseAccessor</c>, <c>LicenseValidator</c>, <c>ILicenseProductInfo</c>)</description></item>
+    /// <item><description>Adds EfLicenseCheckBehavior with order −1 (after core LicenseCheckBehavior at −2)</description></item>
     /// <item><description>Adds UnifiedTransactionBehavior with order 10</description></item>
-    /// <item><description>Registers all implementations of IQueryableFilter from specified assemblies</description></item>
     /// <item><description>Registers DbContextProvider for the specified DbContext type</description></item>
+    /// <item><description>Registers EfLicenseHostedValidator as hosted service</description></item>
     /// </list>
     /// </remarks>
     public static CqrsRegistrationSyntax AddEntityFrameworkIntegration<TDbContext>(
@@ -33,6 +33,12 @@ public static class CqrsRegistrationSyntaxExtensions
             IsolationLevel = isolationLevel,
         };
         syntax.Services.AddSingleton(options);
+
+        // Same DI shape as Cross.CQRS AddCQRS licensing — types from Cross.CQRS.EF.Licensing (global using)
+        LicenseCheckExtensions.ResetLicenseCheckForTests();
+        syntax.Services.AddSingleton<LicenseAccessor>();
+        syntax.Services.AddSingleton<LicenseValidator>();
+        syntax.Services.AddSingleton<ILicenseProductInfo, LicenseProductInfo>();
 
         // Registration order is important, it works like ASP.NET Core middleware
         // Behaviors registered earlier will be executed earlier

@@ -65,7 +65,7 @@ Do not mix refactoring, formatting untouched files, and a feature in one PR. Dri
 ### Repository conventions
 
 - `.editorconfig` — style source (**UTF-8 BOM**, **LF**, 4 spaces for `.cs`).
-- Prefer `GlobalUsings.cs` for imports (no file-scoped `using` in type files). Library project currently uses `ImplicitUsings` = `enable`; test project uses `disable` — follow the project you edit.
+- Prefer `GlobalUsings.cs` with `global using` directives (no local `using` in type files). Library project currently uses `ImplicitUsings` = `enable`; test project uses `disable` — follow the project you edit.
 - New `.cs` / `.csproj` / `.sln` / `.slnx` files — **UTF-8 with BOM**.
 - Tests — **NUnit** + FluentAssertions; prefer method names `Given[X]_When[Y]_Then[Z]` (async → `…Async`); add/update tests with behavior changes.
 - Library awaits: `ConfigureAwait(false)` where CA2007 applies; sample/tests may differ (see `.editorconfig`).

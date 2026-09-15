@@ -1,4 +1,9 @@
-﻿namespace Cross.CQRS.EF.Licensing;
+﻿using System.Security.Claims;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+
+namespace Cross.CQRS.EF.Licensing;
 
 internal class LicenseAccessor
 {

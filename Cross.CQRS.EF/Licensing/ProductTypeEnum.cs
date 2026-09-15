@@ -1,4 +1,6 @@
-﻿namespace Cross.CQRS.EF.Licensing;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Cross.CQRS.EF.Licensing;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 internal enum ProductTypeEnum

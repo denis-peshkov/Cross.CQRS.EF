@@ -1,4 +1,6 @@
-﻿namespace Cross.CQRS.EF.Licensing;
+﻿using System.Security.Claims;
+
+namespace Cross.CQRS.EF.Licensing;
 
 internal class License
 {
