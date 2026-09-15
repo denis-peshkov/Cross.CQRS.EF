@@ -24,14 +24,11 @@
 
 ## Принято (осознанный trade-off)
 
-- Git tags: never from `dev`; only stable SemVer on `master` / `release/*` / `hotfix/*` (NuGet pre-release on `dev` OK).
-- SemVer только через `GitVersion.yml` (без CI override / matrix fallback / `+semver`); `commit-message-incrementing: Disabled`.
+- Git tags: только stable SemVer с `master` / `release/*` / `hotfix/*` (никогда с `dev`; без pre-release suffix). NuGet Push также с `dev` (pre-release).
+- SemVer только через `GitVersion.yml` (без CI override / matrix fallback / `+semver`); `commit-message-incrementing: Disabled`. CI GitVersion 6.8.2.
 - `main`: Inherit от `release`/`hotfix`; корневой `increment: Patch` для orphaned master; цифры в `release/*` игнорируются.
-- CI GitVersion 6.8.2; git tag только для stable SemVer без pre-release suffix.
 - SampleWebApp / Tests: `CA2007` в `NoWarn` (host/test style), library — `ConfigureAwait(false)`.
 - Licensing: только `EfLicenseProductInfo`; не дублировать проверку лицензии в этом пакете.
-- Tag только с `master` / `release/*` / `hotfix/*` (stable SemVer). NuGet Push также с `dev` (pre-release).
-- Git tags только для **stable** SemVer (без `-preview` / `-dev` / …); `dev` **не** создаёт git tags.
 - SonarCloud display name меняется только анализом main (`master`); PR analysis не переименовывает проект.
 - Sonar `qualitygate.wait` только на `pull_request`; push/publish QG не ждёт.
 - Локальные хвосты `release/*` могут завышать SemVer — для publish ориентир = CI **после** очистки мусорных tags.

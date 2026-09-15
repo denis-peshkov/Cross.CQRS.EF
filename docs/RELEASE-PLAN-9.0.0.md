@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H8 M6 L6
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H8 M6 L5
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -106,10 +106,6 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 Секция датирована как релиз, но tag/GitHub Release ещё нет — пометить Unreleased / pending. (CR 2026-09-15)
 
-### ⬜ L25. `RELEASE-PLAN-to-master.md` всё ещё gates на H8
-
-Q1/Q2/Q5/N1/G2 ссылаются на закрытый H8 — обновить на текущие open blockers. (CR 2026-09-15)
-
 ---
 
 ## Принято (осознанный trade-off)
@@ -141,6 +137,7 @@ Q1/Q2/Q5/N1/G2 ссылаются на закрытый H8 — обновить 
 | ✅ #M10 pipeline transaction tests | `UnifiedTransactionBehaviorTests` + `SqlitePipelineHost.SendAsync` (triage 2026-09-15) |
 | ✅ #L19 чужие plan 11.1.x | файлы `docs/RELEASE-PLAN-11.1.*` в дереве отсутствуют (triage 2026-09-15) |
 | ✅ #M11 ResetLicenseCheckForTests | убран из `AddEntityFrameworkIntegration`; на EF-регистрации reset не нужен |
+| ✅ #L25 to-master без H8 gates | Q1/Q2/Q5/N1/G2 без ссылок на закрытый H8; B2 = PR #9 |
 
 ---
 
@@ -159,7 +156,7 @@ Q1/Q2/Q5/N1/G2 ссылаются на закрытый H8 — обновить 
 1. **H11** / **H12** / **M12** — transaction behavior correctness (finally, BeginTransactionAsync, unknown enum).
 2. **H9** / **L22** — выровнять defaults isolation/behavior.
 3. **H10** — CA2007 / ConfigureAwait в library.
-4. **H16** / **L24** / **L25** — docs consistency (BREAKING/CHANGELOG/to-master).
+4. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
 5. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
 6. **M13** / **L20** / **L23**.
 
