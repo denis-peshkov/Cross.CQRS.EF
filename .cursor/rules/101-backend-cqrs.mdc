@@ -61,7 +61,7 @@ public class SubmitResumeCommandHandler : CommandHandler<SubmitResumeCommand, bo
 {
     protected override async Task<bool> HandleAsync(SubmitResumeCommand command, CancellationToken cancellationToken)
     {
-        // Бизнес-логика
+        // Business logic
         return true;
     }
 }
@@ -132,5 +132,5 @@ public class VacanciesController : ControllerBase
 // *CommandRequestFilter.cs
 dto.Email = InputNormalizer.NormalizeTrimmedText(dto.Email);
 dto.Code = InputNormalizer.NormalizeTrimmedText(dto.Code);
-// dto.Password — не нормализовать
+// dto.Password — do not normalize
 ```

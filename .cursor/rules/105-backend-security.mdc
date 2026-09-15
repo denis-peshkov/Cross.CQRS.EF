@@ -67,7 +67,7 @@ services.AddCors(o =>
     });
 });
 
-// В ConfigureApp — CORS до других middleware
+// In ConfigureApp — CORS before other middleware
 app.UseCors("ui");
 ```
 

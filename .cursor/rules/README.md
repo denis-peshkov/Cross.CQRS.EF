@@ -36,5 +36,5 @@
 - `301-testing-angular.mdc` - Тестирование Angular
 
 ### 400-499: Output Format
-- `400-output-format.mdc` - Правила форматирования вывода
+- `400-output-format.mdc` - Формат ответа агента
 - `401-markdown.mdc` - Форматирование Markdown-таблиц

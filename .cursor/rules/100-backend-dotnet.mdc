@@ -215,28 +215,9 @@ if(condition&&otherCondition)
 }
 ```
 
-## Комментарии
+## XML-документация
 
-- комментарии на русском
-- XML-комментарии для public методов и свойств
-- объяснять «почему», не «что»
-
-```csharp
-/// <summary>
-/// Конвертирует PascalCase/TitleCase в camelCase.
-/// Умно обрабатывает начальные акронимы.
-/// </summary>
-public static string ToCamelCase(this string s)
-{
-    // Локализованные значения по умолчанию
-    var notSpecified = language switch
-    {
-        "en" => "Not specified",
-        "ru" => "Не указано",
-        _ => "Not specified"
-    };
-}
-```
+- XML-комментарии (`///`) для public методов и свойств
 
 ## Структура файла
 

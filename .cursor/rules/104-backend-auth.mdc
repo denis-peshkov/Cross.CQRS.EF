@@ -22,8 +22,8 @@ alwaysApply: false
 services.AddOAuthAuthentication(configuration);
 services.AddAuthorization();
 
-// В ConfigureApp:
-app.UseAuthentication();  // должен быть перед UseAuthorization
+// In ConfigureApp:
+app.UseAuthentication();  // must run before UseAuthorization
 app.UseAuthorization();
 ```
 
@@ -56,7 +56,7 @@ public async Task<ApiEnvelope<bool>> SubmitResumeAsync(...)
 [HttpPost("SubmitResume")]
 public async Task<ApiEnvelope<bool>> SubmitResumeAsync(...)
 {
-    // Проверяет наличие scope "vacancies.write" или permission "vacancies:write"
+    // Checks for scope "vacancies.write" or permission "vacancies:write"
 }
 ```
 
@@ -66,8 +66,8 @@ public async Task<ApiEnvelope<bool>> SubmitResumeAsync(...)
 [HttpPatch("UpdateVacancy")]
 public async Task<ApiEnvelope<bool>> UpdateVacancyAsync(...)
 {
-    // Проверяет права на каждое поле в PATCH запросе
-    // Например: "vacancies.title.update", "vacancies.description.update"
+    // Checks permission for each field in the PATCH payload
+    // e.g. "vacancies.title.update", "vacancies.description.update"
 }
 ```
 
