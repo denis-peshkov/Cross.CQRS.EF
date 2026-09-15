@@ -1,0 +1,152 @@
+---
+description: Роутинг и guards — lazy load, ROUTE_PATH, CanMatchFn, :lang
+globs:
+  - "apps/**/*.ts"
+  - "libs/**/*.ts"
+  - "client/**/*.ts"
+  - "client/**/*.tsx"
+alwaysApply: false
+---
+
+# Роутинг и guards
+
+## Структура роутов
+
+- пути — константы `ROUTE_PATH` из `core/constants/route.path.ts` (или эквивалент хоста)
+- экспорт константы (`export const vacanciesRoutes: Routes = [...]`)
+- lazy loading: `loadComponent` / `loadChildren` и динамический `import()`
+- языковой префикс `:lang` в первом сегменте; пути без префикса, префикс добавляет guard
+
+```typescript
+import { Routes } from '@angular/router';
+import { ROUTE_PATH } from './core/constants';
+
+export const routes: Routes = [
+  {
+    path: ':lang',
+    canMatch: [langValidateGuard],
+    children: [
+      {
+        path: ROUTE_PATH.COMPANY_VACANCIES,
+        loadChildren: () => import('./pages/vacancies/vacancies.routes')
+          .then(m => m.vacanciesRoutes),
+      },
+    ],
+  },
+];
+```
+
+```typescript
+export const vacanciesRoutes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./vacancies.component')
+      .then((m) => m.VacanciesComponent),
+  },
+  {
+    path: ':id',
+    loadComponent: () => import('./vacancy/vacancy.component')
+      .then((m) => m.VacancyComponent),
+  },
+];
+```
+
+## Параметры и навигация
+
+- `ActivatedRoute.snapshot.paramMap.get('id')`; проверять наличие
+- нет обязательного параметра или сущность не найдена — `router.navigate`
+- в шаблоне `[routerLink]`; относительные пути `['./', id]`
+- программная навигация — `router.navigate()`
+
+```typescript
+ngOnInit(): void {
+  const vacancyId = this.route.snapshot.paramMap.get('id');
+
+  if (!vacancyId) {
+    this.router.navigate(['../'], { relativeTo: this.route });
+    return;
+  }
+
+  this.vacancy = vacancies.find(v => v.id === vacancyId) || null;
+
+  if (!this.vacancy) {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+}
+```
+
+```html
+<a [routerLink]="['./', vacancy.id]">
+  {{ vacancy.title }}
+</a>
+```
+
+## Функциональные guards
+
+- функциональные `CanMatchFn` / `CanActivateFn` / `CanDeactivateFn`, не классы
+- `CanDeactivateFn` — перед уходом (несохранённые данные)
+- зависимости через `inject()`
+- `CanLoad` устарел — `CanMatchFn`
+- `canMatch` до lazy load; `canActivate` до активации; `canDeactivate` при уходе
+- несколько guards: `canMatch: [guard1, guard2]`
+- возврат: `true` / `false` / `UrlTree`
+- только проверка доступа, не загрузка данных; бизнес-логика в сервисах
+- асинхронно: `Observable<boolean | UrlTree>` / `Promise<...>`
+
+```typescript
+export const langValidateGuard: CanMatchFn = (route, segments) => {
+  const router = inject(Router);
+  const languageStore = inject(LanguageStore);
+
+  const lang = segments[0]?.path?.toUpperCase();
+  const isSupportedLang = lang && Languages.includes(lang);
+
+  if (isSupportedLang) {
+    languageStore.setCurrentLanguageCode(lang);
+    return true;
+  }
+
+  const currentLang = languageStore.currentLanguageCode.toLowerCase();
+  return router.createUrlTree(['/', currentLang, ...segments.map(s => s.path)]);
+};
+```
+
+```typescript
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+
+  if (authService.isAuthenticated()) {
+    return true;
+  }
+
+  const router = inject(Router);
+  return router.createUrlTree(['/login']);
+};
+```
+
+```typescript
+// ❌ loading data in a guard
+export const dataGuard: CanActivateFn = () => {
+  const dataService = inject(DataService);
+  return dataService.loadData().pipe(
+    map(data => data !== null)
+  );
+};
+
+// ✅ access check only
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  return authService.isAuthenticated();
+};
+```
+
+```typescript
+export const asyncGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+
+  return authService.checkAuth$().pipe(
+    map(isAuth => isAuth || inject(Router).createUrlTree(['/login']))
+  );
+};
+```

@@ -1,0 +1,140 @@
+---
+description: Обработка ошибок на клиенте — HTTP, catchError, сообщения через i18n, PII
+globs:
+  - "apps/**/*.ts"
+  - "libs/**/*.ts"
+  - "client/**/*.ts"
+  - "client/**/*.tsx"
+alwaysApply: false
+---
+
+# Обработка ошибок
+
+## HTTP
+
+- общая обработка (401, 403, 500) — в `ApiService`
+- специфичные ошибки — в компоненте через `catchError`
+- пользователю — переводы, без stack trace и кодов
+
+```typescript
+private handleError = (error: HttpErrorResponse): Observable<never> => {
+  if (error.status === 401) {
+    this.router.navigate(['/login']);
+  } else if (error.status === 403) {
+    console.error('Forbidden');
+  } else if (error.status >= 500) {
+    console.error('Server error:', error);
+  }
+
+  return throwError(() => error);
+};
+```
+
+```typescript
+this.apiService.post$(endpoint, formData)
+  .pipe(
+    takeUntilDestroyed(this.destroyRef),
+    catchError(error => {
+      console.error('Failed to submit resume:', error);
+      alert(this.translationService.get('common_resume_error'));
+      return of(null);
+    }),
+  )
+  .subscribe({
+    next: (response) => {
+      if (response) {
+        // Handle success
+      }
+    },
+  });
+```
+
+## Observable
+
+- `catchError` в цепочке
+- fallback через `of()`, либо `throwError()` если ошибку нужно пробросить
+
+```typescript
+this.apiService.get$<Vacancy[]>('/vacancies')
+  .pipe(
+    takeUntilDestroyed(this.destroyRef),
+    catchError(error => {
+      console.error('Failed to load vacancies:', error);
+      return of([]);
+    }),
+  )
+  .subscribe(vacancies => {
+    this.vacancies = vacancies;
+  });
+```
+
+## Роут без данных
+
+- проверять параметр и сущность; иначе `router.navigate`
+
+```typescript
+ngOnInit(): void {
+  const vacancyId = this.route.snapshot.paramMap.get('id');
+
+  if (!vacancyId) {
+    this.router.navigate(['../'], { relativeTo: this.route });
+    return;
+  }
+
+  this.vacancy = vacancies.find(v => v.id === vacancyId);
+
+  if (!this.vacancy) {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+}
+```
+
+## Логи
+
+- `console.error` в разработке, со контекстом
+- не логировать пароли, токены, PII
+
+```typescript
+catchError(error => {
+  console.error('Failed to submit resume:', {
+    endpoint,
+    error: error.message,
+    status: error.status,
+    timestamp: new Date().toISOString(),
+  });
+  return throwError(() => error);
+})
+```
+
+## Сообщения пользователю
+
+```typescript
+// ❌
+alert(`Error: ${error.message}`);
+
+// ✅
+alert(this.translationService.get('common_resume_error'));
+```
+
+## Глобально
+
+- Angular `ErrorHandler` для необработанных ошибок
+- HTTP interceptors для общих HTTP-ошибок
+
+```typescript
+@Injectable()
+export class GlobalErrorHandler implements ErrorHandler {
+  handleError(error: Error): void {
+    console.error('Unhandled error:', error);
+    // Forward to monitoring
+  }
+}
+```
+
+## Secrets / PII в UI
+
+- не логировать пароли, tokens, PII в `console.*` и UI
+- auth-формы: `withCredentials` / cookies, где API требует session
+- не хранить secrets/tokens в `localStorage` без явной необходимости и review
+- UGC/HTML: `DomSanitizer`; без `[innerHTML]` на сыром вводе
+- runtime config / env: без hardcode production keys в `environment.ts`

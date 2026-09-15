@@ -1,4 +1,5 @@
 ---
+description: Тестирование Angular — Jasmine/Karma, TestBed, HTTP и формы
 globs:
   - "apps/**/*.spec.ts"
   - "libs/**/*.spec.ts"

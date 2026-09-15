@@ -1,4 +1,5 @@
 ---
+description: UI и Tailwind — утилиты, scss по необходимости, a11y, HTML
 globs:
   - "client/**/*.ts"
   - "client/**/*.html"
@@ -22,7 +23,7 @@ alwaysApply: false
 
 Пример:
 ```scss
-// ❌ Нельзя через @apply
+// ❌ Do not use @apply for this
 .resume-bg {
   background: linear-gradient(
     to bottom,
@@ -32,7 +33,7 @@ alwaysApply: false
   );
 }
 
-// ✅ Можно через @apply для простых случаев
+// ✅ @apply is fine for simple repeated utilities
 .button {
   @apply px-4 py-2 rounded-lg bg-indigo-600 text-white;
 }
@@ -54,7 +55,7 @@ alwaysApply: false
 Пример:
 ```html
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <!-- Контент -->
+  <!-- Content -->
 </div>
 ```
 
@@ -93,7 +94,7 @@ alwaysApply: false
   class="px-4 py-2 rounded-lg"
   [disabled]="isLoading"
 >
-  Нажми меня
+  {{ 'common_submit' | translate }}
 </button>
 ```
 
@@ -104,11 +105,11 @@ alwaysApply: false
 
 Пример:
 ```html
-<label for="search" class="sr-only">Поиск</label>
+<label for="search" class="sr-only">{{ 'common_search' | translate }}</label>
 <input
   type="text"
   id="search"
   [(ngModel)]="searchQuery"
-  placeholder="Поиск"
+  placeholder="{{ 'common_search_placeholder' | translate }}"
 />
 ```

@@ -46,7 +46,7 @@ this.languageStore.currentLanguage$
   .pipe(
     distinctUntilChanged(),
     switchMap(lang => {
-      // Загрузка ресурсов для нового языка
+      // Load resources for the new language
       return this.loadResourcesForLanguage(lang);
     }),
     tap(data => console.log('Loaded:', data)),

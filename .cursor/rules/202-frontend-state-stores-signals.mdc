@@ -1,4 +1,5 @@
 ---
+description: Stores и Signals — BehaviorSubject, LanguageStore, кэш
 globs:
   - "apps/**/*.ts"
   - "libs/**/*.ts"
@@ -52,7 +53,7 @@ this.languageStore.currentLanguage$
   .pipe(
     distinctUntilChanged(),
     switchMap(lang => {
-      // Реакция на изменение языка
+      // React to language change
       return this.loadResourcesForLanguage(lang);
     }),
     takeUntilDestroyed(this.destroyRef),

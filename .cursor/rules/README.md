@@ -18,18 +18,15 @@
 - `106-backend-nuget.mdc` - NuGet multi-targeting, nuspec, BREAKING/CHANGELOG
 
 ### 200-299: Frontend (Angular)
-- `200-frontend-angular-general.mdc` - Общие правила Angular
-- `201-frontend-rxjs-only.mdc` - Правила работы с RxJS
-- `202-frontend-state-stores-signals.mdc` - Управление состоянием: Stores и Signals
-- `203-frontend-http.mdc` - Правила работы с HTTP
-- `204-frontend-ui-tailwind.mdc` - Правила работы с UI и Tailwind CSS
-- `205-frontend-i18n.mdc` - Правила интернационализации
-- `206-frontend-forms-ugc.mdc` - Правила работы с формами
-- `207-frontend-formatting-and-style.mdc` - Форматирование и стиль кода фронтенда
-- `208-frontend-angular-routing.mdc` - Роутинг в Angular
-- `209-frontend-guards.mdc` - Guards (Защита роутов)
-- `210-frontend-error-handling.mdc` - Обработка ошибок
-- `211-frontend-input-normalization.mdc` - Нормализация пользовательского ввода на клиенте (формы, validators)
+- `200-frontend-angular.mdc` - Язык и формат Angular
+- `201-frontend-rxjs-only.mdc` - RxJS
+- `202-frontend-state-stores-signals.mdc` - Stores и Signals
+- `203-frontend-http.mdc` - HTTP (ApiService)
+- `204-frontend-ui-tailwind.mdc` - UI и Tailwind
+- `205-frontend-i18n.mdc` - Интернационализация
+- `206-frontend-forms.mdc` - Формы и нормализация ввода
+- `207-frontend-routing.mdc` - Роутинг и guards
+- `208-frontend-errors.mdc` - Обработка ошибок
 
 ### 300-399: Testing
 - `300-testing-dotnet.mdc` - Тестирование .NET

@@ -1,0 +1,194 @@
+---
+description: Язык и формат Angular — standalone, DI, отступ 2, импорты, именование
+globs:
+  - "client/**/*.ts"
+  - "client/**/*.html"
+  - "client/**/*.scss"
+  - "apps/**/*.ts"
+  - "apps/**/*.html"
+  - "apps/**/*.scss"
+  - "libs/**/*.ts"
+  - "libs/**/*.html"
+  - "libs/**/*.scss"
+alwaysApply: false
+---
+
+# Язык и формат Angular
+
+## Standalone
+
+- новые компоненты — `standalone: true`, явный `imports: [...]`
+- не использовать NgModules
+- `template` или `templateUrl` — обязательно
+- стили: Tailwind в шаблоне; `styleUrls` только если есть scss-файл; не `styles: []`
+
+```typescript
+@Component({
+  selector: 'app-component-name',
+  standalone: true,
+  templateUrl: './component-name.component.html',
+  imports: [CommonModule, TranslatePipe],
+})
+export class ComponentNameComponent implements OnInit {
+  isResourceLoaded = false;
+  protected readonly resource = 'path/to/strings';
+
+  constructor(
+    private readonly service: SomeService,
+    private readonly destroyRef: DestroyRef,
+  ) {
+  }
+
+  ngOnInit(): void {
+    // Initialization
+  }
+}
+```
+
+Inline, если нет отдельных файлов:
+
+```typescript
+@Component({
+  selector: 'app-component-name',
+  standalone: true,
+  template: '<div>...</div>',
+  styles: [':host { display: block; }'],
+  imports: [CommonModule, TranslatePipe],
+})
+export class ComponentNameComponent {}
+```
+
+## Модификаторы доступа
+
+- явные `private` / `protected` / `public`
+- инжектированные сервисы — `private readonly`
+- API шаблона — `protected`
+- константные свойства — `readonly` (например `protected readonly resource`)
+
+```typescript
+export class Component {
+  private readonly service: SomeService;
+  protected readonly resource = 'path';
+  public title: string;
+}
+```
+
+## Подписки
+
+- `takeUntilDestroyed(this.destroyRef)` для отписки
+- инжектировать `DestroyRef`
+- не отписываться в `ngOnDestroy`
+
+## Типизация
+
+- интерфейсы для структур данных, не `any`
+- `export type` для union
+- явно `| null`, если значение может быть null
+
+```typescript
+export type LocationId = 'any' | 'us' | 'ua' | 'po' | 'cy';
+
+export interface Vacancy {
+  id: string;
+  title: string;
+  location?: LocationId;
+}
+
+vacancy: Vacancy | null = null;
+```
+
+## Методы для шаблона
+
+- `protected` для данных шаблона
+- суффикс `_items()` или `_data()` (например `row_16_items()`)
+
+```typescript
+protected row_16_items(): Vacancy[] {
+  return vacancies;
+}
+```
+
+## EditorConfig
+
+- отступ 2 пробела для TypeScript / JavaScript / HTML / SCSS
+- одинарные кавычки
+- `insert_final_newline`, без trailing whitespace
+
+## Пробелы в объектах и декораторах
+
+- `{ a: 1 }`, пробел после `:` и `,`, пробелы вокруг `=>`
+- в `@Component` пробелы после `:` и внутри массивов `[ ... ]`
+
+```typescript
+// ✅
+const obj = { a: 1, b: 2 };
+const fn = (x: number) => x * 2;
+
+@Component({
+  selector: 'app-oil',
+  standalone: true,
+  templateUrl: './oil.component.html',
+  imports: [
+    CommonModule,
+    FormsModule,
+  ],
+})
+
+// ❌
+const obj = {a:1,b:2};
+
+@Component({
+  selector:'app-oil',
+  standalone:true,
+  templateUrl:'./oil.component.html',
+})
+```
+
+## Именование
+
+- компоненты: PascalCase + `Component`
+- сервисы: PascalCase + `Service`
+- интерфейсы: PascalCase
+- типы: PascalCase + `Id` / `Type`
+- константы, методы, свойства: camelCase
+
+## Импорты
+
+Порядок групп:
+
+1. `@angular/*`
+2. внешние npm-пакеты
+3. `@workspace/*`
+4. относительные `from '.'` в самом низу
+
+Внутри группы — алфавит. Импорты из одного модуля объединять.
+
+```typescript
+// ✅
+import { Component, DestroyRef, ViewChild } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { Observable } from 'rxjs';
+import { ROUTE_PATH, RouterPaths } from '@workspace/core';
+import { AuthService } from './auth.service';
+
+// ❌ split imports from the same module / wrong group order
+import { AuthService } from './auth.service';
+import { Component } from '@angular/core';
+import { DestroyRef } from '@angular/core';
+import { ROUTE_PATH } from '@workspace/core';
+import { Observable } from 'rxjs';
+```
+
+## Структура файлов
+
+- один основной экспорт на файл
+- имя файла = имя класса (kebab-case)
+- `index.ts` для реэкспорта из директорий
+
+## При правках
+
+- новые компоненты: standalone, явный `imports`, обязательный template
+- `private readonly` для DI; `protected` для template API; без `any` в публичных DTO
+- hotspots: `core/` (HTTP, guards, runtime-config, validators), identity/account, checkout/Stripe — не логировать payment data; корректные return URLs
+- публичные routes / API contracts — согласовать с backend и README
+- ключи i18n — синхронизировать все локали

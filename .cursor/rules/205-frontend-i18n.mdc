@@ -1,4 +1,5 @@
 ---
+description: i18n — page folders, TranslatePipe, strings.ru.json, формат JSON
 globs:
   - "apps/**/*.ts"
   - "libs/**/*.ts"
@@ -66,7 +67,7 @@ export class VacanciesComponent implements OnInit {
 
 Пример:
 ```html
-<!-- ✅ Правильно -->
+<!-- ✅ -->
 <h1>{{ 'row_15_title' | translate:resource }}</h1>
 <p>{{ 'row_15_description' | translate:resource }}</p>
 <app-input-text
@@ -74,7 +75,7 @@ export class VacanciesComponent implements OnInit {
   placeholder="{{ 'common_name_placeholder' | translate }}"
 />
 
-<!-- ❌ НЕПРАВИЛЬНО -->
+<!-- ❌ hardcoded copy -->
 <h1>Personal Information</h1>
 <p>Our Talent Acquisition team will contact you</p>
 <app-input-text

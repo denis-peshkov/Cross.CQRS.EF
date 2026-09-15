@@ -1,4 +1,5 @@
 ---
+description: HTTP на клиенте — ApiService, endpoints, FormData, cookies
 globs:
   - "apps/**/*.ts"
   - "libs/**/*.ts"
@@ -56,14 +57,14 @@ this.apiService.post$(endpoint, data)
   .pipe(
     takeUntilDestroyed(this.destroyRef),
     catchError(error => {
-      console.error('Ошибка:', error);
-      alert('Произошла ошибка при отправке данных');
+      console.error('Request failed:', error);
+      alert(this.translationService.get('common_resume_error'));
       return of(null);
     }),
   )
   .subscribe(response => {
     if (response) {
-      // Обработка успешного ответа
+      // Handle success
     }
   });
 ```
