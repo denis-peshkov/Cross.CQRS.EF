@@ -17,8 +17,6 @@
 
 Simple .NET MediatR base EF Transactional Behavior.
 
-Written on C#.
-
 Main Features:
 * **Configurable Transaction Behavior**
 
