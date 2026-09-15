@@ -1,4 +1,4 @@
-# Cross.CQRS — GitHub Ruleset recipes
+﻿# Cross.CQRS.EF — GitHub Ruleset recipes
 
 Importable JSON for [repository rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository), aligned with `CONTRIBUTING.md` branch policy.
 
@@ -6,7 +6,7 @@ Based on [github/ruleset-recipes](https://github.com/github/ruleset-recipes).
 
 ## Prerequisite
 
-`Cross.CQRS` is a **public** repository, so repository rulesets are available without GitHub Pro.
+`Cross.CQRS.EF` is a **public** repository, so repository rulesets are available without GitHub Pro.
 
 Until rulesets are imported and set to **Active**, keep enforcing policy via `.github/workflows/branch-policy.yml`.
 

@@ -1,5 +1,5 @@
 ﻿name: Bug report
-description: Reproducible defect in Cross.CQRS (pipeline, registration, validation, licensing).
+description: Reproducible defect in Cross.CQRS.EF (transactions, ExactTransaction, registration, licensing).
 labels:
   - bug
 body:
@@ -10,21 +10,31 @@ body:
 
         **Never paste** license keys, passwords, or live JWT tokens. Redact or use placeholders.
 
+        Core CQRS / `AddCQRS` defects → [Cross.CQRS issues](https://github.com/denis-peshkov/Cross.CQRS/issues).
+
   - type: input
     id: package-version
     attributes:
-      label: Cross.CQRS NuGet version
-      description: e.g. `11.0.0` from [nuget.org](https://www.nuget.org/packages/Cross.CQRS/)
+      label: Cross.CQRS.EF NuGet version
+      description: e.g. `11.0.0` from [nuget.org](https://www.nuget.org/packages/Cross.CQRS.EF/)
       placeholder: "x.y.z"
     validations:
       required: true
+
+  - type: input
+    id: core-version
+    attributes:
+      label: Cross.CQRS (core) NuGet version
+      description: Version of the sibling package used with this EF extension
+      placeholder: "x.y.z"
+    validations:
+      required: false
 
   - type: dropdown
     id: target-framework
     attributes:
       label: Target framework (TFM)
       options:
-        - netstandard2.1
         - net6.0
         - net7.0
         - net8.0
@@ -39,7 +49,7 @@ body:
     attributes:
       label: Host / integration surface
       description: e.g. ASP.NET Core Minimal API, SampleWebApp, unit test only
-      placeholder: "ASP.NET Core 8 Minimal API + AddCQRS"
+      placeholder: "ASP.NET Core + AddCQRS + AddEntityFrameworkIntegration"
     validations:
       required: true
 
@@ -49,9 +59,9 @@ body:
       label: Verification
       description: Please verify before submitting. If you cannot check these honestly, use the **Question** template instead.
       options:
-        - label: I searched [open and closed issues](https://github.com/denis-peshkov/Cross.CQRS/issues?q=is%3Aissue) and did not find a duplicate.
+        - label: I searched [open and closed issues](https://github.com/denis-peshkov/Cross.CQRS.EF/issues?q=is%3Aissue) and did not find a duplicate.
           required: true
-        - label: I am on the latest **Cross.CQRS** version listed on NuGet (or the issue also reproduces on the latest).
+        - label: I am on the latest **Cross.CQRS.EF** version listed on NuGet (or the issue also reproduces on the latest).
           required: true
         - label: I can reproduce this with a **minimal** setup (not only in a large private app), or I attached the smallest repro I can share.
           required: true
@@ -62,7 +72,7 @@ body:
     id: context
     attributes:
       label: What were you trying to do (and why)?
-      description: Command/query type, registration snippet, or API surface involved.
+      description: Command handler, registration snippet, or transaction surface involved.
     validations:
       required: true
 
@@ -86,10 +96,11 @@ body:
     attributes:
       label: Step-by-step reproduction
       description: |
-        Include AddCQRS registration, request type, and commands if applicable.
+        Include EF registration (AddEntityFrameworkIntegration-style), DbContext wiring, and the command under test if applicable.
       render: shell
       placeholder: |
         services.AddCQRS(cfg => cfg.RegisterFromAssemblies(typeof(Program).Assembly));
+        // AddEntityFrameworkIntegration / options / ExactTransaction on the handler
         await mediator.Send(new SomeCommand());
     validations:
       required: true
@@ -100,13 +111,14 @@ body:
       label: Area (if known)
       options:
         - Unknown
-        - Registration / DI / AddCQRS
-        - Pipeline behaviors
-        - Validation (FluentValidation)
-        - Request / result filters
-        - CommandEvents / event queue
-        - Licensing (LicenseKey / ILicenseProductInfo)
+        - Registration / DI / AddEntityFrameworkIntegration
+        - UnifiedTransactionBehavior / transactions
+        - ExactTransaction (per-handler)
+        - Isolation / TransactionBehaviorOptions
+        - DbContext provider
+        - Licensing (EF slot / hosted validator)
         - SampleWebApp / hosting
+        - Packaging / multi-targeting
         - Documentation
     validations:
       required: true

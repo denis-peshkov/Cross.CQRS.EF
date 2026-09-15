@@ -1,14 +1,16 @@
 ﻿name: Feature request
-description: Propose new behavior, pipeline extension, or public API for Cross.CQRS.
+description: Propose new behavior, transaction option, or public API for Cross.CQRS.EF.
 labels:
   - enhancement
 body:
   - type: markdown
     attributes:
       value: |
-        Feature requests help shape the library. Registration and pipeline contracts are **public API** — breaking changes need a migration path.
+        Feature requests help shape the EF extension. Registration and transaction contracts are **public API** — breaking changes need a migration path.
 
         For small doc fixes or typos, a pull request is often faster than an issue.
+
+        Core CQRS features → [Cross.CQRS](https://github.com/denis-peshkov/Cross.CQRS).
 
   - type: checkboxes
     id: verification

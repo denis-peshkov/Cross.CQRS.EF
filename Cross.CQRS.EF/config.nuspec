@@ -10,10 +10,10 @@
     <icon>icon.png</icon>
     <readme>docs\README.md</readme>
     <copyright>Copyright 2026 Denis Peshkov</copyright>
-    <license type="file">LICENSE</license>
+    <license type="file">LICENSE.md</license>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Simple .NET MediatR base EF Transactional Behavior, Paginated Queries, Paginated Models. Written on C#.</description>
-    <tags>.NET Mediatr EF TransactionalBehavior Paginated PaginatedQueries PaginatedModels Queries Models SyntaxNotes NetCore</tags>
+    <description>Simple .NET MediatR base EF Transactional Behavior for Cross.CQRS.</description>
+    <tags>.NET MediatR EF Core TransactionalBehavior ExactTransaction DbContext CQRS NetCore</tags>
     <releaseNotes><![CDATA[
 Cross.CQRS.EF — AddEntityFrameworkIntegration: UnifiedTransactionBehavior, TransactionBehaviorOptions / ExactTransaction, EF license pipeline slot (−1) + hosted validator. Pagination APIs removed from this package. TFMs net6–net10.
 
@@ -66,7 +66,7 @@ Breaking: https://github.com/denis-peshkov/Cross.CQRS.EF/blob/master/docs/BREAKI
     <file src="..\Cross.CQRS.EF\bin\Release\net8.0\Cross.CQRS.EF*.*" target="lib\net8.0" />
     <file src="..\Cross.CQRS.EF\bin\Release\net9.0\Cross.CQRS.EF*.*" target="lib\net9.0" />
     <file src="..\Cross.CQRS.EF\bin\Release\net10.0\Cross.CQRS.EF*.*" target="lib\net10.0" />
-    <file src="..\LICENSE" target="LICENSE" />
+    <file src="..\LICENSE.md" target="LICENSE.md" />
     <file src="..\README.md" target="docs\" />
     <file src="..\icon.png" target="\" />
   </files>

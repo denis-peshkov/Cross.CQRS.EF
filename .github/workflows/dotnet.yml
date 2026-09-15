@@ -79,7 +79,7 @@ jobs:
             -p:InformationalVersion="${GitVersion_InformationalVersion}" \
             -p:Company="Denis Peshkov" \
             -p:Product="Cross.CQRS.EF" \
-            -p:Description="Simple .NET MediatR base EF Transactional Behavior and Paginated Queries and Paginated Models. Published on Nuget at https://www.nuget.org/packages/Cross.CQRS.EF" \
+            -p:Description="Simple .NET MediatR base EF Transactional Behavior for Cross.CQRS. Published on Nuget at https://www.nuget.org/packages/Cross.CQRS.EF" \
             -p:RepositoryUrl="https://github.com/denis-peshkov/Cross.CQRS.EF.git" \
             -p:RepositoryType=git \
             -p:CLSCompliant=true \

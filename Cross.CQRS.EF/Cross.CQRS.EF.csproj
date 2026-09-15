@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
-    <NoWarn>1701;1702;1591</NoWarn>
+    <NoWarn>1701;1702;1591;CS8618;</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
@@ -39,10 +39,6 @@
     <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.5</MicrosoftEntityFrameworkCoreRelationalVersion>
     <MicrosoftExtensionsHostingAbstractionsVersion>10.0.5</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
-
-  <Target Name="DeleteBinObjFolders" BeforeTargets="Clean">
-    <RemoveDir Directories=".\bin" />
-  </Target>
 
   <ItemGroup>
     <PackageReference Include="Cross.CQRS" Version="10.1.5" />
