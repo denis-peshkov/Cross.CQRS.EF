@@ -5,7 +5,7 @@ public class LicensingRegistrationTests
 {
     [Test]
     [Category(TestCategory.UNIT)]
-    public void GivenAddEntityFrameworkIntegration_WhenRegistered_ThenRegistersEfLicenseProductInfoAndPipelineSlot()
+    public void GivenAddEntityFrameworkIntegration_WhenRegistered_ThenRegistersEfLicenseProductInfoOnly()
     {
         var services = new ServiceCollection();
         services.AddLogging();
@@ -19,36 +19,13 @@ public class LicensingRegistrationTests
             d.ImplementationType != null &&
             d.ImplementationType.Name == "EfLicenseProductInfo");
 
-        services.Should().Contain(d =>
+        services.Should().NotContain(d =>
             d.ImplementationType != null &&
             d.ImplementationType.Name == "EfLicenseCheckBehavior`2");
 
-        services.Should().Contain(d =>
-            d.ServiceType == typeof(IHostedService) &&
+        services.Should().NotContain(d =>
             d.ImplementationType != null &&
             d.ImplementationType.Name == "EfLicenseHostedValidator");
-    }
-
-    [Test]
-    [Category(TestCategory.INTEGRATION)]
-    public void GivenAddEntityFrameworkIntegration_WhenProviderBuilt_ThenCheckLicenseViaCoreDoesNotThrow()
-    {
-        var services = new ServiceCollection();
-        services.AddLogging();
-        services.AddDbContext<LicensingProbeDbContext>(o => o.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-
-        services
-            .AddCQRS(cfg => cfg.RegisterFromAssemblyContaining<LicensingProbeRequest>())
-            .AddEntityFrameworkIntegration<LicensingProbeDbContext>();
-
-        using var provider = services.BuildServiceProvider();
-        var hosted = provider.GetServices<IHostedService>().OfType<object>()
-            .First(s => s.GetType().Name == "EfLicenseHostedValidator");
-
-        var start = hosted.GetType().GetMethod("StartAsync");
-        start.Should().NotBeNull();
-        var act = () => start!.Invoke(hosted, new object[] { CancellationToken.None });
-        act.Should().NotThrow();
     }
 
     [Test]

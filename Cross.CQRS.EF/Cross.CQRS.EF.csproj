@@ -13,38 +13,32 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <MicrosoftEntityFrameworkCoreVersion>6.0.36</MicrosoftEntityFrameworkCoreVersion>
     <MicrosoftEntityFrameworkCoreRelationalVersion>6.0.36</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftExtensionsHostingAbstractionsVersion>6.0.1</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <MicrosoftEntityFrameworkCoreVersion>7.0.20</MicrosoftEntityFrameworkCoreVersion>
     <MicrosoftEntityFrameworkCoreRelationalVersion>7.0.20</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftExtensionsHostingAbstractionsVersion>7.0.0</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <MicrosoftEntityFrameworkCoreVersion>8.0.25</MicrosoftEntityFrameworkCoreVersion>
     <MicrosoftEntityFrameworkCoreRelationalVersion>8.0.25</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftExtensionsHostingAbstractionsVersion>8.0.1</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
     <MicrosoftEntityFrameworkCoreVersion>9.0.14</MicrosoftEntityFrameworkCoreVersion>
     <MicrosoftEntityFrameworkCoreRelationalVersion>9.0.14</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftExtensionsHostingAbstractionsVersion>9.0.14</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
     <MicrosoftEntityFrameworkCoreVersion>10.0.5</MicrosoftEntityFrameworkCoreVersion>
     <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.5</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftExtensionsHostingAbstractionsVersion>10.0.5</MicrosoftExtensionsHostingAbstractionsVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Cross.CQRS" Version="11.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(MicrosoftEntityFrameworkCoreVersion)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftEntityFrameworkCoreRelationalVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="$(MicrosoftExtensionsHostingAbstractionsVersion)" />
   </ItemGroup>
 
 </Project>

@@ -15,10 +15,8 @@ public static class CqrsRegistrationSyntaxExtensions
     /// This method performs the following registrations:
     /// <list type="bullet">
     /// <item><description>Registers EF <c>ILicenseProductInfo</c> (<c>EfLicenseProductInfo</c>) into core licensing DI (<c>InternalsVisibleTo</c>)</description></item>
-    /// <item><description>Adds EfLicenseCheckBehavior with order −1 (after core LicenseCheckBehavior at −2); uses core <c>CheckLicense</c></description></item>
     /// <item><description>Adds UnifiedTransactionBehavior with order 10</description></item>
     /// <item><description>Registers DbContextProvider for the specified DbContext type</description></item>
-    /// <item><description>Registers EfLicenseHostedValidator as hosted service</description></item>
     /// </list>
     /// </remarks>
     public static CqrsRegistrationSyntax AddEntityFrameworkIntegration<TDbContext>(
@@ -42,13 +40,9 @@ public static class CqrsRegistrationSyntaxExtensions
 
         // Registration order is important, it works like ASP.NET Core middleware
         // Behaviors registered earlier will be executed earlier
-        syntax.Behaviors.AddBehavior(typeof(EfLicenseCheckBehavior<,>), order: -1);
         syntax.Behaviors.AddBehavior(typeof(UnifiedTransactionBehavior<,>), order: 10);
 
         syntax.Services.TryAddScoped<IDbContextProvider, DbContextProvider<TDbContext>>();
-
-        syntax.Services.TryAddEnumerable(
-            ServiceDescriptor.Singleton<IHostedService, EfLicenseHostedValidator>());
 
         return syntax;
     }

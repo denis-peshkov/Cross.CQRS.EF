@@ -1,7 +1,6 @@
 ﻿global using MediatR;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
-global using Microsoft.Extensions.Hosting;
 global using System;
 global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
@@ -15,7 +14,6 @@ global using Cross.CQRS.Commands;
 global using Cross.CQRS.EF.Behaviors;
 global using Cross.CQRS.EF.Enums;
 global using Cross.CQRS.EF.Extensions;
-global using Cross.CQRS.EF.Hosting;
 global using Cross.CQRS.EF.Licensing;
 global using Cross.CQRS.EF.Options;
 global using Cross.CQRS.EF.Services;
