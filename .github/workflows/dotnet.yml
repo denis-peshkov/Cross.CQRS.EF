@@ -28,7 +28,7 @@ jobs:
 
     env:
       BUILD_CONFIG: 'Release'
-      SOLUTION: 'Cross.CQRS.slnx'
+      SOLUTION: 'Cross.CQRS.EF.slnx'
       QUALITY_GATE_WAIT: ${{ github.event_name == 'pull_request' }}
 
     runs-on: ubuntu-22.04 # ubuntu-latest

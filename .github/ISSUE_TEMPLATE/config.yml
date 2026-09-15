@@ -1,0 +1,15 @@
+﻿blank_issues_enabled: false
+
+contact_links:
+  - name: Read CONTRIBUTING.md
+    url: https://github.com/denis-peshkov/Cross.CQRS/blob/master/CONTRIBUTING.md
+    about: Branching, tests, PR process, security notes, and scope for Cross.CQRS.
+  - name: Open a pull request
+    url: https://github.com/denis-peshkov/Cross.CQRS/compare
+    about: Ready to contribute a fix or feature? See CONTRIBUTING.md.
+  - name: NuGet package
+    url: https://www.nuget.org/packages/Cross.CQRS/
+    about: Check the latest published version before reporting a regression.
+  - name: Commercial license (Peshkov)
+    url: https://peshkov.biz/license
+    about: Licensing questions for production use — not for posting secrets in public issues.

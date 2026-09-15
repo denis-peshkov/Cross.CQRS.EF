@@ -2,7 +2,9 @@
   <Folder Name="/assets/">
     <File Path=".gitignore" />
     <File Path="GitVersion.yml" />
-    <File Path="LICENSE" />
+    <File Path="icon.png" />
+    <File Path="icon.svg" />
+    <File Path="LICENSE.md" />
     <File Path="README.md" />
     <File Path="ReleaseNotes.txt" />
   </Folder>
