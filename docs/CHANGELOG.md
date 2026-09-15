@@ -1,79 +1,105 @@
 ﻿# Changelog — Cross.CQRS.EF
 
-Newest releases first. GitHub releases: <https://github.com/denis-peshkov/Cross.CQRS.EF/releases>
+Newest releases first. Published versions: [GitHub Releases](https://github.com/denis-peshkov/Cross.CQRS.EF/releases).
 
 Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
-## v9.0.0 — 10 Sep 2025
-
-Transaction Configuration and Behavior Refactor.
-
-1. **Centralized configuration** — `TransactionBehaviorOptions` for unified transaction settings; configurable isolation levels via DI (singleton).
-2. **Unified transaction handling** — replaced multiple behaviors (`TransactionalBehavior`, `ScopeBehavior`, etc.) with a single `UnifiedTransactionBehavior`; removed switch-based logic in favor of internal strategy selection.
-3. **Improved documentation** — enhanced public API docs and parameter descriptions; clarified registration order and execution logic.
-4. **Structural improvements** — reorganized code into feature folders (e.g. `Extensions`); added project icon and minor formatting updates; renamed “Solution Items” folder to `assets`; added `icon.svg`.
-5. **Sample handler** — updated `SomeScopeExternalCommandHandler` (constructor parameters; `Events.Write` → `CommandEvents.Write`; logging).
-6. Added IntegrationTests.
-7. Moved `PaginationQuery` / `PaginationQueryHandler` into a separate library.
-8. Removed `PaginationResult.cs`.
-
-Goal: simplify transaction management; improve configurability, maintainability, and clarity.
-
----
-
 ## v8.4.1 — 9 Mar 2025
 
-- Connect to Sonar Cloud.
+### CI / release process
+
+- SonarCloud scan step added to `.github/workflows/dotnet.yml` (`sonarsource/sonarcloud-github-action@v5`, project key `Cross.CQRS.EF`).
+- Runner pinned to `ubuntu-22.04`; checkout `fetch-depth: 0` for better analysis relevance.
 
 ---
 
 ## v8.4.0 — 13 Aug 2024
 
-- Added NoBehavior.
-- Added TransactionalScopeBehavior.
+### Transactions
+
+- Added `TransactionalScopeBehavior` and `NoBehavior` to `TransactionBehaviorEnum`.
+- Registration via `AddEntityFrameworkIntegration` updated for the new modes.
 
 ---
 
 ## v8.3.0 — 10 Aug 2024
 
-- Added ScopeBehavior.
-- Added SampleProject.
+### Transactions
+
+- Added `ScopeBehavior` pipeline behavior and enum value.
+- `AddEntityFrameworkIntegration` accepts transaction behavior selection.
+
+### Samples
+
+- SampleWebApp extended with scope command/event handlers (`SomeScopeExternal*` / `SomeScopeInternal*`).
 
 ---
 
 ## v8.2.1 — 16 May 2024
 
-- Add build pipeline.
+### CI / release process
+
+- Added `.github/workflows/dotnet.yml` (build, test, NuGet pack/push).
+- Added `GitVersion.yml` for SemVer in CI.
+
+### Solution
+
+- Solution items updated for GitVersion / CI assets.
 
 ---
 
 ## v8.2.0 — 16 Apr 2024
 
-- Upgraded packages.
+### Dependencies
+
+- Upgraded package versions (library `.csproj` / nuspec).
 
 ---
 
-## v8.1.0 — 3 Apr 2024
+## v8.1.1 — 3 Apr 2024
 
-- Small fixes.
-- Upgraded packages.
+### Dependencies
+
+- Upgraded package versions.
+
+### Library
+
+- XML docs on `AddEntityFrameworkIntegration`; small registration/docs fixes.
+
+### Samples
+
+- Added `SampleWebApp` (Minimal API host + EF `Context`, query/validator examples).
+
+### Solution
+
+- `SampleWebApp` included in the solution.
 
 ---
 
 ## v8.0.1 — 24 Nov 2023
 
-- Upgraded packages.
+### Dependencies
+
+- Upgraded package versions (library `.csproj` / nuspec).
 
 ---
 
 ## v8.0.0 — 23 Nov 2023
 
-- Added support for .NET 8.
+### Target frameworks
+
+- Added support for .NET 8 (`net8.0` TFM in library and packaging).
+
+### Documentation
+
+- README / release notes updated for .NET 8 support.
 
 ---
 
-## v7.0.0 — 18 Nov 2023
+## v7.0.0 — 19 Nov 2023
 
-- Latest source from original repository.
+### Packaging
+
+- Initial NuGet line aligned with .NET 7: library, nuspec (`_nuget`), icon, LICENSE, README.
