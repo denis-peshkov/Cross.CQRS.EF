@@ -4,11 +4,12 @@ globs:
   - "**/*EntityTypeConfiguration*.cs"
   - "**/*Context.cs"
   - "**/*DbContext*.cs"
-  - "**/MainContext.cs"
-  - "**/ConfigurationContext.cs"
-  - "**/PoliciesContext.cs"
-  - "**/TestMainContext.cs"
   - "**/Infrastructure/Scripts/**/*.sql"
+  - "**/1_PreDeployment/**/*.sql"
+  - "**/2_Initial/**/*.sql"
+  - "**/3_SeedLookup/**/*.sql"
+  - "**/4_SeedData/**/*.sql"
+  - "**/5_PostDeployment/**/*.sql"
 alwaysApply: false
 ---
 
@@ -38,7 +39,7 @@ alwaysApply: false
 
 ### `3_SeedLookup` — MERGE upsert (предпочтительно)
 
-Для lookup-таблиц предпочтительно загружать нужные строки в table variable (или CTE) из блока `VALUES` с чёткими маркерами **BEGIN/END OF AREA FOR EDIT**, затем **`MERGE`** в целевую таблицу: обновить совпавшие, вставить отсутствующие, удалить отсутствующие в источнике. Полный пример для SQL Server — `server/Web.Api/Infrastructure/Scripts/3_SeedLookup/3_01_pol_Permissions.sql`. PostgreSQL / MySQL: эквивалентный upsert + delete-not-in-source.
+Для lookup-таблиц предпочтительно загружать нужные строки в table variable (или CTE) из блока `VALUES` с чёткими маркерами **BEGIN/END OF AREA FOR EDIT**, затем **`MERGE`** в целевую таблицу: обновить совпавшие, вставить отсутствующие, удалить отсутствующие в источнике. Полный пример для SQL Server — скрипт слоя `3_SeedLookup` с суффиксом сущности (например `3_01_Permissions.sql`). PostgreSQL / MySQL: эквивалентный upsert + delete-not-in-source.
 
 ### `4_SeedData` — одноразовые начальные данные
 
@@ -117,19 +118,19 @@ DbUp отслеживает применённые скрипты по **име�
 
 После создания таблицы скриптом PreDeployment на существующей БД **записать в журнал соответствующее имя файла `2_Initial`** в `__MigrationsHistory` (или таблице журнала DbUp хоста), чтобы слой `2_Initial` **пропустил** этот скрипт и не пытался создать таблицу снова.
 
-Пример для SQL Server (подстроить schema/journal/имя скрипта под хост):
+Пример для SQL Server (подставить schema, журнал DbUp и имя скрипта хоста):
 
 ```sql
--- … create auth.ExternalLoginStates if not exists (idempotent) …
+-- … create schema.NewTable if not exists (idempotent) …
 
-IF OBJECT_ID(N'auth.ExternalLoginStates') IS NOT NULL
+IF OBJECT_ID(N'schema.NewTable') IS NOT NULL
 AND NOT EXISTS (
     SELECT 1 FROM [dbo].[__MigrationsHistory]
-    WHERE [ScriptName] = N'2_01_auth_ExternalLoginStates.sql'
+    WHERE [ScriptName] = N'2_01_schema_NewTable.sql'
 )
 BEGIN
     INSERT INTO [dbo].[__MigrationsHistory] ([ScriptName], [Applied])
-    VALUES (N'2_01_auth_ExternalLoginStates.sql', SYSDATETIME());
+    VALUES (N'2_01_schema_NewTable.sql', SYSDATETIME());
 END
 GO
 ```
@@ -140,6 +141,6 @@ GO
 - На PostgreSQL / MySQL использовать эквивалентные проверки/вставки провайдера.
 - Предпочтительно делать create + journal insert в **одном** PreDeployment-скрипте, чтобы частичный сбой не оставил таблицу без строки журнала (или наоборот).
 
-## Хост
+## Пути скриптов
 
-Пути DbUp часто `**/Infrastructure/Scripts/`; на части продуктов symlink `compose/Identity/` → `server/Web.Api/Infrastructure/Scripts/`. Схема `auth` и consumer breaking — `docs/BREAKING.md`. Операционные детали скриптов — skill `db-scripts` (`.cursor/skills/db-scripts/SKILL.md`), если он есть в репозитории.
+Корень DbUp обычно `**/Infrastructure/Scripts/` (иногда symlink из compose/deploy). Consumer breaking по схеме — `docs/BREAKING.md`. Операционные детали хоста — skill `db-scripts`, если он есть в репозитории.
