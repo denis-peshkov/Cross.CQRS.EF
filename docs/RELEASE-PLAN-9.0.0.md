@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **95** коммита · **174** файлов · **+12392 / −713**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **97** коммита · **176** файлов · **+12575 / −713**. Open C/H/M/L пустые.
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-1140*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 2 findings (0 Critical, 2 Major, 0 Minor) → все закрыты в этом плане.
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-1237*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 1 finding (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -94,6 +94,7 @@
 | ✅ #M19 ExecuteAsync CT | оба `executionStrategy.ExecuteAsync` — overload `Func<CancellationToken, Task>` + `cancellationToken` |
 | ✅ #H24 tracker values snapshot | rollback: CurrentValues + OriginalValues + State; тот же state больше не `continue` |
 | ✅ #H23 retry restore | перед каждой попыткой `ExecuteAsync` — `RestoreTrackedEntities` (тот же snapshot, что #H24) |
+| ✅ #M20 retry test uniqueness | `ToList` + `ContainSingle`: дубликат с тем же Name падает, а не `FirstOrDefault` |
 
 ---
 

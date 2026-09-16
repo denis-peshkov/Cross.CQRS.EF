@@ -441,10 +441,11 @@ public class UnifiedTransactionBehaviorTests
 
         await host.SendAsync(command);
 
-        var entity = await host.ExecuteAsync(sp =>
+        var entities = await host.ExecuteAsync(sp =>
             sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == command.Name));
+                .Where(x => x.Name == command.Name)
+                .ToListAsync());
 
-        entity.Should().NotBeNull();
+        entities.Should().ContainSingle();
     }
 }
