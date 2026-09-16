@@ -74,14 +74,11 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         await executionStrategy.ExecuteAsync(async () =>
         {
-            await dbContext.Database.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
             var transaction = await dbContext.Database
-                .GetDbConnection()
                 .BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken)
                 .ConfigureAwait(false);
             await using (transaction.ConfigureAwait(false))
             {
-                await dbContext.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
                 response = await next().ConfigureAwait(false);
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }

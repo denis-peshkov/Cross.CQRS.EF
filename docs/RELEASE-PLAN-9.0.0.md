@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H5 M6 L4
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H4 M6 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H12. Raw `DbConnection.BeginTransactionAsync` + `UseTransactionAsync`
-
-Transactional path открывает connection вручную и передаёт raw `DbTransaction` в `UseTransactionAsync`. CR: `Database.BeginTransactionAsync(isolation, ct)` для владения EF. (CR 2026-09-15)
 
 ### ⬜ H13. `TransactionLockTests` — shared SQLite connection
 
@@ -126,6 +122,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #L22 behavior defaults | `TransactionBehaviorOptions.Behavior` = `TransactionalBehavior` (как у extension) |
 | ✅ #H10 ConfigureAwait(false) | library awaits + `CA2007` убран из `NoWarn` |
 | ✅ #H11 Detach in finally | ChangeTracker cleanup в `finally` после `Get()` |
+| ✅ #H12 EF BeginTransactionAsync | `Database.BeginTransactionAsync(isolation, ct)` вместо raw connection / `UseTransactionAsync` |
 
 ---
 
@@ -141,7 +138,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 ## Приоритет фиксов
 
-1. **H12** / **M12** — transaction behavior correctness (BeginTransactionAsync, unknown enum).
+1. **M12** — unknown enum must not swallow the command.
 2. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
 3. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
 4. **M13** / **L20** / **L23**.
