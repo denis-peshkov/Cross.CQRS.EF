@@ -24,6 +24,7 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Tests
 
 - Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS; writer `BEGIN EXCLUSIVE` without nested EF transactions.
+- `IsolationLevelIntegrationTests`: commit/rollback, Scope/TransactionalScope ambient isolation, and `ExactTransaction` overrides across ReadUncommitted–Serializable.
 
 ### Samples
 

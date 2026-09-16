@@ -64,25 +64,5 @@ public class TransactionBehaviorTests
         snapshot.HasAmbientTransaction.Should().BeTrue();
     }
 
-    [Test]
-    [Category(TestCategory.INTEGRATION)]
-    [TestCase(IsolationLevel.ReadUncommitted)]
-    [TestCase(IsolationLevel.ReadCommitted)]
-    [TestCase(IsolationLevel.RepeatableRead)]
-    [TestCase(IsolationLevel.Serializable)]
-    public async Task DifferentIsolationLevels_Success_ShouldCommitChanges(IsolationLevel isolationLevel)
-    {
-        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior, isolationLevel);
-        var name = Guid.NewGuid().ToString("N");
-
-        await host.SendAsync(new CreateTestEntityCommand { Name = name });
-
-        host.IsolationCapture.LastStartedIsolationLevel.Should().Be(isolationLevel.ToDataIsolation());
-
-        var entity = await host.ExecuteAsync(sp =>
-            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == name));
-
-        entity.Should().NotBeNull();
-    }
+    // Isolation-level matrix lives in IsolationLevelIntegrationTests.
 }

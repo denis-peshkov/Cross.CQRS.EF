@@ -387,28 +387,6 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    [TestCase(IsolationLevel.ReadUncommitted)]
-    [TestCase(IsolationLevel.ReadCommitted)]
-    [TestCase(IsolationLevel.RepeatableRead)]
-    [TestCase(IsolationLevel.Serializable)]
-    public async Task GivenTransactionalBehavior_WhenIsolationLevelConfigured_ThenCommandSucceeds(IsolationLevel isolationLevel)
-    {
-        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior, isolationLevel);
-        var name = Guid.NewGuid().ToString("N");
-
-        await host.SendAsync(new CreateTestEntityCommand { Name = name });
-
-        host.IsolationCapture.LastStartedIsolationLevel.Should().Be(isolationLevel.ToDataIsolation());
-
-        var entity = await host.ExecuteAsync(sp =>
-            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == name));
-
-        entity.Should().NotBeNull();
-    }
-
-    [Test]
-    [Category(TestCategory.INTEGRATION)]
     [TestCase(TransactionBehaviorEnum.TransactionalBehavior)]
     [TestCase(TransactionBehaviorEnum.TransactionalScopeBehavior)]
     public async Task GivenExecutionStrategy_WhenCancellationRequested_ThenDoesNotCommit(TransactionBehaviorEnum behavior)

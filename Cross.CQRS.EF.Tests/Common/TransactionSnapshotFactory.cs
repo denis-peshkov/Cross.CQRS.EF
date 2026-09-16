@@ -15,6 +15,7 @@ internal static class TransactionSnapshotFactory
             HasEfTransaction = dbContext.Database.CurrentTransaction != null,
             HasAmbientTransaction = Transaction.Current != null,
             EfIsolationLevel = isolationLevel,
+            AmbientIsolationLevel = Transaction.Current?.IsolationLevel,
         };
     }
 }

@@ -72,4 +72,4 @@ Please use [Wiki](https://github.com/denis-peshkov/Cross.CQRS.EF/wiki) for docum
 - Implement transaction timeout configuration
 - Add monitoring and metrics for transactions
 - Provide more examples and documentation for transaction configurations
-- Add integration tests for different isolation levels
+- ~~Add integration tests for different isolation levels~~
