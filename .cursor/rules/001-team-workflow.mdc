@@ -1,0 +1,24 @@
+---
+description: Ветки/PR, коммуникация
+alwaysApply: true
+---
+
+# Правила командной работы
+
+## Ветки и pull requests
+
+| Кто | Создать ветку | Открыть PR в |
+|---|---|---|
+| **Contributors** | `feature/*`, `fix/*`, `chore/*` | **только `dev`** |
+| **Repository owner** | любая, включая `release/*`, `hotfix/*` | `dev`, `master`, release/hotfix по необходимости |
+
+- Никогда не предлагать контрибьюторам целиться в **`master`**, **`release/*`** или **`hotfix/*`**.
+- CI обеспечивает правила только для владельца: `.github/workflows/branch-policy.yml`.
+- После push в **`master`** CI мержит **`master` → `dev`** и пушит (без PR) через **`TAGTOKEN`** (admin bypass Protect-dev): `.github/workflows/backmerge-master-to-dev.yml` (noop, если `dev` уже содержит `master`; падает при конфликтах).
+- Полная политика: `CONTRIBUTING.md` → **Branches and releases**.
+
+## Коммуникация
+
+- **Объяснять изменения** - при внесении изменений объяснять, что было сделано и почему.
+- **Задавать уточняющие вопросы** - если задача неясна, задавать уточняющие вопросы вместо предположений.
+- **Текст, обращённый к GitHub** (issues, PRs, commit messages) — **на английском** согласно `CONTRIBUTING.md`.

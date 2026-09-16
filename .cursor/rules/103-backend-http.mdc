@@ -1,0 +1,122 @@
+---
+description: HTTP-контракт API — версионирование, verbs, envelope, FromForm, CancellationToken
+globs:
+  - "**/*Controller*.cs"
+  - "**/*Endpoint*.cs"
+  - "**/Program.cs"
+alwaysApply: false
+---
+
+# HTTP-контракт
+
+Контроллеры — только маршрутизация; бизнес-логика в handlers через MediatR.
+
+```csharp
+[ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+public class VacanciesController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    private readonly ILogger<VacanciesController> _logger;
+
+    public VacanciesController(IMediator mediator, ILogger<VacanciesController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    [HttpPost("SubmitResume")]
+    public async Task<ApiEnvelope<bool>> SubmitResumeAsync(
+        [FromForm] SubmitResumeDto request,
+        CancellationToken cancellationToken)
+    {
+        var command = new SubmitResumeCommand
+        {
+            Dto = request ?? new SubmitResumeDto()
+        };
+
+        return new ApiEnvelope<bool>(await _mediator.Send(command, cancellationToken));
+    }
+}
+```
+
+## Версионирование
+
+- атрибут `[ApiVersion("1.0")]`
+- маршрутизация `[Route("api/v{version:apiVersion}/[controller]")]`
+- версия в URL пути
+
+## HTTP методы
+
+- **POST** — создание ресурсов и операции с side effects
+- **GET** — только чтение
+- async-методы с суффиксом `Async`
+
+```csharp
+[HttpPost("SubmitResume")]
+public async Task<ApiEnvelope<bool>> SubmitResumeAsync(
+    [FromForm] SubmitResumeDto request,
+    CancellationToken cancellationToken)
+{
+    // ...
+}
+```
+
+## Ответы
+
+- все ответы оборачивать в `ApiEnvelope<T>`
+- всегда указывать тип возвращаемого значения
+- тот же envelope для ошибок
+
+```csharp
+return new ApiEnvelope<bool>(await _mediator.Send(command, cancellationToken));
+```
+
+## Загрузка файлов
+
+- `[FromForm]` для загрузки файлов
+- `[RequestFormLimits]` для ограничения размера
+
+```csharp
+[HttpPost("SubmitResume")]
+[RequestFormLimits(MultipartBodyLengthLimit = 10485760, ValueLengthLimit = int.MaxValue)]
+public async Task<ApiEnvelope<bool>> SubmitResumeAsync(
+    [FromForm] SubmitResumeDto request,
+    CancellationToken cancellationToken)
+{
+    // ...
+}
+```
+
+## ModelState
+
+- проверять `ModelState.IsValid` в контроллерах до обработки
+- логировать ошибки валидации
+
+```csharp
+if (!ModelState.IsValid)
+{
+    foreach (var error in ModelState)
+    {
+        _logger.LogWarning("ModelState error for {Key}: {Errors}",
+            error.Key,
+            string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage)));
+    }
+}
+```
+
+## CancellationToken
+
+- все async-методы endpoint принимают `CancellationToken`
+- передавать дальше во все async-операции
+
+```csharp
+public async Task<ApiEnvelope<bool>> SubmitResumeAsync(
+    [FromForm] SubmitResumeDto request,
+    CancellationToken cancellationToken)
+{
+    return new ApiEnvelope<bool>(
+        await _mediator.Send(command, cancellationToken));
+}
+```

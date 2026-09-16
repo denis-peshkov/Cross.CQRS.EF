@@ -1,0 +1,111 @@
+---
+description: Безопасность бэкенда — валидация, секреты, CORS, HTTPS, license JWT
+globs:
+  - "**/*.cs"
+  - "**/appsettings*.json"
+  - "**/Program.cs"
+alwaysApply: false
+---
+
+# Безопасность бэкенда
+
+## Валидация входных данных
+
+- FluentValidation для валидации DTOs
+- проверять валидность данных на уровне контроллера до обработки
+
+```csharp
+if (!ModelState.IsValid)
+{
+    foreach (var error in ModelState)
+    {
+        _logger.LogWarning("ModelState error for {Key}: {Errors}",
+            error.Key,
+            string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage)));
+    }
+}
+```
+
+## Санитизация данных
+
+- санитизировать все пользовательские данные перед использованием
+- защита от XSS — экранировать HTML/JavaScript в пользовательском вводе
+- защита от SQL Injection — параметризованные запросы, не строковая конкатенация
+
+## Логирование чувствительных данных
+
+- не логировать пароли, токены, JWT license keys, персональные данные
+- маскировать чувствительные данные в логах (например, `****` вместо пароля)
+- структурированные (параметризованные) сообщения
+- sample hosts — не активировать и не коммитить live license keys в примерах
+
+```csharp
+// ❌
+_logger.LogInformation("User login: {Username}, Password: {Password}", username, password);
+
+// ✅
+_logger.LogInformation("User login attempt: {Username}", username);
+```
+
+## CORS
+
+- настраивать CORS-политику для разрешённых источников
+- CORS до middleware, которые читают заголовки
+- `AllowCredentials()` для поддержки cookies
+
+```csharp
+services.AddCors(o =>
+{
+    o.AddPolicy("ui", builder =>
+    {
+        builder
+            .WithOrigins(configuration["Cors:AllowedOrigins"]!.Split(","))
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders("Set-Cookie");
+    });
+});
+
+// In ConfigureApp — CORS before other middleware
+app.UseCors("ui");
+```
+
+## HTTPS
+
+- HTTPS в production
+- HSTS в production
+- перенаправление HTTP → HTTPS в production
+
+```csharp
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.UseHttpsRedirection();
+}
+```
+
+## Защита от атак
+
+- rate limiting против DDoS
+- ограничивать размер запросов (особенно загрузка файлов)
+- таймауты для долгих операций
+
+```csharp
+services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10485760; // 10 MB
+    options.ValueLengthLimit = int.MaxValue;
+});
+```
+
+## Заголовки
+
+- security headers (X-Content-Type-Options, X-Frame-Options и т.д.)
+- middleware для кастомных заголовков безопасности
+
+## Защита API
+
+- версионирование API для контроля изменений
+- rate limiting per user
+- whitelist IP для критичных endpoints, если необходимо

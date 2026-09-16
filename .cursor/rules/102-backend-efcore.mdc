@@ -1,0 +1,146 @@
+---
+description: EF Core + SQL-миграции DbUp (не Code First Migrations) — именование, слои, append-only, идемпотентные скрипты
+globs:
+  - "**/*EntityTypeConfiguration*.cs"
+  - "**/*Context.cs"
+  - "**/*DbContext*.cs"
+  - "**/Infrastructure/Scripts/**/*.sql"
+  - "**/1_PreDeployment/**/*.sql"
+  - "**/2_Initial/**/*.sql"
+  - "**/3_SeedLookup/**/*.sql"
+  - "**/4_SeedData/**/*.sql"
+  - "**/5_PostDeployment/**/*.sql"
+alwaysApply: false
+---
+
+# Entity Framework Core + DbUp
+
+**EF Core** используется для runtime-модели (`DbContext`, entities, configurations).
+**Эволюция схемы и seed** идёт через **пронумерованные SQL-скрипты DbUp**, а не через EF Code First Migrations (`Add-Migration` / `__EFMigrationsHistory` как основной путь).
+
+## DbUp вместо Code First Migrations
+
+| Подход | Роль здесь |
+|---|---|
+| EF Core | Маппинг, запросы, `SaveChanges`, опциональное выравнивание greenfield-модели |
+| DbUp SQL folders | Применение DDL/DML к существующим и новым БД в фиксированном порядке слоёв |
+
+Типичная раскладка слоёв (под корнем скриптов, опционально по провайдеру БД):
+
+```text
+1_PreDeployment/   # incremental migrations for already deployed databases
+2_Initial/         # create schema/database and tables (greenfield)
+3_SeedLookup/      # lookup seed — preferred: table-var + MERGE upsert (edit VALUES area)
+4_SeedData/        # initial data — applied once per script per database; never re-run after that
+5_PostDeployment/  # follow-up data/structure updates (use this for later data changes)
+```
+
+Порядок применения: `1` → `2` → `3` → `4` → `5`.
+
+### `3_SeedLookup` — MERGE upsert (предпочтительно)
+
+Для lookup-таблиц предпочтительно загружать нужные строки в table variable (или CTE) из блока `VALUES` с чёткими маркерами **BEGIN/END OF AREA FOR EDIT**, затем **`MERGE`** в целевую таблицу: обновить совпавшие, вставить отсутствующие, удалить отсутствующие в источнике. Полный пример для SQL Server — скрипт слоя `3_SeedLookup` с суффиксом сущности (например `3_01_Permissions.sql`). PostgreSQL / MySQL: эквивалентный upsert + delete-not-in-source.
+
+### `4_SeedData` — одноразовые начальные данные
+
+`4_SeedData` — только **начальный** seed. DbUp фиксирует каждый скрипт по имени файла и **не выполняет его повторно** после успешного применения на этой БД. Не полагаться на повторный запуск SeedData для обновлений. Постоянные правки данных/структуры после первой установки — в **`5_PostDeployment`** (новые append-only скрипты), а не повторным вызовом или переписыванием SeedData.
+
+## Соглашения по именованию
+
+- **Именование файлов скриптов** — `<FolderNumber>_<Layer>_<EntityName>[_<comment_if_required>]`
+
+| Часть | Значение |
+|---|---|
+| `FolderNumber` | id папки DbUp (`1` … `5` → `1_PreDeployment` … `5_PostDeployment`) |
+| `Layer` | **Стадия зависимости** внутри этой папки (`00`, `01`, `02`, …). **Не** порядковый номер файла. Несколько скриптов могут иметь один и тот же `Layer`, если они **независимы** (между ними нет порядка). Увеличивать `Layer` только когда скрипт **зависит от** работы, которая уже должна была выполниться на **предыдущей** стадии. |
+| `EntityName` / optional `_comment` | Краткое назначение / подсказка по сущности |
+
+**Канонический bootstrap-файл** (все провайдеры): ровно `1_00_Predeployment.sql` (регистр как написано — не `predeployment` / `PreDeployment`). Имя папки остаётся `1_PreDeployment/`.
+
+**Назначение `1_00`:** намеренный **no-op** (только `SELECT`), чтобы у DbUp всегда был первый успешный PreDeployment-скрипт для журнала как `1_00`. Он **не** создаёт `__MigrationsHistory` и никаких объектов схемы — таблица журнала **управляется DbUp**. Не удалять этот файл и не «чините» его в настоящий DDL только потому, что `SELECT` выглядит неиспользуемым.
+
+Примеры:
+
+```text
+1_PreDeployment/1_00_Predeployment.sql
+2_Initial/2_00_auth.sql
+2_Initial/2_01_auth_UsersAccounts.sql
+2_Initial/2_01_auth_ExternalLoginStates.sql   # same Layer 01 — independent of UsersAccounts create
+2_Initial/2_02_auth_ExternalLoginStates.sql   # Layer 02 — FK depends on prior stage
+4_SeedData/4_01_auth_Providers.sql
+```
+
+- **Выбор `Layer`:**
+  - **`2_Initial`** (и seed-папки `3_*` / `4_*` при добавлении peer-скриптов): `Layer` — **стадия зависимости** — несколько независимых скриптов могут разделять один и тот же `nn`; увеличивать только когда новый скрипт зависит от предыдущей стадии.
+  - **`1_PreDeployment`** и **`5_PostDeployment`** (append-only эволюция): каждый **новый** файл скрипта должен использовать **`max(existing Layer in that folder) + 1`**. **Никогда не заполнять пробелы** (gap-fill) отсутствующим меньшим номером после того, как уже есть больший (например, если есть `1_07`, **не** добавлять `1_05`, даже если он свободен). То же правило после того, как скрипт уже ушёл в любое окружение.
+- **Комментарии** — опциональный суффикс `_comment`, когда назначение неочевидно из имени сущности.
+
+## Append-only слои (обязательно)
+
+Никогда не редактировать, не переименовывать и не удалять уже отгруженные скрипты под:
+
+- `*/1_PreDeployment/`
+- `*/5_PostDeployment/`
+
+DbUp отслеживает применённые скрипты по **имени файла**; изменение старого файла не перезапускает его на БД, где он уже применён. Добавлять **новый** скрипт только с **дельтой**.
+
+**Нумерация в `1_PreDeployment` / `5_PostDeployment`:** всегда **наибольший `Layer` + 1**. **Без gap-filling.**
+
+**Никогда:**
+
+- Не патчить старый скрипт, чтобы «починить» деплой или сделать его идемпотентным после отгрузки
+- Не заполнять пробелы меньшим `Layer` в `1_PreDeployment` / `5_PostDeployment`, когда больший `Layer` уже существует (отгружен или нет)
+- Не вставлять скрипт `2_Initial`, который должен выполниться до уже отгруженной стадии зависимости — вместо этого увеличить `Layer`
+
+## Предпочитать идемпотентные новые скрипты
+
+Новые файлы в append-only слоях должны быть **идемпотентными там, где практично** (частичное применение / повторный запуск / восстановленная БД):
+
+- Схема: создавать индекс/ограничение только если отсутствует; добавлять колонку только если отсутствует; backfill с `WHERE col IS NULL` (или эквивалент).
+- Seeds: для **`3_SeedLookup`** предпочитать table-var + `MERGE` (upsert + delete not in source); иначе вставлять только при отсутствии (`WHERE NOT EXISTS` / `ON CONFLICT DO NOTHING` / `INSERT IGNORE` — в зависимости от провайдера).
+
+Деструктивные rename/drop могут оставаться односторонними — документировать для операторов и держать дельту минимальной.
+
+## Greenfield (`2_Initial`)
+
+`2_Initial` (или эквивалент) **можно править на месте**, чтобы новые установки соответствовали текущей модели EF. **Не** переписывать историю в append-only слоях под greenfield — для существующих БД добавлять скрипты PreDeployment/PostDeployment.
+
+## Новая таблица после того, как БД уже инициализирована
+
+**Эвристика:** считать БД / продукт уже инициализированными, когда в `1_PreDeployment/` есть скрипты **кроме** bootstrap `1_00_Predeployment.sql` (или эквивалента). Тогда **новую таблицу** нужно добавить в **оба** места:
+
+1. **`2_Initial`** — greenfield create (чтобы новые установки получили таблицу).
+2. **`1_PreDeployment`** — новый пронумерованный скрипт, создающий ту же таблицу на **существующих** БД (идемпотентно: создавать только если отсутствует).
+
+Если обновить только `2_Initial`, уже развёрнутые БД таблицу не получат. Если добавить только PreDeployment, greenfield может создать таблицу дважды (PreDeployment, затем `2_Initial`) и упасть с «object already exists».
+
+### Отметить соответствующий скрипт `2_Initial` как применённый
+
+После создания таблицы скриптом PreDeployment на существующей БД **записать в журнал соответствующее имя файла `2_Initial`** в `__MigrationsHistory` (или таблице журнала DbUp хоста), чтобы слой `2_Initial` **пропустил** этот скрипт и не пытался создать таблицу снова.
+
+Пример для SQL Server (подставить schema, журнал DbUp и имя скрипта хоста):
+
+```sql
+-- … create schema.NewTable if not exists (idempotent) …
+
+IF OBJECT_ID(N'schema.NewTable') IS NOT NULL
+AND NOT EXISTS (
+    SELECT 1 FROM [dbo].[__MigrationsHistory]
+    WHERE [ScriptName] = N'2_01_schema_NewTable.sql'
+)
+BEGIN
+    INSERT INTO [dbo].[__MigrationsHistory] ([ScriptName], [Applied])
+    VALUES (N'2_01_schema_NewTable.sql', SYSDATETIME());
+END
+GO
+```
+
+Замечания:
+
+- `[ScriptName]` должен совпадать **точно** с тем, что DbUp хранит для этого скрипта `2_Initial` (часто имя файла; сверять с существующими строками журнала).
+- На PostgreSQL / MySQL использовать эквивалентные проверки/вставки провайдера.
+- Предпочтительно делать create + journal insert в **одном** PreDeployment-скрипте, чтобы частичный сбой не оставил таблицу без строки журнала (или наоборот).
+
+## Пути скриптов
+
+Корень DbUp обычно `**/Infrastructure/Scripts/` (иногда symlink из compose/deploy). Consumer breaking по схеме — `docs/BREAKING.md`. Операционные детали хоста — skill `db-scripts`, если он есть в репозитории.

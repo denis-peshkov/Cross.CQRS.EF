@@ -397,3 +397,11 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 .idea
+
+# Release-plan skill delta cache
+.cursor/skills/release-plan/.cache/
+
+# CodeRabbit skill review logs
+.cursor/skills/coderabbit/.cache/
+
+.tmp-*
