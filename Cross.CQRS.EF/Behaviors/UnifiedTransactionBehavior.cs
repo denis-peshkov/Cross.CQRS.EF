@@ -58,34 +58,48 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         }
         catch
         {
-            // Drop this command's graph only; keep Unchanged/pending entries from earlier in the same request scope.
+            // Drop this command's graph only; restore pre-command Current/Original values and state on the scoped DbContext.
             RestoreTrackedEntities(dbContext, trackedBefore);
             throw;
         }
     }
 
-    private static IReadOnlyDictionary<object, EntityState> SnapshotTrackedEntities(DbContext dbContext)
+    private static IReadOnlyDictionary<object, TrackedEntitySnapshot> SnapshotTrackedEntities(DbContext dbContext)
     {
         return dbContext.ChangeTracker.Entries()
-            .ToDictionary(entry => entry.Entity, entry => entry.State, ReferenceEqualityComparer.Instance);
+            .ToDictionary(
+                entry => entry.Entity,
+                entry => new TrackedEntitySnapshot(
+                    entry.State,
+                    entry.CurrentValues.Clone(),
+                    entry.State == EntityState.Added ? null : entry.OriginalValues.Clone()),
+                ReferenceEqualityComparer.Instance);
     }
 
-    private static void RestoreTrackedEntities(DbContext dbContext, IReadOnlyDictionary<object, EntityState> trackedBefore)
+    private static void RestoreTrackedEntities(DbContext dbContext, IReadOnlyDictionary<object, TrackedEntitySnapshot> trackedBefore)
     {
         foreach (var pair in trackedBefore)
         {
+            var snapshot = pair.Value;
             var entry = dbContext.Entry(pair.Key);
-            if (entry.State == pair.Value)
+
+            if (entry.State == EntityState.Detached)
             {
-                continue;
+                entry.State = snapshot.State == EntityState.Added ? EntityState.Added : EntityState.Unchanged;
             }
 
-            if (entry.State == EntityState.Modified)
+            if (snapshot.OriginalValues != null)
             {
-                entry.CurrentValues.SetValues(entry.OriginalValues);
+                if (entry.State == EntityState.Added)
+                {
+                    entry.State = EntityState.Unchanged;
+                }
+
+                entry.OriginalValues.SetValues(snapshot.OriginalValues);
             }
 
-            entry.State = pair.Value;
+            entry.CurrentValues.SetValues(snapshot.CurrentValues);
+            entry.State = snapshot.State;
         }
 
         foreach (var entry in dbContext.ChangeTracker.Entries().ToList())
@@ -96,6 +110,8 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
             }
         }
     }
+
+    private sealed record TrackedEntitySnapshot(EntityState State, PropertyValues CurrentValues, PropertyValues OriginalValues);
 
     private async Task<TResponse> HandleTransactionalBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel, DbContext dbContext, CancellationToken cancellationToken)
     {

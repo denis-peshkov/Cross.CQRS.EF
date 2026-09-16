@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **94** коммита · **174** файлов · **+12374 / −713**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **95** коммита · **174** файлов · **+12392 / −713**. Open: C0 H1 M0 L0
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → все закрыты в этом плане.
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-1140*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 2 findings (0 Critical, 2 Major, 0 Minor) → 1 открыт в плане (#H23).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -21,6 +21,10 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
+
+### ⬜ H23. `ExecuteAsync` retries повторно зовут `next()`
+
+`HandleTransactionalBehaviorAsync` / `HandleTransactionalScopeBehaviorAsync`: `next()` внутри `executionStrategy.ExecuteAsync`. При retry (SQL Server `EnableRetryOnFailure`) handler/events/tracker гоняются снова на том же scoped `DbContext`. CR: retry только вокруг идемпотентного persistence / полный restore на попытку. (CR 2026-09-16)
 
 ---
 
@@ -92,6 +96,7 @@
 | ✅ #H22 lock timeout | `WaitAsync(5s)` на lock handshake / observer read (и ignored concurrent tests) |
 | ✅ #H19 tracker restore | `catch` восстанавливает pre-command snapshot; graph упавшей команды Detach, чужой Unchanged/pending остаётся |
 | ✅ #M19 ExecuteAsync CT | оба `executionStrategy.ExecuteAsync` — overload `Func<CancellationToken, Task>` + `cancellationToken` |
+| ✅ #H24 tracker values snapshot | rollback: CurrentValues + OriginalValues + State; тот же state больше не `continue` |
 
 ---
 
@@ -106,5 +111,7 @@
 ---
 
 ## Приоритет фиксов
+
+1. **H23** — `next()` не должен повторно выполняться на retry execution strategy.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

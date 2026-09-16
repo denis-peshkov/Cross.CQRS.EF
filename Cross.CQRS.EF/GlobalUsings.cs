@@ -22,6 +22,7 @@ global using Cross.CQRS.Licensing;
 global using Cross.CQRS.Queries;
 global using Cross.CQRS.Services;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 //global using IsolationLevel = System.Data.IsolationLevel;

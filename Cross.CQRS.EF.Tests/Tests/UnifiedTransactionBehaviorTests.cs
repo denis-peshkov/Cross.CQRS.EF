@@ -174,6 +174,68 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterMutatingTrackedEntities_ThenRestoresPreCommandValuesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var unchangedName = Guid.NewGuid().ToString("N");
+        var originalModifiedName = Guid.NewGuid().ToString("N");
+        var dirtyModifiedName = Guid.NewGuid().ToString("N");
+        var pendingName = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            await mediator.Send(new CreateTestEntityCommand { Name = unchangedName });
+            await mediator.Send(new CreateTestEntityCommand { Name = originalModifiedName });
+
+            var modifiedEntity = dbContext.TestEntities.Local.Single(entity => entity.Name == originalModifiedName);
+            modifiedEntity.Name = dirtyModifiedName;
+            modifiedEntity.BalanceAmount = 10m;
+
+            dbContext.TestEntities.Add(new TestEntity
+            {
+                Name = pendingName,
+                BalanceAmount = 5m,
+                CreatedOn = DateTime.UtcNow
+            });
+
+            var act = () => mediator.Send(new FailingMutateTrackedEntitiesCommand());
+            await act.Should().ThrowAsync<InvalidOperationException>();
+
+            var unchangedEntry = dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.Entity.Name == unchangedName)
+                .Which;
+            unchangedEntry.State.Should().Be(EntityState.Unchanged);
+            unchangedEntry.Entity.BalanceAmount.Should().Be(0m);
+
+            var modifiedEntry = dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.Entity.Name == dirtyModifiedName)
+                .Which;
+            modifiedEntry.State.Should().Be(EntityState.Modified);
+            modifiedEntry.Entity.BalanceAmount.Should().Be(10m);
+            modifiedEntry.OriginalValues.GetValue<string>(nameof(TestEntity.Name)).Should().Be(originalModifiedName);
+
+            var addedEntry = dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.Entity.Name == pendingName)
+                .Which;
+            addedEntry.State.Should().Be(EntityState.Added);
+            addedEntry.Entity.BalanceAmount.Should().Be(5m);
+
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .NotContain(entry => entry.Entity.Name.StartsWith("failed-", StringComparison.Ordinal));
+
+            return 0;
+        });
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenChangeTrackerKeepsUnchangedEntriesAsync()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
