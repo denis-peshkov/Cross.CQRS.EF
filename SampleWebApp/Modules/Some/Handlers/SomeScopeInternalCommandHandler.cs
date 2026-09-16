@@ -1,6 +1,6 @@
 ﻿namespace SampleWebApp.Modules.Some.Handlers;
 
-public class SomeScopeInternalCommandHandler : CommandHandler<SomeScopeExternalCommand>
+public class SomeScopeInternalCommandHandler : CommandHandler<SomeScopeInternalCommand>
 {
 
     public SomeScopeInternalCommandHandler(ICommandEventQueueWriter commandEvents, ILogger<SomeScopeInternalCommandHandler> logger)
@@ -8,7 +8,7 @@ public class SomeScopeInternalCommandHandler : CommandHandler<SomeScopeExternalC
     {
     }
 
-    protected override Task HandleAsync(SomeScopeExternalCommand command, CancellationToken cancellationToken)
+    protected override Task HandleAsync(SomeScopeInternalCommand command, CancellationToken cancellationToken)
     {
         CommandEvents.Write(new InternalEvent(command.CommandId, $"hello from {nameof(SomeScopeInternalCommandHandler)}"));
 

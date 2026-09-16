@@ -35,5 +35,6 @@
 
 - `skills/release-plan/` — планы версий, `TO-DO.md`, `BREAKING.md`
 - `skills/coderabbit/` — CodeRabbit CLI → текущий RELEASE-PLAN
+- `skills/pr-message/` — текст PR по `.github/PULL_REQUEST_TEMPLATE.md` + авточеки
 - `skills/db-scripts/` — DbUp / SQL scripts (соглашения также в `rules/102-backend-efcore.mdc`)
 - `skills/stripe-accounts/`, `skills/stripe-products/`, `skills/translate-resources/` — по необходимости продукта

@@ -76,7 +76,7 @@ Do not mix refactoring, formatting untouched files, and a feature in one PR. Dri
 
 ### In scope
 
-- `Cross.CQRS.EF/` — library (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Hosting/`);
+- `Cross.CQRS.EF/` — library (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Licensing/`);
 - `Cross.CQRS.EF.Tests/` — unit / pipeline / integration tests;
 - `SampleWebApp/` — smoke host example;
 - `README.md`, `docs/CHANGELOG.md`, `docs/BREAKING.md`, `Cross.CQRS.EF/config.nuspec`;
@@ -181,7 +181,7 @@ git checkout -b feature/short-description
 
 ### 2. Changes
 
-- Follow existing folder layout (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Hosting/`, …).
+- Follow existing folder layout (`Behaviors/`, `Extensions/`, `Options/`, `Enums/`, `Services/`, `Licensing/`, …).
 - Do not touch unrelated files.
 - Breaking change → `docs/BREAKING.md` only (nuspec keeps a link, not a duplicate list).
 

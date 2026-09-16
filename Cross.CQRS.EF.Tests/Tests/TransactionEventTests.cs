@@ -5,7 +5,7 @@ public class TransactionEventTests
 {
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenPublishesEventsAsync()
+    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenPublishesEvents()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var command = new CreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
@@ -18,7 +18,7 @@ public class TransactionEventTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenHandlerFails_ThenDoesNotPublishEventsAsync()
+    public async Task GivenTransactionalBehavior_WhenHandlerFails_ThenDoesNotPublishEvents()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var command = new FailingCreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
@@ -31,7 +31,7 @@ public class TransactionEventTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenCommitFails_ThenDoesNotPublishEventsAsync()
+    public async Task GivenTransactionalBehavior_WhenCommitFails_ThenDoesNotPublishEvents()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var command = new CreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };

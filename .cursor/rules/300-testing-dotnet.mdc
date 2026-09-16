@@ -26,7 +26,7 @@ alwaysApply: false
   - **Given** — контекст / предусловия (`[X]`)
   - **When** — действие под тестом (`[Y]`)
   - **Then** — ожидаемый результат (`[Z]`)
-- **Асинхронные тесты:** имя метода **должно** заканчиваться на `Async` (то же правило, что и для production async API).
+- **Асинхронные тесты:** суффикс `Async` в **имени теста не ставить** (отличие от production async API). `async Task` в сигнатуре — да; `…Async()` в имени `Given_When_Then` — нет.
 - **Не** использовать `Method_Should_Expected_When_Condition` или другие legacy-стили для новых или переименованных тестов.
 - Имена должны быть описательными; `[X]` / `[Y]` / `[Z]` — фразы в PascalCase без пробелов.
 
@@ -40,7 +40,7 @@ public void GivenValidInput_WhenHandlerRuns_ThenReturnsSuccess()
 }
 
 [Test]
-public async Task GivenValidInput_WhenHandlerRuns_ThenReturnsSuccessAsync()
+public async Task GivenValidInput_WhenHandlerRuns_ThenReturnsSuccess()
 {
     // Arrange / Act / Assert
 }
@@ -55,7 +55,7 @@ public async Task GivenValidInput_WhenHandlerRuns_ThenReturnsSuccessAsync()
 
 ```csharp
 [Test]
-public async Task GivenValidResume_WhenSubmitResume_ThenReturnsSuccessAsync()
+public async Task GivenValidResume_WhenSubmitResume_ThenReturnsSuccess()
 {
     // Arrange
     var dto = new SubmitResumeDto
@@ -91,7 +91,7 @@ public void GivenValidInput_WhenParse_ThenReturnsValue() { /* … */ }
 
 [Test]
 [Category(TestCategory.INTEGRATION)]
-public async Task GivenPersistedToken_WhenValidate_ThenReturnsTrueAsync() { /* … */ }
+public async Task GivenPersistedToken_WhenValidate_ThenReturnsTrue() { /* … */ }
 ```
 
 ```bash
@@ -103,10 +103,8 @@ dotnet test --filter "Category=Integration"
 
 - Зеркалировать production-области в тестовом проекте (например, по фиче или слою: services, handlers, UI).
 - Предпочитать отдельные папки для unit и integration, когда набор тестов большой.
-- Новое поведение в PR **должно** иметь соответствующие тесты; покрывать failure-пути для auth, security и money-sensitive логики.
+- Новое поведение в PR **должно** иметь соответствующие тесты.
 - При изменении DI registration, MediatR behaviors или pipeline — предпочитать **pipeline/integration** coverage, не только прямой вызов handler.
-- Test TFMs выравнивать с library TFMs.
-- Никогда не коммитить реальные secrets, токены или production-учётные данные в fixtures.
 
 ## Локальная проверка
 

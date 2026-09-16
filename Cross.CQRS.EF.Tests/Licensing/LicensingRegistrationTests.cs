@@ -30,7 +30,7 @@ public class LicensingRegistrationTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenAddEntityFrameworkIntegration_WhenMediatorSendsRequest_ThenLicenseCheckDoesNotThrowAsync()
+    public async Task GivenAddEntityFrameworkIntegration_WhenMediatorSendsRequest_ThenLicenseCheckDoesNotThrow()
     {
         var services = new ServiceCollection();
         services.AddLogging();

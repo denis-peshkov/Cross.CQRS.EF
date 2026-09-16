@@ -133,7 +133,6 @@ export class GlobalErrorHandler implements ErrorHandler {
 
 ## Secrets / PII в UI
 
-- не логировать пароли, tokens, PII в `console.*` и UI
 - auth-формы: `withCredentials` / cookies, где API требует session
 - не хранить secrets/tokens в `localStorage` без явной необходимости и review
 - UGC/HTML: `DomSanitizer`; без `[innerHTML]` на сыром вводе
