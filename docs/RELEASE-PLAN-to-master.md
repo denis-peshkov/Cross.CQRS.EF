@@ -8,7 +8,7 @@
 > **Updated:** 2026-09-16
 > **HEAD:** `044589d` · PR [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) merged → `master`
 
-**Change summary:** **22** items — ✅ **21** (95%) · 🟨 **1** (5%) · ⬜ **0** (0%) · ❌ **0** (0%)
+**Change summary:** **22** items — ✅ **22** (100%) · 🟨 **0** (0%) · ⬜ **0** (0%) · ❌ **0** (0%)
 
 ---
 
@@ -42,7 +42,7 @@
 | Q2 | `dotnet test` Release | ✅ локально 65 passed / 3 skipped × 5 TFM; CI `Run tests` SUCCESS |
 | Q3 | CI `.NET` green on release branch | ✅ PR #9 merged; `.NET` / tag / NuGet push SUCCESS на `044589d` |
 | Q4 | SonarCloud / quality gate | ✅ SonarCloud Code Analysis SUCCESS; CodeQL SUCCESS |
-| Q5 | SampleWebApp smoke | 🟨 `dotnet build` Release 0 errors; в `Cross.CQRS.EF.slnx`. HTTP smoke нет (нет `AddDbContext`, sample не host) |
+| Q5 | SampleWebApp smoke | ✅ SQLite in-memory `AddDbContext` + `SaveChanges` + `[ExactTransaction]`; локальный HTTP POST/GET `/somescope` 200. CI HTTP нет |
 
 ---
 
@@ -75,4 +75,4 @@
 | G2 | Publish blockers cleared | ✅ version plan C/H/M/L пустые; tag + NuGet `9.0.0` + back-merge done |
 
 - **Date:** 2026-09-16
-- **Notes:** `9.0.0` shipped. Следующего version plan нет (`next-version` в GitVersion всё ещё `9.0.0` → следующий патч с `master` будет `9.0.1`). Q5 остаётся 🟨: SampleWebApp без HTTP smoke.
+- **Notes:** `9.0.0` shipped. Следующего version plan нет (`next-version` в GitVersion всё ещё `9.0.0` → следующий патч с `master` будет `9.0.1`). Q5: SampleWebApp — SQLite in-memory + `SaveChanges` + `[ExactTransaction]` (локальный HTTP smoke).

@@ -4,7 +4,12 @@
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
-builder.Services.TryAddScoped<Context>();
+
+var sqliteKeepAlive = new SqliteConnection("Data Source=file:SampleWebApp?mode=memory&cache=shared");
+sqliteKeepAlive.Open();
+builder.Services.AddSingleton(sqliteKeepAlive);
+builder.Services.AddDbContext<Context>(options =>
+    options.UseSqlite(sqliteKeepAlive.ConnectionString));
 
 //MediatR
 builder.Services
@@ -21,6 +26,12 @@ builder.Services
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
+    dbContext.Database.EnsureCreated();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -28,11 +39,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/somescope", (IMediator mediator ) =>
+app.MapPost("/somescope", async (IMediator mediator, Context dbContext, CancellationToken cancellationToken) =>
     {
-        var forecast = mediator.Send(new SomeScopeExternalCommand());
-        return forecast;
+        var name = Guid.NewGuid().ToString("N");
+        await mediator.Send(new SomeScopeExternalCommand { Name = name }, cancellationToken);
+        var entity = await dbContext.SampleEntities.AsNoTracking()
+            .SingleAsync(x => x.Name == name, cancellationToken);
+        return Results.Ok(entity);
     })
-    .WithName("RunSomeScope");
+    .WithName("CreateSomeScope");
+
+app.MapGet("/somescope", async (Context dbContext, CancellationToken cancellationToken) =>
+        await dbContext.SampleEntities.AsNoTracking().ToListAsync(cancellationToken))
+    .WithName("ListSomeScope");
 
 app.Run();
