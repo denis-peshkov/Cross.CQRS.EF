@@ -12,6 +12,7 @@
 
 **CodeRabbit:**
 - `2026-09-16` · pasted finding (TransactionLockTests ~L149) · 1 findings (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
+- `2026-09-16` · pasted finding (SampleWebApp.csproj ImplicitUsings) · 1 findings (0 Critical, 0 Major, 0 Minor) · 1 Trivial/Info → все закрыты в этом плане.
 
 **PR:** [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) (`chore:` SourceLink, EF bumps, lock tests, docs/rules hygiene).
 
@@ -63,6 +64,7 @@
 | ✅ CHANGELOG v9.2.0 | `update-changelog.mjs --write`; секция уточнена |
 | ✅ pr-message skill | `.cursor/skills/pr-message` + Shell `required_permissions: ["all"]` |
 | ✅ #M22 lock-read test | writer `BEGIN EXCLUSIVE` + plain reader SELECT (без второго `BeginTransactionAsync`) |
+| ✅ #L30 SampleWebApp ImplicitUsings | `disable`; импорты только из `GlobalUsings.cs` |
 
 ---
 
