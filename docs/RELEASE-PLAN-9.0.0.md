@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M0 L4
+> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M0 L3
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -42,15 +42,12 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 Синхронизировать body с `Configure<TransactionBehaviorOptions>`, актуальным BREAKING и закрытыми H8/M10. (triage 2026-09-15)
 
-### ⬜ L24. CHANGELOG `v9.0.0` выглядит published
-
-Секция датирована как релиз, но tag/GitHub Release ещё нет — пометить Unreleased / pending. (CR 2026-09-15)
-
 ---
 
 ## Принято (осознанный trade-off)
 
 - Licensing: пакет регистрирует `EfLicenseProductInfo` (JWT type `Cross_CQRS_EF`).
+- CHANGELOG целевой версии — dated `## vX.Y.Z` до git tag / GitHub Release (не `Unreleased`).
 - Pagination / `IQueryableFilter` / `QueryableExtensions` убраны из этого пакета — не возвращать без отдельного product decision.
 - SemVer только `GitVersion.yml` (`next-version: 9.0.0`; digits в `release/*` игнорируются).
 - TFMs библиотеки и тестов: `net6.0`–`net10.0` (netstandard в этом пакете нет).
@@ -93,6 +90,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #M15 Create CommandId | `CreateTestEntityCommand` : `Command`; event test проверяет не-empty id |
 | ✅ #M16 Delete CommandId | `DeleteTestEntityCommand` : `Command`; unit test проверяет не-empty id |
 | ✅ #M17 sample ILogger | `SomeScopeInternalCommandHandler` → `ILogger<SomeScopeInternalCommandHandler>` |
+| ✅ #L24 CHANGELOG dated | принято: `## vX.Y.Z` до tag — канон, не Unreleased |
 
 ---
 
@@ -108,8 +106,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 ## Приоритет фиксов
 
-1. **L24** — CHANGELOG `v9.0.0` не должен выглядеть published до tag.
-2. **L21** — убрать commented JWT.
-3. **L20** / **L23**.
+1. **L21** — убрать commented JWT.
+2. **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
