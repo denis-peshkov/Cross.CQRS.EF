@@ -74,11 +74,16 @@ Skill [`release-plan`](SKILL.md) → **Section** · domain hint
    `Дельта: \`{{BASE}}...HEAD\` — **{{N}}** коммита · **{{F}}** файлов · **{{+X}} / {{−Y}}**. {{OPEN_CHML_STATUS}}`
    - Считать: `git rev-list --count {{BASE}}...HEAD`, `git diff --shortstat {{BASE}}...HEAD`.
    - `{{OPEN_CHML_STATUS}}`: `Open C/H/M/L пустые.` **или** `Open: Cx Hy Mz Lw`.
-2. **CodeRabbit** (вне blockquote; если не гоняли — `не запускался.` / `—`):
+2. **CodeRabbit** (вне blockquote; список bullets под одним заголовком; если не гоняли — один bullet `не запускался.` / `—`):
 
 ```markdown
-**CodeRabbit:** `YYYY-MM-DD` · log `.cursor/skills/coderabbit/.cache/cr-….jsonl` · N findings (C Critical, M Major, m Minor) → все закрыты в этом плане.
+**CodeRabbit:**
+- `YYYY-MM-DD` · log `.cursor/skills/coderabbit/.cache/cr-….jsonl` · N findings (C Critical, M Major, m Minor) → CURRENT.
 ```
+
+   - **Формат сообщения — один `→`:** до `→` = снимок (дата · log · counts; **без** open/skipped/id); после `→` = текущее open C/H/M/L. Снимок не переписывать; правую часть синхронизировать на всех bullets при новом прогоне / смене open. Детали — skill [`coderabbit`](../coderabbit/SKILL.md).
+   - Каждый последующий прогон — **новый** bullet `- …` (append; не удалять предыдущие).
+   - Placeholder `- не запускался.` / `- —` заменять только первым реальным прогоном.
 
 3. **PR** (вне blockquote): `**PR:** [#N]({{REPOSITORY_LINK}}/pull/N) (\`BREAKING:\` …).` — нет PR → `**PR:** —`.
 

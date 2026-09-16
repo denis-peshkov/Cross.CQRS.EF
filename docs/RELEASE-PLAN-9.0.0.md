@@ -1,6 +1,6 @@
 ﻿Ниже — **проблемы внутри библиотеки**, по уровню критичности. Аудит по дельте ветки относительно базовой ветки (обычно `master`).
 
-> **Версия:** `9.0.0` · **ветка:** `release/9.0.0-Transaction-Configuration-and-Behavior-Refactor` · **база:** `origin/master` (`v8.4.1`) · **дата:** `2026-09-15`
+> **Версия:** `9.0.0` · **ветка:** `release/9.0.0-Transaction-Configuration-and-Behavior-Refactor` · **база:** `origin/master` (`v8.4.1`) · **дата:** `2026-09-16`
 >
 > **Релиз (если есть):** https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.0.0
 >
@@ -8,9 +8,11 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **97** коммита · **176** файлов · **+12575 / −713**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **98** коммита · **176** файлов · **+12577 / −713**. Open C/H/M/L пустые.
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-1237*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 1 finding (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
+**CodeRabbit:**
+- `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → все закрыты в этом плане.
+- `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-1237*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 1 finding (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
