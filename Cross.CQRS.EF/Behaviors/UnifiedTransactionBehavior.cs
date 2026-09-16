@@ -38,6 +38,11 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
             }
         }
 
+        if (behavior == TransactionBehaviorEnum.NoBehavior)
+        {
+            return await next().ConfigureAwait(false);
+        }
+
         var dbContext = _dbContextProvider.Get();
 
         try
@@ -47,22 +52,14 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
                 TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
                 TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel).ConfigureAwait(false),
                 TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
-                TransactionBehaviorEnum.NoBehavior =>
-                    // Skip behavior if not correspond the TransactionBehaviorEnum or not set.
-                    await next().ConfigureAwait(false),
                 _ => throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null)
             };
         }
-        finally
+        catch
         {
-            // Detach pending entries even when next/commit throws, so the scoped DbContext does not keep a failed command graph.
-            var trackedEntries = dbContext.ChangeTracker.Entries()
-                .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
-                .ToArray();
-            foreach (var entry in trackedEntries)
-            {
-                entry.State = EntityState.Detached;
-            }
+            // Failed command must not leave a graph on the scoped DbContext for a later SaveChanges in the same request.
+            dbContext.ChangeTracker.Clear();
+            throw;
         }
     }
 

@@ -50,6 +50,15 @@ public class TestCommandIdTests
 
     [Test]
     [Category(TestCategory.UNIT)]
+    public void GivenAddTestEntityWithoutSaveCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        var command = new AddTestEntityWithoutSaveCommand { Name = "n" };
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
     public void GivenExactTransactionProbeCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
     {
         new ExactTransactionProbeCommand().CommandId.Should().NotBe(Guid.Empty);

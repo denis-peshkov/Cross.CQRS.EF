@@ -123,9 +123,30 @@ public class UnifiedTransactionBehaviorTests
             await act.Should().ThrowAsync<InvalidOperationException>();
 
             dbContext.ChangeTracker.Entries()
-                .Where(entry => entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
                 .Should()
                 .BeEmpty();
+
+            return 0;
+        });
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenChangeTrackerKeepsUnchangedEntriesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var name = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            await mediator.Send(new CreateTestEntityCommand { Name = name });
+
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.State == EntityState.Unchanged && entry.Entity.Name == name);
 
             return 0;
         });
@@ -165,6 +186,51 @@ public class UnifiedTransactionBehaviorTests
 
         entity.Should().NotBeNull();
         entity!.Name.Should().Be(name);
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenNoBehavior_WhenHandlerAddsWithoutSave_ThenChangeTrackerKeepsAddedEntriesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
+        var name = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            await mediator.Send(new AddTestEntityWithoutSaveCommand { Name = name });
+
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.State == EntityState.Added && entry.Entity.Name == name);
+
+            return 0;
+        });
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenNoBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerKeepsAddedEntriesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
+        var name = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            var act = () => mediator.Send(new FailingAddWithoutSaveCommand { Name = name });
+            await act.Should().ThrowAsync<InvalidOperationException>();
+
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.State == EntityState.Added && entry.Entity.Name == name);
+
+            return 0;
+        });
     }
 
     [Test]

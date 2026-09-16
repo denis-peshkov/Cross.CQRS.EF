@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H2 M0 L0
+> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H1 M0 L0
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → 5 открыты в плане (#H17, #H18, #M18, #L26, #L27); skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → 1 открыт в плане (#H18); skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H17. ChangeTracker cleanup всегда, в т.ч. success / `NoBehavior`
-
-`finally` после `Get()` снимает Added/Modified/Deleted даже после успешного commit и при `NoBehavior`. CR: чистить только после сбоя транзакции; для `NoBehavior` не трогать tracker; на failure — `ChangeTracker.Clear()`, не фильтр по state. (CR 2026-09-16)
 
 ### ⬜ H18. `ExactTransaction` ReadCommitted на SQLite-probe
 
@@ -93,6 +89,7 @@
 | ✅ #M18 remaining CommandId | Update/Failing*/Probe : `Command`/`Command<T>`; query : `Query<T>`; других пустых id нет |
 | ✅ #L26 TearDown finally | `HandlerTestsBase`: `EnsureDeleted` null-safe; Dispose в `finally` |
 | ✅ #L27 lock TCS | `TransactionLockTests`: TCS handshake; WAL tempfile; observer сравнивает original name, не tracked instance |
+| ✅ #H17 tracker cleanup | `Clear()` только в `catch`; `NoBehavior` не трогает ChangeTracker |
 
 ---
 
@@ -108,7 +105,6 @@
 
 ## Приоритет фиксов
 
-1. **H17** — ChangeTracker cleanup не должен сносить graph после success / `NoBehavior`.
-2. **H18** — ExactTransaction probe vs SQLite isolation.
+1. **H18** — ExactTransaction probe vs SQLite isolation.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
