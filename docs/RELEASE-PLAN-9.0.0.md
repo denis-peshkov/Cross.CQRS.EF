@@ -92,7 +92,7 @@
 | ✅ #L23 PR body | не актуально для version plan: GitHub-описание, не дефект пакета |
 | ✅ #M18 remaining CommandId | Update/Failing*/Probe : `Command`/`Command<T>`; query : `Query<T>`; других пустых id нет |
 | ✅ #L26 TearDown finally | `HandlerTestsBase`: `EnsureDeleted` null-safe; Dispose в `finally` |
-| ✅ #L27 lock TCS | `TransactionLockTests`: `TaskCompletionSource` вместо `Task.Delay` sync |
+| ✅ #L27 lock TCS | `TransactionLockTests`: TCS handshake; WAL tempfile; observer сравнивает original name, не tracked instance |
 
 ---
 

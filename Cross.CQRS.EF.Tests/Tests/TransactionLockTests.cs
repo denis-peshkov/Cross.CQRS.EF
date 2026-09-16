@@ -4,7 +4,8 @@ public class TransactionLockTests : HandlerTestsBase
 {
     private TestDbContext _dbContext1;
     private TestDbContext _dbContext2;
-    private SqliteConnection _keepAlive;
+    private SqliteConnection _connection1;
+    private SqliteConnection _connection2;
     private string _connectionString;
     private string _databasePath;
     private Mock<ICommandEventQueueWriter> _commandEventsMock;
@@ -22,21 +23,22 @@ public class TransactionLockTests : HandlerTestsBase
     [SetUp]
     public new void Setup()
     {
-        // In-memory SQLite ignores WAL and takes a table lock after uncommitted SaveChanges,
-        // so the observer connection cannot read the last committed snapshot. A temp file + WAL
-        // keeps a dedicated connection per context and lets the ReadCommitted handshake proceed.
+        // In-memory SQLite ignores WAL and takes a table lock after uncommitted SaveChanges.
+        // A temp file + WAL lets the observer connection read the last committed snapshot.
+        // Pin an open connection per context so SaveChanges stays in the writer's transaction
+        // instead of auto-committing through a pooled connection.
         _databasePath = Path.Combine(Path.GetTempPath(), $"cross-cqrs-ef-lock-{Guid.NewGuid():N}.db");
-        _connectionString = $"Data Source={_databasePath}";
-        _keepAlive = new SqliteConnection(_connectionString);
-        _keepAlive.Open();
-        using (var journalMode = _keepAlive.CreateCommand())
+        _connectionString = $"Data Source={_databasePath};Pooling=False";
+        _connection1 = OpenConnection();
+        using (var journalMode = _connection1.CreateCommand())
         {
             journalMode.CommandText = "PRAGMA journal_mode=WAL;";
             journalMode.ExecuteNonQuery();
         }
 
-        _dbContext1 = CreateContext();
-        _dbContext2 = CreateContext();
+        _connection2 = OpenConnection();
+        _dbContext1 = CreateContext(_connection1);
+        _dbContext2 = CreateContext(_connection2);
         _dbContext1.Database.EnsureCreated();
     }
 
@@ -47,7 +49,8 @@ public class TransactionLockTests : HandlerTestsBase
         {
             _dbContext1?.Dispose();
             _dbContext2?.Dispose();
-            _keepAlive?.Dispose();
+            _connection1?.Dispose();
+            _connection2?.Dispose();
         }
         finally
         {
@@ -55,10 +58,17 @@ public class TransactionLockTests : HandlerTestsBase
         }
     }
 
-    private TestDbContext CreateContext()
+    private SqliteConnection OpenConnection()
+    {
+        var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+        return connection;
+    }
+
+    private static TestDbContext CreateContext(SqliteConnection connection)
     {
         var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseSqlite(_connectionString)
+            .UseSqlite(connection)
             .EnableSensitiveDataLogging()
             .Options;
 
@@ -69,6 +79,7 @@ public class TransactionLockTests : HandlerTestsBase
     public async Task ReadCommitted_Update_ShouldNotBlockRead()
     {
         var entity = await CreateTestEntity();
+        var originalName = entity.Name;
         var updateCommand = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var completed = false;
         var writeSaved = CreateSignal();
@@ -100,7 +111,7 @@ public class TransactionLockTests : HandlerTestsBase
 
             var readEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
             readEntity.Should().NotBeNull();
-            readEntity!.Name.Should().Be(entity.Name);
+            readEntity!.Name.Should().Be(originalName);
         }
         finally
         {
@@ -111,7 +122,8 @@ public class TransactionLockTests : HandlerTestsBase
         completed.Should().BeTrue();
 
         var updatedEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-        updatedEntity.Name.Should().Be(updateCommand.Name);
+        updatedEntity.Should().NotBeNull();
+        updatedEntity!.Name.Should().Be(updateCommand.Name);
     }
 
     [Test]
@@ -320,12 +332,35 @@ public class TransactionLockTests : HandlerTestsBase
     private static TaskCompletionSource CreateSignal()
         => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    private void DeleteDatabaseFiles()
+    {
+        if (string.IsNullOrEmpty(_databasePath))
+        {
+            return;
+        }
+
+        foreach (var path in new[] { _databasePath, _databasePath + "-wal", _databasePath + "-shm" })
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (IOException)
+            {
+                // Best-effort cleanup; leftover temp files are reclaimed by the OS.
+            }
+        }
+    }
+
     private async Task<TestEntity> CreateTestEntity()
     {
         var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
         var loggerMock = new Mock<ILogger<CreateTestEntityHandler>>();
         var handler = new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, _dbContext1);
         await handler.Handle(command, CancellationToken.None);
-        return await _dbContext1.TestEntities.FirstOrDefaultAsync(x => x.Name == command.Name);
+        return await _dbContext1.TestEntities.AsNoTracking().FirstAsync(x => x.Name == command.Name);
     }
 }
