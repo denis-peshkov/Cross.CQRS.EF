@@ -13,7 +13,8 @@ internal sealed class SqlitePipelineHost : IDisposable
 
     public SqlitePipelineHost(
         TransactionBehaviorEnum behavior = TransactionBehaviorEnum.TransactionalBehavior,
-        IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+        IsolationLevel isolationLevel = IsolationLevel.ReadCommitted,
+        bool retryOnTransientFailure = false)
     {
         IsolationCapture = new IsolationCaptureInterceptor();
         CommitFailure = new CommitFailureInterceptor();
@@ -27,7 +28,17 @@ internal sealed class SqlitePipelineHost : IDisposable
         services.AddSingleton<INotificationHandler<TestEvent>>(PublishedEvents);
         services.AddDbContext<TestDbContext>(options =>
         {
-            options.UseSqlite(_keepAlive.ConnectionString);
+            if (retryOnTransientFailure)
+            {
+                options.UseSqlite(
+                    _keepAlive.ConnectionString,
+                    sqlite => sqlite.ExecutionStrategy(dependencies => new OnceRetryingExecutionStrategy(dependencies)));
+            }
+            else
+            {
+                options.UseSqlite(_keepAlive.ConnectionString);
+            }
+
             options.AddInterceptors(IsolationCapture, CommitFailure);
         });
         services
@@ -58,5 +69,19 @@ internal sealed class SqlitePipelineHost : IDisposable
     {
         _provider.Dispose();
         _keepAlive.Dispose();
+    }
+
+    private sealed class OnceRetryingExecutionStrategy : ExecutionStrategy
+    {
+        public OnceRetryingExecutionStrategy(ExecutionStrategyDependencies dependencies)
+            : base(dependencies, maxRetryCount: 1, maxRetryDelay: TimeSpan.Zero)
+        {
+        }
+
+        protected override bool ShouldRetryOn(Exception exception)
+        {
+            return exception is InvalidOperationException
+                || exception.InnerException is InvalidOperationException;
+        }
     }
 }

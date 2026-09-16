@@ -50,9 +50,9 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         {
             return behavior switch
             {
-                TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
+                TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, trackedBefore, cancellationToken).ConfigureAwait(false),
                 TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel).ConfigureAwait(false),
-                TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
+                TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, trackedBefore, cancellationToken).ConfigureAwait(false),
                 _ => throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null)
             };
         }
@@ -113,14 +113,22 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
     private sealed record TrackedEntitySnapshot(EntityState State, PropertyValues CurrentValues, PropertyValues OriginalValues);
 
-    private async Task<TResponse> HandleTransactionalBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel, DbContext dbContext, CancellationToken cancellationToken)
+    private async Task<TResponse> HandleTransactionalBehaviorAsync(
+        RequestHandlerDelegate<TResponse> next,
+        IsolationLevel isolationLevel,
+        DbContext dbContext,
+        IReadOnlyDictionary<object, TrackedEntitySnapshot> trackedBefore,
+        CancellationToken cancellationToken)
     {
         TResponse response = default;
 
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
 
-        await executionStrategy.ExecuteAsync(async ct =>
+        await executionStrategy.ExecuteAsync(
+            async ct =>
             {
+                RestoreTrackedEntities(dbContext, trackedBefore);
+
                 var transaction = await dbContext.Database
                     .BeginTransactionAsync(isolationLevel.ToDataIsolation(), ct)
                     .ConfigureAwait(false);
@@ -129,7 +137,8 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
                     response = await next().ConfigureAwait(false);
                     await transaction.CommitAsync(ct).ConfigureAwait(false);
                 }
-            }, cancellationToken).ConfigureAwait(false);
+            },
+            cancellationToken).ConfigureAwait(false);
 
         return response;
     }
@@ -151,15 +160,22 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         return response;
     }
 
-    private async Task<TResponse> HandleTransactionalScopeBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel, DbContext dbContext, CancellationToken cancellationToken)
+    private async Task<TResponse> HandleTransactionalScopeBehaviorAsync(
+        RequestHandlerDelegate<TResponse> next,
+        IsolationLevel isolationLevel,
+        DbContext dbContext,
+        IReadOnlyDictionary<object, TrackedEntitySnapshot> trackedBefore,
+        CancellationToken cancellationToken)
     {
         TResponse response = default;
 
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
 
-        await executionStrategy.ExecuteAsync(async ct =>
+        await executionStrategy.ExecuteAsync(
+            async ct =>
             {
                 ct.ThrowIfCancellationRequested();
+                RestoreTrackedEntities(dbContext, trackedBefore);
 
                 var transactionOptions = new TransactionOptions
                 {
@@ -170,7 +186,8 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
                 using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
                 response = await next().ConfigureAwait(false);
                 transactionScope.Complete();
-            }, cancellationToken).ConfigureAwait(false);
+            },
+            cancellationToken).ConfigureAwait(false);
 
         return response;
     }

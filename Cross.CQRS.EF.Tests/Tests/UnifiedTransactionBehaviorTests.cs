@@ -427,4 +427,24 @@ public class UnifiedTransactionBehaviorTests
 
         entity.Should().BeNull();
     }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenRetryingStrategy_WhenCommitFailsOnce_ThenRestoresStateAndCommitsOnceAsync()
+    {
+        using var host = new SqlitePipelineHost(
+            TransactionBehaviorEnum.TransactionalBehavior,
+            IsolationLevel.ReadCommitted,
+            retryOnTransientFailure: true);
+        var command = new CreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
+        host.CommitFailure.FailNextCommit = true;
+
+        await host.SendAsync(command);
+
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == command.Name));
+
+        entity.Should().NotBeNull();
+    }
 }
