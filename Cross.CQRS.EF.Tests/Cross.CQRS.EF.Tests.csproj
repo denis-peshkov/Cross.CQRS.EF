@@ -7,13 +7,13 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
-    <NoWarn>1701;1702;1591</NoWarn>
+    <NoWarn>1701;1702;1591;CS8618;</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <MicrosoftDataSqliteVersion>7.0.20</MicrosoftDataSqliteVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>7.0.20</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>7.0.20</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftDataSqliteVersion>6.0.36</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>6.0.36</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>6.0.36</MicrosoftEntityFrameworkCoreSqliteVersion>
     <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftNETTestSdkVersion>17.13.0</MicrosoftNETTestSdkVersion>
   </PropertyGroup>

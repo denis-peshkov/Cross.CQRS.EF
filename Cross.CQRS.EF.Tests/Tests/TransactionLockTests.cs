@@ -332,7 +332,6 @@ public class TransactionLockTests : HandlerTestsBase
         finalEntity.Name.Should().Be(updateCommand1.Name);
     }
 
-
     private static readonly TimeSpan ConcurrentWaitTimeout = TimeSpan.FromSeconds(5);
 
     private static TaskCompletionSource CreateSignal()
