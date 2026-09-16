@@ -3,14 +3,15 @@
 public static class CqrsRegistrationSyntaxExtensions
 {
     /// <summary>
-    /// Registers required Entity Framework integration services from the specified assemblies to the
-    /// specified <see cref="IServiceCollection"/>.
+    /// Registers Entity Framework integration for <typeparamref name="TDbContext"/> on
+    /// <paramref name="syntax"/>: transaction options, <c>EfLicenseProductInfo</c>,
+    /// unified transaction behavior (order 10), and the DbContext provider.
     /// </summary>
     /// <typeparam name="TDbContext">The type of the database context.</typeparam>
     /// <param name="syntax">The CQRS registration syntax instance.</param>
     /// <param name="transactionBehavior">The transaction behavior to use. Defaults to TransactionalBehavior.</param>
     /// <param name="isolationLevel">The transaction isolation level to use. Defaults to Serializable.</param>
-    /// <returns>A reference to this instance after the operation has completed.</returns>
+    /// <returns>The same <see cref="CqrsRegistrationSyntax"/> instance.</returns>
     /// <remarks>
     /// This method performs the following registrations:
     /// <list type="bullet">
