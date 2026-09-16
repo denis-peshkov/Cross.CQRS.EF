@@ -41,7 +41,7 @@
 - SemVer только `GitVersion.yml` (`next-version: 9.0.0`); имя version plan `9.2.0` не требует bump next-version.
 - SampleWebApp `LicenseKey = "YOUR_LICENSE_KEY"` — канонический placeholder, не секрет и не баг.
 - `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) — достаточно для этой дельты.
-- `config.nuspec` `releaseNotes` — краткие ссылки на CHANGELOG/BREAKING; не дублировать versioned changelog.
+- `config.nuspec` `releaseNotes` — только ссылки на CHANGELOG и BREAKING, без summary в nuspec.
 
 ---
 
@@ -54,7 +54,7 @@
 | ✅ #H25 GitVersion next-version | принято: `next-version: 9.0.0` не трогать; план 9.2.0 — документ, не override GitVersion |
 | ✅ #M21 sample LicenseKey | принято: placeholder `YOUR_LICENSE_KEY`, код не менять |
 | ✅ #L28 SourceLink 1.1.1 | принято: 1.1.1 ок, не bump до 8.x |
-| ✅ #L29 nuspec releaseNotes | принято: ссылки на CHANGELOG/BREAKING, не переписывать summary 9.0.0 |
+| ✅ #L29 nuspec releaseNotes | только ссылки CHANGELOG / BREAKING, без абзаца про UnifiedTransaction / pagination |
 | ✅ SampleWebApp SQLite | in-memory + `EnsureCreated`, POST/GET `/somescope`, `[ExactTransaction]` |
 | ✅ Tests naming / lock | без суффикса `Async`; lock tests WAL/TCS; test TFM pkgs `6.0.36` |
 | ✅ README RPL 1.5 | badge + описание SampleWebApp / Tests |

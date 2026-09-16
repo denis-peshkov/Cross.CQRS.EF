@@ -29,7 +29,7 @@
 |---|---|---|
 | B1 | Consumer breaks in `docs/BREAKING.md` | ✅ нет API-break 9.0.0 → 9.2.0 (только EF patch deps) |
 | B2 | PR title `BREAKING:` where applicable | ✅ N/A |
-| B3 | `config.nuspec` `releaseNotes` → BREAKING | ✅ ссылки на CHANGELOG / BREAKING (#L29 принято) |
+| B3 | `config.nuspec` `releaseNotes` → BREAKING | ✅ только ссылки CHANGELOG / BREAKING (#L29) |
 | B4 | `docs/CHANGELOG.md` updated | ✅ `## v9.2.0` |
 
 ---
@@ -50,7 +50,7 @@
 
 | # | Item | Status |
 |---|---|---|
-| N1 | `config.nuspec` metadata | ✅ TFMs/deps EF bump; releaseNotes-ссылки (#L29 принято) |
+| N1 | `config.nuspec` metadata | ✅ TFMs/deps EF bump; releaseNotes = ссылки (#L29) |
 | N2 | Secrets `NUGET_API_KEY`, `TAGTOKEN` | ⬜ проверить перед publish |
 | N3 | Tag + NuGet push from CI | ⬜ нет `v9.2.0` (SemVer = GitVersion, #H25) |
 | N4 | GitHub Release notes | ⬜ для `v9.2.0` |
@@ -72,7 +72,7 @@
 | # | Item | Status |
 |---|---|---|
 | G1 | Go / No-Go recorded | ⬜ |
-| G2 | Publish blockers cleared | ✅ version plan C/H/M/L пустые (H25/M21/L28/L29 принято) |
+| G2 | Publish blockers cleared | ✅ version plan C/H/M/L пустые (H25/M21/L28 принято; L29 исправлен) |
 
 - **Date:** 2026-09-16
 - **Notes:** Дельта 10 коммитов на local `master` vs `origin/master` (`v9.0.0`). Open C/H/M/L пустые. Publish tag/NuGet = GitVersion (не имя файла плана).
