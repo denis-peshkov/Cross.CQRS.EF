@@ -38,10 +38,16 @@ public abstract class HandlerTestsBase
     [TearDown]
     public virtual void TearDown()
     {
-        DbContext.Database.EnsureDeleted();
-        DbContext?.Dispose();
-        _connection?.Close();
-        _connection?.Dispose();
+        try
+        {
+            DbContext?.Database.EnsureDeleted();
+        }
+        finally
+        {
+            DbContext?.Dispose();
+            _connection?.Close();
+            _connection?.Dispose();
+        }
     }
 
     [OneTimeTearDown]

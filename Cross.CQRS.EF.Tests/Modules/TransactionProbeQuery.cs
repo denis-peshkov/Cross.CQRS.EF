@@ -1,6 +1,5 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class TransactionProbeQuery : IQuery<TransactionSnapshot>
+public class TransactionProbeQuery : Query<TransactionSnapshot>
 {
-    public Guid QueryId { get; }
 }

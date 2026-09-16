@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H2 M1 L2
+> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H2 M0 L0
 
 **CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → 5 открыты в плане (#H17, #H18, #M18, #L26, #L27); skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
 
@@ -34,21 +34,9 @@
 
 ## Средний (противоречия / баги контрактов)
 
-### ⬜ M18. Остальные test-команды с `CommandId` = `Empty`
-
-После #M15/#M16 тот же getter без `Guid.NewGuid()` / без `: Command` у `UpdateTestEntityCommand`, `FailingCreateTestEntityCommand`, `FailingAddWithoutSaveCommand`, `ExactTransactionProbeCommand`, `TransactionProbeCommand`; у `TransactionProbeQuery` — `QueryId`. (CR 2026-09-16)
-
 ---
 
 ## Низкий (техдолг / несогласованности)
-
-### ⬜ L26. `HandlerTestsBase.TearDown` без защиты partial setup
-
-`EnsureDeleted()` без null-check; `Dispose` не в `finally` — при исключении cleanup соединения может не выполниться. (CR 2026-09-16)
-
-### ⬜ L27. Lock-тесты на `Task.Delay`
-
-`TransactionLockTests` синхронизирует concurrent update/read через фиксированные delay (500/2000 ms), не через `TaskCompletionSource`. Гонка на медленной машине. (CR 2026-09-16)
 
 ---
 
@@ -102,6 +90,9 @@
 | ✅ #L20 README 9.0.0 | ExactTransaction, Extensions, pagination removed, Cross.CQRS 11.1.2, net6–net10 |
 | ✅ #L21 sample JWT | убран commented license JWT из `SampleWebApp/Program.cs` |
 | ✅ #L23 PR body | не актуально для version plan: GitHub-описание, не дефект пакета |
+| ✅ #M18 remaining CommandId | Update/Failing*/Probe : `Command`/`Command<T>`; query : `Query<T>`; других пустых id нет |
+| ✅ #L26 TearDown finally | `HandlerTestsBase`: `EnsureDeleted` null-safe; Dispose в `finally` |
+| ✅ #L27 lock TCS | `TransactionLockTests`: `TaskCompletionSource` вместо `Task.Delay` sync |
 
 ---
 
@@ -119,7 +110,5 @@
 
 1. **H17** — ChangeTracker cleanup не должен сносить graph после success / `NoBehavior`.
 2. **H18** — ExactTransaction probe vs SQLite isolation.
-3. **M18** — оставшиеся test CommandId/QueryId.
-4. **L26** / **L27** — teardown и lock-test sync.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

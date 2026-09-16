@@ -1,8 +1,7 @@
-namespace Cross.CQRS.EF.Tests.Modules;
+﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class UpdateTestEntityCommand : ICommand
+public class UpdateTestEntityCommand : Command
 {
-    public Guid CommandId { get; }
     public int Id { get; set; }
     public required string Name { get; set; }
 }

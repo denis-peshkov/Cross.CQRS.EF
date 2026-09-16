@@ -6,6 +6,7 @@ public class TransactionLockTests : HandlerTestsBase
     private TestDbContext _dbContext2;
     private SqliteConnection _keepAlive;
     private string _connectionString;
+    private string _databasePath;
     private Mock<ICommandEventQueueWriter> _commandEventsMock;
     private Mock<ILogger<UpdateTestEntityHandler>> _loggerMock;
 
@@ -21,10 +22,18 @@ public class TransactionLockTests : HandlerTestsBase
     [SetUp]
     public new void Setup()
     {
-        // Shared in-memory DB with a dedicated connection per context (SQLite connections are not thread-safe).
-        _connectionString = $"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared";
+        // In-memory SQLite ignores WAL and takes a table lock after uncommitted SaveChanges,
+        // so the observer connection cannot read the last committed snapshot. A temp file + WAL
+        // keeps a dedicated connection per context and lets the ReadCommitted handshake proceed.
+        _databasePath = Path.Combine(Path.GetTempPath(), $"cross-cqrs-ef-lock-{Guid.NewGuid():N}.db");
+        _connectionString = $"Data Source={_databasePath}";
         _keepAlive = new SqliteConnection(_connectionString);
         _keepAlive.Open();
+        using (var journalMode = _keepAlive.CreateCommand())
+        {
+            journalMode.CommandText = "PRAGMA journal_mode=WAL;";
+            journalMode.ExecuteNonQuery();
+        }
 
         _dbContext1 = CreateContext();
         _dbContext2 = CreateContext();
@@ -34,9 +43,16 @@ public class TransactionLockTests : HandlerTestsBase
     [TearDown]
     public new void TearDown()
     {
-        _dbContext1?.Dispose();
-        _dbContext2?.Dispose();
-        _keepAlive?.Dispose();
+        try
+        {
+            _dbContext1?.Dispose();
+            _dbContext2?.Dispose();
+            _keepAlive?.Dispose();
+        }
+        finally
+        {
+            DeleteDatabaseFiles();
+        }
     }
 
     private TestDbContext CreateContext()
@@ -52,12 +68,12 @@ public class TransactionLockTests : HandlerTestsBase
     [Test]
     public async Task ReadCommitted_Update_ShouldNotBlockRead()
     {
-        // Arrange
         var entity = await CreateTestEntity();
         var updateCommand = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var completed = false;
+        var writeSaved = CreateSignal();
+        var readFinished = CreateSignal();
 
-        // Act
         var updateTask = Task.Run(async () =>
         {
             using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
@@ -65,28 +81,35 @@ public class TransactionLockTests : HandlerTestsBase
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
                 await handler.Handle(updateCommand, CancellationToken.None);
-                await Task.Delay(2000); // Имитация длительной операции
+                writeSaved.TrySetResult();
+                await readFinished.Task;
                 await transaction.CommitAsync();
                 completed = true;
             }
             catch
             {
+                writeSaved.TrySetResult();
                 await transaction.RollbackAsync();
                 throw;
             }
         });
 
-        await Task.Delay(500); // Даем время начать транзакцию обновления
+        try
+        {
+            await writeSaved.Task;
 
-        // Assert - проверяем, что чтение не блокируется
-        var readEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-        readEntity.Should().NotBeNull();
-        readEntity.Name.Should().Be(entity.Name); // Должно вернуть старое значение
+            var readEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
+            readEntity.Should().NotBeNull();
+            readEntity!.Name.Should().Be(entity.Name);
+        }
+        finally
+        {
+            readFinished.TrySetResult();
+        }
 
         await updateTask;
         completed.Should().BeTrue();
 
-        // Проверяем, что изменения применились после завершения транзакции
         var updatedEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
         updatedEntity.Name.Should().Be(updateCommand.Name);
     }
@@ -95,12 +118,12 @@ public class TransactionLockTests : HandlerTestsBase
     [Ignore("Not finished yet")]
     public async Task RepeatableRead_Update_ShouldBlockRead()
     {
-        // Arrange
         var entity = await CreateTestEntity();
         var updateCommand = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var completed = false;
+        var writeSaved = CreateSignal();
+        var allowCommit = CreateSignal();
 
-        // Act
         var updateTask = Task.Run(async () =>
         {
             using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
@@ -108,29 +131,37 @@ public class TransactionLockTests : HandlerTestsBase
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
                 await handler.Handle(updateCommand, CancellationToken.None);
-                await Task.Delay(2000); // Имитация длительной операции
+                writeSaved.TrySetResult();
+                await allowCommit.Task;
                 await transaction.CommitAsync();
                 completed = true;
             }
             catch
             {
+                writeSaved.TrySetResult();
                 await transaction.RollbackAsync();
                 throw;
             }
         });
 
-        await Task.Delay(500); // Даем время начать транзакцию обновления
-
-        // Assert - проверяем, что чтение блокируется
-        var readTask = Task.Run(async () =>
+        try
         {
-            using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
-            return await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-        });
+            await writeSaved.Task;
 
-        var timeoutTask = Task.Delay(5000);
-        var completedTask = await Task.WhenAny(readTask, timeoutTask);
-        completedTask.Should().Be(timeoutTask, "Read operation should be blocked");
+            var readTask = Task.Run(async () =>
+            {
+                using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
+                return await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
+            });
+
+            var timeoutTask = Task.Delay(5000);
+            var completedTask = await Task.WhenAny(readTask, timeoutTask);
+            completedTask.Should().Be(timeoutTask, "Read operation should be blocked");
+        }
+        finally
+        {
+            allowCommit.TrySetResult();
+        }
 
         await updateTask;
         completed.Should().BeTrue();
@@ -140,13 +171,13 @@ public class TransactionLockTests : HandlerTestsBase
     [Ignore("Not finished yet")]
     public async Task Serializable_ConcurrentUpdates_ShouldBlockSecondUpdate()
     {
-        // Arrange
         var entity = await CreateTestEntity();
         var updateCommand1 = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var updateCommand2 = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var secondUpdateException = false;
+        var firstWriteSaved = CreateSignal();
+        var allowFirstCommit = CreateSignal();
 
-        // Act
         var updateTask1 = Task.Run(async () =>
         {
             await using var transaction = await _dbContext1.SafeBeginTransactionAsync(IsolationLevel.Serializable);
@@ -154,19 +185,20 @@ public class TransactionLockTests : HandlerTestsBase
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
                 await handler.Handle(updateCommand1, CancellationToken.None);
-                await Task.Delay(2000); // Имитация длительной операции
+                firstWriteSaved.TrySetResult();
+                await allowFirstCommit.Task;
                 await transaction.CommitAsync();
                 return true;
             }
             catch
             {
+                firstWriteSaved.TrySetResult();
                 await transaction.RollbackAsync();
                 throw;
             }
         });
 
-        // Ждем, пока первая транзакция начнется
-        await Task.Delay(500);
+        await firstWriteSaved.Task;
 
         var updateTask2 = Task.Run(async () =>
         {
@@ -190,13 +222,19 @@ public class TransactionLockTests : HandlerTestsBase
             }
         });
 
-        // Assert
+        try
+        {
+            await updateTask2;
+        }
+        finally
+        {
+            allowFirstCommit.TrySetResult();
+        }
+
         await updateTask1;
-        await updateTask2;
 
         secondUpdateException.Should().BeTrue("Second update should fail due to serialization conflict");
 
-        // Проверяем, что применились изменения только от первой транзакции
         var finalEntity = await _dbContext1.TestEntities.AsNoTracking().FirstAsync(e => e.Id == entity.Id);
         finalEntity.Name.Should().Be(updateCommand1.Name);
     }
@@ -205,13 +243,13 @@ public class TransactionLockTests : HandlerTestsBase
     [Ignore("Not finished yet")]
     public async Task Serializable_ConcurrentUpdates_ShouldBlockSecondUpdate_v2()
     {
-        // Arrange
         var entity = await CreateTestEntity();
         var updateCommand1 = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var updateCommand2 = new UpdateTestEntityCommand { Id = entity.Id, Name = Faker.Company.CompanyName() };
         var secondUpdateException = false;
+        var firstWriteSaved = CreateSignal();
+        var allowFirstCommit = CreateSignal();
 
-        // Act
         var updateTask1 = Task.Run(async () =>
         {
             using var scope = new TransactionScope(
@@ -222,17 +260,19 @@ public class TransactionLockTests : HandlerTestsBase
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
                 await handler.Handle(updateCommand1, CancellationToken.None);
-                await Task.Delay(2000); // Имитация длительной операции
+                firstWriteSaved.TrySetResult();
+                await allowFirstCommit.Task;
                 scope.Complete();
                 return true;
             }
             catch
             {
+                firstWriteSaved.TrySetResult();
                 throw;
             }
         });
 
-        await Task.Delay(500);
+        await firstWriteSaved.Task;
 
         var updateTask2 = Task.Run(async () =>
         {
@@ -259,17 +299,26 @@ public class TransactionLockTests : HandlerTestsBase
             }
         });
 
-        // Assert
+        try
+        {
+            await updateTask2;
+        }
+        finally
+        {
+            allowFirstCommit.TrySetResult();
+        }
+
         await updateTask1;
-        await updateTask2;
 
         secondUpdateException.Should().BeTrue("Second update should fail due to serialization conflict");
 
-        // Проверяем, что применились изменения только от первой транзакции
         var finalEntity = await _dbContext1.TestEntities.AsNoTracking().FirstAsync(e => e.Id == entity.Id);
         finalEntity.Name.Should().Be(updateCommand1.Name);
     }
 
+
+    private static TaskCompletionSource CreateSignal()
+        => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     private async Task<TestEntity> CreateTestEntity()
     {

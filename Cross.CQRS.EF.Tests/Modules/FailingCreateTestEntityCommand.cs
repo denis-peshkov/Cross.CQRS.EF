@@ -1,8 +1,6 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class FailingCreateTestEntityCommand : ICommand
+public class FailingCreateTestEntityCommand : Command
 {
-    public Guid CommandId { get; }
-
     public required string Name { get; set; }
 }

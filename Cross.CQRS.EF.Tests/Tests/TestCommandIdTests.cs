@@ -11,4 +11,61 @@ public class TestCommandIdTests
 
         command.CommandId.Should().NotBe(Guid.Empty);
     }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenCreateTestEntityCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        var command = new CreateTestEntityCommand { Name = "n" };
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenUpdateTestEntityCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        var command = new UpdateTestEntityCommand { Id = 1, Name = "n" };
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenFailingCreateTestEntityCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        var command = new FailingCreateTestEntityCommand { Name = "n" };
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenFailingAddWithoutSaveCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        var command = new FailingAddWithoutSaveCommand { Name = "n" };
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenExactTransactionProbeCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        new ExactTransactionProbeCommand().CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenTransactionProbeCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
+    {
+        new TransactionProbeCommand().CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
+    public void GivenTransactionProbeQuery_WhenConstructed_ThenQueryIdIsNotEmpty()
+    {
+        new TransactionProbeQuery().QueryId.Should().NotBe(Guid.Empty);
+    }
 }

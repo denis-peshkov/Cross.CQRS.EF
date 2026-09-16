@@ -1,6 +1,5 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class TransactionProbeCommand : ICommand<TransactionSnapshot>
+public class TransactionProbeCommand : Command<TransactionSnapshot>
 {
-    public Guid CommandId { get; }
 }

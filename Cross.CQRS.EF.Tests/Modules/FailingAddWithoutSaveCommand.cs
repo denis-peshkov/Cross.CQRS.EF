@@ -1,8 +1,6 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class FailingAddWithoutSaveCommand : ICommand
+public class FailingAddWithoutSaveCommand : Command
 {
-    public Guid CommandId { get; }
-
     public required string Name { get; set; }
 }
