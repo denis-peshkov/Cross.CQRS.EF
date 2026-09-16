@@ -1,6 +1,6 @@
 ﻿Ниже — **проблемы внутри библиотеки**, по уровню критичности. Аудит по дельте ветки относительно базовой ветки (обычно `master`).
 
-> **Версия:** `9.2.0` · **ветка:** `master` · **база:** `origin/master` (`v9.0.0`) · **дата:** `2026-09-16`
+> **Версия:** `9.2.0` · **ветка:** `release/9.2.0-EF-Core-SourceLink` · **база:** `origin/master` (`v9.0.0`) · **дата:** `2026-09-16`
 >
 > **Релиз (если есть):** https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.2.0
 >
@@ -8,12 +8,12 @@
 >
 > **Предыдущий план:** [RELEASE-PLAN-9.0.0.md](RELEASE-PLAN-9.0.0.md)
 >
-> Дельта: `origin/master...HEAD` — **10** коммита · **27** файлов · **+254 / −267**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **15** коммита · **32** файлов · **+495 / −278**. Open C/H/M/L пустые.
 
 **CodeRabbit:**
 - не запускался.
 
-**PR:** —
+**PR:** [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) (`chore:` SourceLink, EF bumps, lock tests, docs/rules hygiene).
 
 ---
 
@@ -36,9 +36,9 @@
 ## Принято (осознанный trade-off)
 
 - Bump EF Core — patch/latest-stable per TFM, не consumer API break; отдельной секции `BREAKING.md` `From 9.0.0 to 9.2.0` нет.
+- SemVer только `GitVersion.yml` (`next-version: 9.2.0` на этой ветке).
 - `SampleWebApp` — host smoke, не часть NuGet.
 - Maintainer `.cursor/rules` в этой дельте — репозиторий, не пакет.
-- SemVer только `GitVersion.yml` (`next-version: 9.0.0`); имя version plan `9.2.0` не требует bump next-version.
 - SampleWebApp `LicenseKey = "YOUR_LICENSE_KEY"` — канонический placeholder, не секрет и не баг.
 - `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) — достаточно для этой дельты.
 - `config.nuspec` `releaseNotes` — только ссылки на CHANGELOG и BREAKING, без summary в nuspec.
@@ -51,7 +51,7 @@
 |---|---|
 | ✅ EF Core bump | net8 `8.0.31` / net9 `9.0.20` / net10 `10.0.12`; nuspec groups совпадают |
 | ✅ SourceLink added | `Microsoft.SourceLink.GitHub` 1.1.1 `PrivateAssets=All` |
-| ✅ #H25 GitVersion next-version | принято: `next-version: 9.0.0` не трогать; план 9.2.0 — документ, не override GitVersion |
+| ✅ #H25 GitVersion next-version | `GitVersion.yml` `next-version: 9.2.0` (`7e37133`) |
 | ✅ #M21 sample LicenseKey | принято: placeholder `YOUR_LICENSE_KEY`, код не менять |
 | ✅ #L28 SourceLink 1.1.1 | принято: 1.1.1 ок, не bump до 8.x |
 | ✅ #L29 nuspec releaseNotes | только ссылки CHANGELOG / BREAKING, без абзаца про UnifiedTransaction / pagination |
@@ -61,6 +61,7 @@
 | ✅ CONTRIBUTING Licensing | folder в scope репозитория |
 | ✅ cursor rules dedupe | logging / secrets / readonly deps |
 | ✅ CHANGELOG v9.2.0 | `update-changelog.mjs --write`; секция уточнена |
+| ✅ pr-message skill | `.cursor/skills/pr-message` + Shell `required_permissions: ["all"]` |
 
 ---
 

@@ -15,6 +15,11 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Packaging
 
 - Added `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) for symbol/source linking.
+- `config.nuspec` `releaseNotes` contain only CHANGELOG and BREAKING links (no inline feature summary).
+
+### Versioning
+
+- `GitVersion.yml` `next-version: 9.2.0`.
 
 ### Tests
 
@@ -31,6 +36,7 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Repository tooling
 
 - `.cursor/rules` dedupe (structured logging, secrets, readonly deps).
+- `.cursor/skills/pr-message`; agent Shell calls require `required_permissions: ["all"]`.
 
 ---
 
