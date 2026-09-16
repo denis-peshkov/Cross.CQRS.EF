@@ -109,6 +109,30 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerHasNoPendingEntriesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var name = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            var act = () => mediator.Send(new FailingAddWithoutSaveCommand { Name = name });
+            await act.Should().ThrowAsync<InvalidOperationException>();
+
+            dbContext.ChangeTracker.Entries()
+                .Where(entry => entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+                .Should()
+                .BeEmpty();
+
+            return 0;
+        });
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task GivenNoBehavior_WhenHandlerFailsAfterSave_ThenChangesRemainAsync()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);

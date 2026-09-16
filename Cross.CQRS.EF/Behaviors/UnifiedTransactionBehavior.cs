@@ -40,27 +40,30 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         var dbContext = _dbContextProvider.Get();
 
-        var response = behavior switch
+        try
         {
-            TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
-            TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel).ConfigureAwait(false),
-            TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
-            TransactionBehaviorEnum.NoBehavior =>
-                // Skip behavior if not correspond the TransactionBehaviorEnum or not set.
-                await next().ConfigureAwait(false),
-            _ => default
-        };
-
-        // Cleanup tracked entries
-        var trackedEntries = dbContext.ChangeTracker.Entries()
-            .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
-            .ToArray();
-        foreach (var entry in trackedEntries)
-        {
-            entry.State = EntityState.Detached;
+            return behavior switch
+            {
+                TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
+                TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel).ConfigureAwait(false),
+                TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
+                TransactionBehaviorEnum.NoBehavior =>
+                    // Skip behavior if not correspond the TransactionBehaviorEnum or not set.
+                    await next().ConfigureAwait(false),
+                _ => default
+            };
         }
-
-        return response;
+        finally
+        {
+            // Detach pending entries even when next/commit throws, so the scoped DbContext does not keep a failed command graph.
+            var trackedEntries = dbContext.ChangeTracker.Entries()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+                .ToArray();
+            foreach (var entry in trackedEntries)
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
     }
 
     private async Task<TResponse> HandleTransactionalBehaviorAsync(RequestHandlerDelegate<TResponse> next, IsolationLevel isolationLevel, DbContext dbContext, CancellationToken cancellationToken)
