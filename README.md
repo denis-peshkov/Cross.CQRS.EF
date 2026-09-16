@@ -26,16 +26,24 @@ Main Features:
 
 * **Enhanced Transaction Control**
 
-  The ExactTransaction attribute supports for custom isolation levels and transaction behavior configuration on both global and per-handler basis through the Attribute.
-  To switch off transaction behavior wrapper on specific CommandHandler or change isolation level have to use ExactTransaction attribute on the command handler.
+  Per-handler `[ExactTransaction(behavior, isolation)]` overrides global options. Opt-out: `[ExactTransaction(TransactionBehaviorEnum.NoBehavior)]` (replaces 8.4 `ExplicitTransaction`).
+  Registration: `AddEntityFrameworkIntegration<TDbContext>` in namespace `Cross.CQRS.EF.Extensions` (after `AddCQRS`). Defaults: `TransactionalBehavior` and `Serializable`.
+
+* **Pagination**
+
+  Paging and query-filter APIs (`PaginationQuery`, `QueryableExtensions`, `IQueryableFilter`) were removed from this package in 9.0.0. Keep them in the host or another library.
+
+* **Cross.CQRS dependency**
+
+  Requires Cross.CQRS **11.1.2**. This package registers `EfLicenseProductInfo` (JWT type `Cross_CQRS_EF`).
 
 * **.NET frameworks and Source Linking**.
 
-  From version 8.0 repository contains additional .NET 8 projects.
-  From version 7.0 repository contains .NET 6 and .NET 7 projects.
-  Source linking enabled and symbol package is published to nuget symbols server, making debugging easier.
+  9.0.0 targets **net6.0–net10.0**. Source linking enabled and symbol package is published to nuget symbols server, making debugging easier.
 
 **Supported frameworks:** .NET 6, .NET 7, .NET 8, .NET 9, .NET 10
+
+Upgrade from 8.4.x: [`docs/BREAKING.md`](docs/BREAKING.md) · release notes: [`docs/CHANGELOG.md`](docs/CHANGELOG.md)
 
 ## Install NuGet package
 

@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M0 L3
+> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M0 L1
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -29,14 +29,6 @@
 ---
 
 ## Низкий (техдолг / несогласованности)
-
-### ⬜ L20. README не отражает breaking 9.0.0
-
-README всё ещё про «.NET 8 from version 8.0» и не описывает `ExactTransaction`, смену namespace, удаление pagination и зависимость Cross.CQRS 11.1.2.
-
-### ⬜ L21. JWT в комментарии SampleWebApp
-
-В `SampleWebApp/Program.cs` закомментирован полный JWT license key. Даже в комментарии это секрет/PII в git. (triage 2026-09-15)
 
 ### ⬜ L23. Тело PR #9 устарело относительно дерева
 
@@ -91,6 +83,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #M16 Delete CommandId | `DeleteTestEntityCommand` : `Command`; unit test проверяет не-empty id |
 | ✅ #M17 sample ILogger | `SomeScopeInternalCommandHandler` → `ILogger<SomeScopeInternalCommandHandler>` |
 | ✅ #L24 CHANGELOG dated | принято: `## vX.Y.Z` до tag — канон, не Unreleased |
+| ✅ #L20 README 9.0.0 | ExactTransaction, Extensions, pagination removed, Cross.CQRS 11.1.2, net6–net10 |
+| ✅ #L21 sample JWT | убран commented license JWT из `SampleWebApp/Program.cs` |
 
 ---
 
@@ -106,7 +100,6 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 ## Приоритет фиксов
 
-1. **L21** — убрать commented JWT.
-2. **L20** / **L23**.
+1. **L23** — синхронизировать тело PR #9 с деревом.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
