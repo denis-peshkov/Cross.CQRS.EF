@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/github/license/denis-peshkov/Cross.CQRS.EF)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-RPL%201.5-blue)](LICENSE.md)
 [![GitHub Release Date](https://img.shields.io/github/release-date/denis-peshkov/Cross.CQRS.EF?label=released)](https://github.com/denis-peshkov/Cross.CQRS.EF/releases)
 [![NuGetVersion](https://img.shields.io/nuget/v/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/)
 [![NugetDownloads](https://img.shields.io/nuget/dt/Cross.CQRS.EF.svg)](https://nuget.org/packages/Cross.CQRS.EF/)
@@ -65,8 +65,7 @@ Contribution is welcomed. If you would like to provide a PR please add some test
 
 Please use [Wiki](https://github.com/denis-peshkov/Cross.CQRS.EF/wiki) for documentation and usage examples.
 
-### Complete usage examples can be found in the test project ###
-Note - test project is not a part of nuget package. You have to clone repository.
+`SampleWebApp` is a Minimal API host: SQLite in-memory EF Core, one command with `SaveChanges`, and `[ExactTransaction]`. Canonical coverage of transaction behaviors is in `Cross.CQRS.EF.Tests` (clone the repository; the test project is not in the NuGet package).
 
 ## Roadmap:
 - Add support for distributed transactions and SAGAs

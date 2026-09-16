@@ -2,7 +2,7 @@
 
 Нерешённые пункты вне дельты version plan + кросс-версионные принятые trade-off’ы.
 
-**Id high-water (не переиспользовать ≤):** `C0` `H24` `M20` `L27`
+**Id high-water (не переиспользовать ≤):** `C0` `H25` `M22` `L30`
 
 ---
 
@@ -37,3 +37,8 @@
 - Pagination / `IQueryableFilter` / `QueryableExtensions` убраны из этого пакета — не возвращать без отдельного product decision.
 - TFMs библиотеки и тестов: `net6.0`–`net10.0` (netstandard в этом пакете нет).
 - Maintainer kit (`.cursor` rules/skills/triage, GitHub templates) — часть репозитория, не NuGet.
+- EF Core: patch/latest-stable per TFM, не consumer API break; секция BREAKING только при смене public API.
+- SampleWebApp — host smoke, не часть NuGet.
+- SampleWebApp `LicenseKey = "YOUR_LICENSE_KEY"` — канонический placeholder, не секрет и не баг.
+- `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) — достаточно, пока нет отдельного product bump.
+- `config.nuspec` `releaseNotes` — только ссылки на CHANGELOG и BREAKING, без summary в nuspec.

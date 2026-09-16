@@ -1,4 +1,4 @@
-// Global using directives
+﻿// Global using directives
 
 global using System;
 global using System.Collections.Generic;
@@ -20,6 +20,8 @@ global using Cross.CQRS.Queries;
 global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.DependencyInjection.Extensions;

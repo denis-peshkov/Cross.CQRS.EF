@@ -87,23 +87,6 @@ public class SubmitResumeDto
 
 - constructor injection
 - интерфейсы для всех зависимостей
-- зависимости — `readonly`
-
-```csharp
-public class VacanciesController : ControllerBase
-{
-    private readonly IMediator _mediator;
-    private readonly ILogger<VacanciesController> _logger;
-
-    public VacanciesController(
-        IMediator mediator,
-        ILogger<VacanciesController> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-}
-```
 
 ## Нормализация ввода
 

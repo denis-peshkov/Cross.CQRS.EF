@@ -6,6 +6,40 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
+## v9.2.0 — 16 Sep 2026
+
+### Dependencies
+
+- Bumped EF Core / Relational to latest stable per TFM: net8 `8.0.31`, net9 `9.0.20`, net10 `10.0.12` (net6/net7 unchanged). `config.nuspec` groups match.
+
+### Packaging
+
+- Added `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) for symbol/source linking.
+- `config.nuspec` `releaseNotes` contain only CHANGELOG and BREAKING links (no inline feature summary).
+
+### Versioning
+
+- `GitVersion.yml` `next-version: 9.2.0`.
+
+### Tests
+
+- Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS; writer `BEGIN EXCLUSIVE` without nested EF transactions.
+
+### Samples
+
+- `SampleWebApp`: SQLite in-memory EF Core, `SaveChanges` + `[ExactTransaction]`, POST/GET `/somescope`; `ImplicitUsings` disabled (`GlobalUsings.cs`).
+
+### Documentation
+
+- README license badge RPL 1.5; SampleWebApp described as Minimal API host. CONTRIBUTING: `Licensing` folder in repo scope.
+
+### Repository tooling
+
+- `.cursor/rules` dedupe (structured logging, secrets, readonly deps).
+- `.cursor/skills/pr-message`; agent Shell calls require `required_permissions: ["all"]`.
+
+---
+
 ## v9.0.0 — 15 Sep 2026
 
 ### Transactions

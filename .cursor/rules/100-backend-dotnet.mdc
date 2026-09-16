@@ -223,7 +223,6 @@ if(condition&&otherCondition)
 
 - namespace в начале файла
 - file-scoped namespaces, если поддерживается (C# 10+)
-- `using` не в файле типа — только в `GlobalUsings.cs`
 
 ```csharp
 namespace Web.Api.Modules.Vacancies.Controllers;
