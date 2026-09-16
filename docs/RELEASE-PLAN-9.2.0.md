@@ -11,7 +11,7 @@
 > Дельта: `origin/master...HEAD` — **15** коммита · **32** файлов · **+495 / −278**. Open C/H/M/L пустые.
 
 **CodeRabbit:**
-- не запускался.
+- `2026-09-16` · pasted finding (TransactionLockTests ~L149) · 1 findings (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
 
 **PR:** [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) (`chore:` SourceLink, EF bumps, lock tests, docs/rules hygiene).
 
@@ -62,6 +62,7 @@
 | ✅ cursor rules dedupe | logging / secrets / readonly deps |
 | ✅ CHANGELOG v9.2.0 | `update-changelog.mjs --write`; секция уточнена |
 | ✅ pr-message skill | `.cursor/skills/pr-message` + Shell `required_permissions: ["all"]` |
+| ✅ #M22 lock-read test | writer `BEGIN EXCLUSIVE` + plain reader SELECT (без второго `BeginTransactionAsync`) |
 
 ---
 

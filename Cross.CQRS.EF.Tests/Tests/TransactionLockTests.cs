@@ -110,7 +110,7 @@ public class TransactionLockTests : HandlerTestsBase
     [Category(TestCategory.INTEGRATION)]
     public async Task GivenExclusiveWriteLock_WhenSecondConnectionReads_ThenReadStaysBlockedUntilCommit()
     {
-        // DELETE journal: an uncommitted writer takes a reserved lock; readers block (unlike WAL).
+        // BEGIN EXCLUSIVE blocks other connections from reading until COMMIT (DELETE journal; unlike WAL snapshot reads).
         OpenContexts(useWal: false, busyTimeoutMilliseconds: 10_000);
         await EnsureCreatedAsync();
 
@@ -119,23 +119,45 @@ public class TransactionLockTests : HandlerTestsBase
         var writeSaved = CreateSignal();
         var allowCommit = CreateSignal();
         var completed = false;
+        Task<TestEntity?>? readTask = null;
+
+        // SaveChanges must not open a nested transaction on top of BEGIN EXCLUSIVE.
+        _dbContext1.Database.AutoTransactionsEnabled = false;
 
         var updateTask = Task.Run(async () =>
         {
-            await using var transaction = await _dbContext1.Database.BeginTransactionAsync(IsolationLevel.Serializable.ToDataIsolation());
+            using (var beginExclusive = _connection1.CreateCommand())
+            {
+                beginExclusive.CommandText = "BEGIN EXCLUSIVE;";
+                await beginExclusive.ExecuteNonQueryAsync();
+            }
+
             try
             {
                 var handler = new UpdateTestEntityHandler(_commandEventsMock.Object, _loggerMock.Object, _dbContext1);
                 await handler.Handle(updateCommand, CancellationToken.None);
                 writeSaved.TrySetResult();
                 await allowCommit.Task;
-                await transaction.CommitAsync();
+
+                using var commit = _connection1.CreateCommand();
+                commit.CommandText = "COMMIT;";
+                await commit.ExecuteNonQueryAsync();
                 completed = true;
             }
             catch
             {
                 writeSaved.TrySetResult();
-                await transaction.RollbackAsync();
+                try
+                {
+                    using var rollback = _connection1.CreateCommand();
+                    rollback.CommandText = "ROLLBACK;";
+                    await rollback.ExecuteNonQueryAsync();
+                }
+                catch
+                {
+                    // Best-effort rollback if BEGIN EXCLUSIVE / SaveChanges failed mid-flight.
+                }
+
                 throw;
             }
         });
@@ -144,15 +166,13 @@ public class TransactionLockTests : HandlerTestsBase
         {
             await writeSaved.Task.WaitAsync(ConcurrentWaitTimeout);
 
-            var readTask = Task.Run(async () =>
-            {
-                await using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.Serializable.ToDataIsolation());
-                return await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-            });
+            // Plain read (no second BeginTransaction) — should block on the exclusive writer lock.
+            readTask = Task.Run(async () =>
+                await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id));
 
             var timeoutTask = Task.Delay(ConcurrentWaitTimeout);
             var completedTask = await Task.WhenAny(readTask, timeoutTask);
-            completedTask.Should().Be(timeoutTask, "read should still be waiting on the writer lock");
+            completedTask.Should().Be(timeoutTask, "read should still be waiting on the writer exclusive lock");
             readTask.IsCompleted.Should().BeFalse();
         }
         finally
@@ -162,6 +182,13 @@ public class TransactionLockTests : HandlerTestsBase
 
         await updateTask.WaitAsync(ConcurrentWaitTimeout);
         completed.Should().BeTrue();
+
+        if (readTask != null)
+        {
+            var readEntity = await readTask.WaitAsync(ConcurrentWaitTimeout);
+            readEntity.Should().NotBeNull();
+            readEntity!.Name.Should().Be(updateCommand.Name);
+        }
     }
 
     [Test]
