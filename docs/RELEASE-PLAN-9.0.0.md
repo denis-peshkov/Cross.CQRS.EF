@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M3 L4
+> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open: C0 H0 M1 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -25,14 +25,6 @@
 ---
 
 ## Средний (противоречия / баги контрактов)
-
-### ⬜ M15. `CreateTestEntityCommand.CommandId` всегда `Guid.Empty`
-
-Getter без хранения; handler пишет пустой id в events. (CR 2026-09-15)
-
-### ⬜ M16. `DeleteTestEntityCommand.CommandId` всегда `Guid.Empty`
-
-То же для delete command. (CR 2026-09-15)
 
 ### ⬜ M17. Sample: wrong `ILogger<T>` на internal handler
 
@@ -102,6 +94,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #H16 licensing docs | BREAKING / CHANGELOG / plan: только `EfLicenseProductInfo`, без чужого license pipeline |
 | ✅ #M12 unknown enum | `_ => throw ArgumentOutOfRangeException`; неизвестный behavior больше не глотает команду |
 | ✅ #M13 XML assemblies | summary `AddEntityFrameworkIntegration` без «specified assemblies»; returns = `CqrsRegistrationSyntax` |
+| ✅ #M15 Create CommandId | `CreateTestEntityCommand` : `Command`; event test проверяет не-empty id |
+| ✅ #M16 Delete CommandId | `DeleteTestEntityCommand` : `Command`; unit test проверяет не-empty id |
 
 ---
 
@@ -118,7 +112,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 ## Приоритет фиксов
 
 1. **L24** — CHANGELOG `v9.0.0` не должен выглядеть published до tag.
-2. **L21** — убрать commented JWT; **M15**–**M17** — tests/sample hygiene.
+2. **L21** — убрать commented JWT; **M17** — sample `ILogger<T>`.
 3. **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

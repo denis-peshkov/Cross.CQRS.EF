@@ -36,8 +36,10 @@ public class TransactionEventTests : HandlerTestsBase
             }
         });
 
-        // Assert
-        _commandEventsMock.Verify(x => x.Write(It.IsAny<ICommandEvent>()), Times.Once);
+        command.CommandId.Should().NotBe(Guid.Empty);
+        _commandEventsMock.Verify(
+            x => x.Write(It.Is<ICommandEvent>(commandEvent => commandEvent.CommandId == command.CommandId)),
+            Times.Once);
     }
 
     [Test]

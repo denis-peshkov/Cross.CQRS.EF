@@ -1,7 +1,6 @@
-namespace Cross.CQRS.EF.Tests.Modules;
+﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class DeleteTestEntityCommand : ICommand
+public class DeleteTestEntityCommand : Command
 {
-    public Guid CommandId { get; }
     public int Id { get; set; }
 }

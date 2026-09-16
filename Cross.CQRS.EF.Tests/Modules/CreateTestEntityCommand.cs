@@ -1,7 +1,6 @@
 namespace Cross.CQRS.EF.Tests.Modules;
 
-public class CreateTestEntityCommand : ICommand
+public class CreateTestEntityCommand : Command
 {
-    public Guid CommandId { get; }
     public required string Name { get; set; }
 }
