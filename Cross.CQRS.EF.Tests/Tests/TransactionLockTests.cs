@@ -48,7 +48,7 @@ public class TransactionLockTests : HandlerTestsBase
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenReadCommittedWriteInProgress_WhenObserverReads_ThenSeesLastCommittedSnapshotAsync()
+    public async Task GivenReadCommittedWriteInProgress_WhenObserverReads_ThenSeesLastCommittedSnapshot()
     {
         // WAL lets the observer read the last committed snapshot while the writer holds an open transaction.
         OpenContexts(useWal: true, busyTimeoutMilliseconds: 5000);
@@ -108,7 +108,7 @@ public class TransactionLockTests : HandlerTestsBase
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenExclusiveWriteLock_WhenSecondConnectionReads_ThenReadStaysBlockedUntilCommitAsync()
+    public async Task GivenExclusiveWriteLock_WhenSecondConnectionReads_ThenReadStaysBlockedUntilCommit()
     {
         // DELETE journal: an uncommitted writer takes a reserved lock; readers block (unlike WAL).
         OpenContexts(useWal: false, busyTimeoutMilliseconds: 10_000);
@@ -166,7 +166,7 @@ public class TransactionLockTests : HandlerTestsBase
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenExclusiveWriteLock_WhenSecondConnectionWrites_ThenSecondSaveChangesFailsAsync()
+    public async Task GivenExclusiveWriteLock_WhenSecondConnectionWrites_ThenSecondSaveChangesFails()
     {
         // busy_timeout=0 → second writer fails immediately with SQLITE_BUSY instead of waiting.
         OpenContexts(useWal: false, busyTimeoutMilliseconds: 0);

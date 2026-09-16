@@ -51,7 +51,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenCommitsChangesAsync()
+    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenCommitsChanges()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -68,7 +68,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenScopeBehavior_WhenCommandRuns_ThenHandlerSeesAmbientTransactionAsync()
+    public async Task GivenScopeBehavior_WhenCommandRuns_ThenHandlerSeesAmbientTransaction()
     {
         // SQLite does not enlist in TransactionScope; assert the wrapper still flows an ambient transaction.
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.ScopeBehavior);
@@ -80,7 +80,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalScopeBehavior_WhenCommandRuns_ThenHandlerSeesAmbientTransactionAsync()
+    public async Task GivenTransactionalScopeBehavior_WhenCommandRuns_ThenHandlerSeesAmbientTransaction()
     {
         // SQLite does not enlist in TransactionScope; assert the wrapper still flows an ambient transaction.
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalScopeBehavior);
@@ -92,7 +92,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenHandlerFails_ThenRollsBackChangesAsync()
+    public async Task GivenTransactionalBehavior_WhenHandlerFails_ThenRollsBackChanges()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -109,7 +109,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerHasNoPendingEntriesAsync()
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerHasNoPendingEntries()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -132,7 +132,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenKeepsPreCommandTrackedEntriesAsync()
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenKeepsPreCommandTrackedEntries()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var committedName = Guid.NewGuid().ToString("N");
@@ -174,7 +174,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterMutatingTrackedEntities_ThenRestoresPreCommandValuesAsync()
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterMutatingTrackedEntities_ThenRestoresPreCommandValues()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var unchangedName = Guid.NewGuid().ToString("N");
@@ -236,7 +236,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenChangeTrackerKeepsUnchangedEntriesAsync()
+    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenChangeTrackerKeepsUnchangedEntries()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -258,7 +258,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenUnknownTransactionBehavior_WhenCommandSent_ThenThrowsAndDoesNotExecuteHandlerAsync()
+    public async Task GivenUnknownTransactionBehavior_WhenCommandSent_ThenThrowsAndDoesNotExecuteHandler()
     {
         using var host = new SqlitePipelineHost((TransactionBehaviorEnum)99);
         var name = Guid.NewGuid().ToString("N");
@@ -276,7 +276,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehavior_WhenHandlerFailsAfterSave_ThenChangesRemainAsync()
+    public async Task GivenNoBehavior_WhenHandlerFailsAfterSave_ThenChangesRemain()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -294,7 +294,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehavior_WhenHandlerAddsWithoutSave_ThenChangeTrackerKeepsAddedEntriesAsync()
+    public async Task GivenNoBehavior_WhenHandlerAddsWithoutSave_ThenChangeTrackerKeepsAddedEntries()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -316,7 +316,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerKeepsAddedEntriesAsync()
+    public async Task GivenNoBehavior_WhenHandlerFailsAfterAdd_ThenChangeTrackerKeepsAddedEntries()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
         var name = Guid.NewGuid().ToString("N");
@@ -339,7 +339,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenCommandRuns_ThenHandlerSeesEfTransactionAsync()
+    public async Task GivenTransactionalBehavior_WhenCommandRuns_ThenHandlerSeesEfTransaction()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
 
@@ -350,7 +350,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehavior_WhenCommandRuns_ThenHandlerDoesNotSeeEfTransactionAsync()
+    public async Task GivenNoBehavior_WhenCommandRuns_ThenHandlerDoesNotSeeEfTransaction()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
 
@@ -362,7 +362,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenTransactionalBehavior_WhenQueryRuns_ThenDoesNotOpenTransactionAsync()
+    public async Task GivenTransactionalBehavior_WhenQueryRuns_ThenDoesNotOpenTransaction()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
 
@@ -374,7 +374,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehaviorAndSerializableGlobally_WhenExactTransactionRequestsReadCommitted_ThenBeginsWithReadCommittedAsync()
+    public async Task GivenNoBehaviorAndSerializableGlobally_WhenExactTransactionRequestsReadCommitted_ThenBeginsWithReadCommitted()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior, IsolationLevel.Serializable);
 
@@ -391,7 +391,7 @@ public class UnifiedTransactionBehaviorTests
     [TestCase(IsolationLevel.ReadCommitted)]
     [TestCase(IsolationLevel.RepeatableRead)]
     [TestCase(IsolationLevel.Serializable)]
-    public async Task GivenTransactionalBehavior_WhenIsolationLevelConfigured_ThenCommandSucceedsAsync(IsolationLevel isolationLevel)
+    public async Task GivenTransactionalBehavior_WhenIsolationLevelConfigured_ThenCommandSucceeds(IsolationLevel isolationLevel)
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior, isolationLevel);
         var name = Guid.NewGuid().ToString("N");
@@ -411,7 +411,7 @@ public class UnifiedTransactionBehaviorTests
     [Category(TestCategory.INTEGRATION)]
     [TestCase(TransactionBehaviorEnum.TransactionalBehavior)]
     [TestCase(TransactionBehaviorEnum.TransactionalScopeBehavior)]
-    public async Task GivenExecutionStrategy_WhenCancellationRequested_ThenDoesNotCommitAsync(TransactionBehaviorEnum behavior)
+    public async Task GivenExecutionStrategy_WhenCancellationRequested_ThenDoesNotCommit(TransactionBehaviorEnum behavior)
     {
         using var host = new SqlitePipelineHost(behavior);
         var name = Guid.NewGuid().ToString("N");
@@ -430,7 +430,7 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenRetryingStrategy_WhenCommitFailsOnce_ThenRestoresStateAndCommitsOnceAsync()
+    public async Task GivenRetryingStrategy_WhenCommitFailsOnce_ThenRestoresStateAndCommitsOnce()
     {
         using var host = new SqlitePipelineHost(
             TransactionBehaviorEnum.TransactionalBehavior,
