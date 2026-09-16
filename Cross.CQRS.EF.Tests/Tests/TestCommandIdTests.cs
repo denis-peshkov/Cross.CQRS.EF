@@ -68,6 +68,18 @@ public class TestCommandIdTests
 
     [Test]
     [Category(TestCategory.UNIT)]
+    [TestCase(typeof(ExactTransactionReadUncommittedProbeCommand))]
+    [TestCase(typeof(ExactTransactionRepeatableReadProbeCommand))]
+    [TestCase(typeof(ExactTransactionSerializableProbeCommand))]
+    public void GivenExactTransactionIsolationProbeCommand_WhenConstructed_ThenCommandIdIsNotEmpty(Type commandType)
+    {
+        var command = (Command<TransactionSnapshot>)Activator.CreateInstance(commandType)!;
+
+        command.CommandId.Should().NotBe(Guid.Empty);
+    }
+
+    [Test]
+    [Category(TestCategory.UNIT)]
     public void GivenExactTransactionProbeCommand_WhenConstructed_ThenCommandIdIsNotEmpty()
     {
         new ExactTransactionProbeCommand().CommandId.Should().NotBe(Guid.Empty);
