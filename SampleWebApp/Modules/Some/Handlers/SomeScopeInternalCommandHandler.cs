@@ -1,9 +1,9 @@
-namespace SampleWebApp.Modules.Some.Handlers;
+﻿namespace SampleWebApp.Modules.Some.Handlers;
 
 public class SomeScopeInternalCommandHandler : CommandHandler<SomeScopeExternalCommand>
 {
 
-    public SomeScopeInternalCommandHandler(ICommandEventQueueWriter commandEvents, ILogger<SomeScopeExternalCommandHandler> logger)
+    public SomeScopeInternalCommandHandler(ICommandEventQueueWriter commandEvents, ILogger<SomeScopeInternalCommandHandler> logger)
         : base(commandEvents, logger)
     {
     }
