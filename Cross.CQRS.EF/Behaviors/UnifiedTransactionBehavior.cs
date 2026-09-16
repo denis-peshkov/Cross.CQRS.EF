@@ -44,6 +44,7 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         }
 
         var dbContext = _dbContextProvider.Get();
+        var trackedBefore = SnapshotTrackedEntities(dbContext);
 
         try
         {
@@ -57,9 +58,42 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         }
         catch
         {
-            // Failed command must not leave a graph on the scoped DbContext for a later SaveChanges in the same request.
-            dbContext.ChangeTracker.Clear();
+            // Drop this command's graph only; keep Unchanged/pending entries from earlier in the same request scope.
+            RestoreTrackedEntities(dbContext, trackedBefore);
             throw;
+        }
+    }
+
+    private static IReadOnlyDictionary<object, EntityState> SnapshotTrackedEntities(DbContext dbContext)
+    {
+        return dbContext.ChangeTracker.Entries()
+            .ToDictionary(entry => entry.Entity, entry => entry.State, ReferenceEqualityComparer.Instance);
+    }
+
+    private static void RestoreTrackedEntities(DbContext dbContext, IReadOnlyDictionary<object, EntityState> trackedBefore)
+    {
+        foreach (var pair in trackedBefore)
+        {
+            var entry = dbContext.Entry(pair.Key);
+            if (entry.State == pair.Value)
+            {
+                continue;
+            }
+
+            if (entry.State == EntityState.Modified)
+            {
+                entry.CurrentValues.SetValues(entry.OriginalValues);
+            }
+
+            entry.State = pair.Value;
+        }
+
+        foreach (var entry in dbContext.ChangeTracker.Entries().ToList())
+        {
+            if (!trackedBefore.ContainsKey(entry.Entity))
+            {
+                entry.State = EntityState.Detached;
+            }
         }
     }
 

@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **92** коммита · **172** файлов · **+12290 / −713**. Open: C0 H1 M1 L0
+> Дельта: `origin/master...HEAD` — **93** коммита · **174** файлов · **+12302 / −713**. Open: C0 H0 M1 L0
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → 2 открыты в плане (#H19, #M19).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → 1 открыт в плане (#M19).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H19. `ChangeTracker.Clear()` сносит чужой graph на scoped context
-
-`catch` после failed command делает `Clear()` — вместе с failed graph уходят Unchanged/pending сущности, которые были на том же scoped `DbContext` до команды. CR: чистить только command-owned / restore pre-command snapshot. (CR 2026-09-16)
 
 ---
 
@@ -98,6 +94,7 @@
 | ✅ #H20 isolation TestCase | `IsolationCapture.LastStartedIsolationLevel` в parameterized isolation tests |
 | ✅ #H21 event pipeline | `TransactionEventTests` через MediatR; кейс commit-failure не публикует events |
 | ✅ #H22 lock timeout | `WaitAsync(5s)` на lock handshake / observer read (и ignored concurrent tests) |
+| ✅ #H19 tracker restore | `catch` восстанавливает pre-command snapshot; graph упавшей команды Detach, чужой Unchanged/pending остаётся |
 
 ---
 
@@ -113,7 +110,6 @@
 
 ## Приоритет фиксов
 
-1. **H19** — `Clear()` не должен сносить pre-command graph на scoped `DbContext`.
-2. **M19** — `ExecuteAsync(..., cancellationToken)`.
+1. **M19** — `ExecuteAsync(..., cancellationToken)`.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

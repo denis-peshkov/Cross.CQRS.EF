@@ -132,6 +132,48 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenHandlerFailsAfterAdd_ThenKeepsPreCommandTrackedEntriesAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var committedName = Guid.NewGuid().ToString("N");
+        var pendingName = Guid.NewGuid().ToString("N");
+        var failedName = Guid.NewGuid().ToString("N");
+
+        await host.ExecuteAsync(async sp =>
+        {
+            var mediator = sp.GetRequiredService<IMediator>();
+            var dbContext = sp.GetRequiredService<TestDbContext>();
+
+            await mediator.Send(new CreateTestEntityCommand { Name = committedName });
+
+            dbContext.TestEntities.Add(new TestEntity
+            {
+                Name = pendingName,
+                CreatedOn = DateTime.UtcNow
+            });
+
+            var act = () => mediator.Send(new FailingAddWithoutSaveCommand { Name = failedName });
+            await act.Should().ThrowAsync<InvalidOperationException>();
+
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .HaveCount(2);
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.State == EntityState.Unchanged && entry.Entity.Name == committedName);
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .ContainSingle(entry => entry.State == EntityState.Added && entry.Entity.Name == pendingName);
+            dbContext.ChangeTracker.Entries<TestEntity>()
+                .Should()
+                .NotContain(entry => entry.Entity.Name == failedName);
+
+            return 0;
+        });
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenChangeTrackerKeepsUnchangedEntriesAsync()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
