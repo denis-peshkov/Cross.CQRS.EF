@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** [RELEASE-PLAN-9.0.0.md](RELEASE-PLAN-9.0.0.md)
 >
-> Дельта: `origin/master...HEAD` — **15** коммита · **32** файлов · **+495 / −278**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **18** коммита · **32** файлов · **+538 / −284**. Open C/H/M/L пустые.
 
 **CodeRabbit:**
 - `2026-09-16` · pasted finding (TransactionLockTests ~L149) · 1 findings (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.

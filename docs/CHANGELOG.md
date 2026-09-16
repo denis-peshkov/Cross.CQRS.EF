@@ -23,11 +23,11 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ### Tests
 
-- Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS cleanup.
+- Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS; writer `BEGIN EXCLUSIVE` without nested EF transactions.
 
 ### Samples
 
-- `SampleWebApp`: SQLite in-memory EF Core, `SaveChanges` + `[ExactTransaction]`, POST/GET `/somescope`.
+- `SampleWebApp`: SQLite in-memory EF Core, `SaveChanges` + `[ExactTransaction]`, POST/GET `/somescope`; `ImplicitUsings` disabled (`GlobalUsings.cs`).
 
 ### Documentation
 

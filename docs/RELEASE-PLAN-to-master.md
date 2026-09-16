@@ -6,9 +6,9 @@
 > **Legend:** ⬜ open · ✅ done · 🟨 partial · ❌ blocker
 > **Related:** [`BREAKING.md`](BREAKING.md) · [`CHANGELOG.md`](CHANGELOG.md) · [`TO-DO.md`](TO-DO.md)
 > **Updated:** 2026-09-16
-> **HEAD:** `d7a6b5e` · PR [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) → `master` · база `origin/master` = [`v9.0.0`](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.0.0)
+> **HEAD:** `664a8e7` (local, ahead 5 of origin) · PR [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) head `7e37133` → `master` · база `origin/master` = [`v9.0.0`](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.0.0)
 
-**Change summary:** **22** items — ✅ **11** (50%) · 🟨 **4** (18%) · ⬜ **7** (32%) · ❌ **0** (0%)
+**Change summary:** **22** items — ✅ **11** (50%) · 🟨 **5** (23%) · ⬜ **6** (27%) · ❌ **0** (0%)
 
 ---
 
@@ -38,10 +38,10 @@
 
 | # | Item | Status |
 |---|---|---|
-| Q1 | `dotnet build` Release | 🟨 PR #10: `.NET` SUCCESS на более раннем SHA; tip `d7a6b5e` build IN_PROGRESS |
-| Q2 | `dotnet test` Release | 🟨 тот же job; tip ещё не зелёный |
-| Q3 | CI `.NET` green on release branch | 🟨 предыдущий build SUCCESS; tip CI in progress |
-| Q4 | SonarCloud / quality gate | ⬜ after tip CI |
+| Q1 | `dotnet build` Release | 🟨 PR #10 `.NET` SUCCESS на `7e37133`; local tip `664a8e7` ещё не на origin |
+| Q2 | `dotnet test` Release | 🟨 тот же job на `7e37133` |
+| Q3 | CI `.NET` green on release branch | 🟨 PR SHA green; tip CI нет (ahead 5) |
+| Q4 | SonarCloud / quality gate | 🟨 SonarCloud SUCCESS на PR #10 (`7e37133`) |
 | Q5 | SampleWebApp smoke | 🟨 SQLite in-memory + endpoints; placeholder LicenseKey принято (#M21) |
 
 ---
@@ -75,4 +75,4 @@
 | G2 | Publish blockers cleared | ✅ version plan C/H/M/L пустые; H25 = `next-version: 9.2.0` |
 
 - **Date:** 2026-09-16
-- **Notes:** Дельта 15 коммитов vs `origin/master` (`v9.0.0`). Ветка ahead 2 of `origin/release/9.2.0-EF-Core-SourceLink`. Open C/H/M/L пустые.
+- **Notes:** Дельта 18 коммитов vs `origin/master` (`v9.0.0`). Local ahead 5 of `origin/release/9.2.0-EF-Core-SourceLink`. Open C/H/M/L пустые. PR #10 CI green на `7e37133` (CodeQL / Sonar / CodeRabbit / `.NET`).
