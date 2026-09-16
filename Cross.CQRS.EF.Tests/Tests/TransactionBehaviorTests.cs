@@ -1,76 +1,39 @@
 ﻿namespace Cross.CQRS.EF.Tests.Tests;
 
 [TestFixture]
-public class TransactionBehaviorTests : HandlerTestsBase
+public class TransactionBehaviorTests
 {
-    private Mock<ICommandEventQueueWriter> _commandEventsMock;
-
-    [OneTimeSetUp]
-    public override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        _commandEventsMock = new Mock<ICommandEventQueueWriter>();
-    }
-
     [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task TransactionalBehavior_Success_ShouldCommitChanges()
     {
-        // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<CreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var name = Guid.NewGuid().ToString("N");
 
-        // Act
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
-        {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
-            try
-            {
-                await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
-                    .Handle(command, CancellationToken.None);
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+        await host.SendAsync(new CreateTestEntityCommand { Name = name });
 
-        // Assert
-        var entity = await DbContext.TestEntities.FirstOrDefaultAsync(x => x.Name == command.Name);
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == name));
+
         entity.Should().NotBeNull();
-        entity.Name.Should().NotBeNull();
-        entity.Name.Should().Be(command.Name);
+        entity!.Name.Should().Be(name);
     }
 
     [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task TransactionalBehavior_Error_ShouldRollbackChanges()
     {
-        // Arrange
-        var command = new FailingCreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<FailingCreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var name = Guid.NewGuid().ToString("N");
 
-        // Act & Assert
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
-        {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
-            try
-            {
-                var handler = new FailingCreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext);
-                var act = () => handler.Handle(command, CancellationToken.None);
-                await act.Should().ThrowAsync<InvalidOperationException>();
+        var act = () => host.SendAsync(new FailingCreateTestEntityCommand { Name = name });
+        await act.Should().ThrowAsync<InvalidOperationException>();
 
-                await transaction.RollbackAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == name));
 
-        var entity = await DbContext.TestEntities.FirstOrDefaultAsync(x => x.Name == command.Name);
         entity.Should().BeNull();
     }
 
@@ -102,35 +65,24 @@ public class TransactionBehaviorTests : HandlerTestsBase
     }
 
     [Test]
+    [Category(TestCategory.INTEGRATION)]
     [TestCase(IsolationLevel.ReadUncommitted)]
     [TestCase(IsolationLevel.ReadCommitted)]
     [TestCase(IsolationLevel.RepeatableRead)]
     [TestCase(IsolationLevel.Serializable)]
     public async Task DifferentIsolationLevels_Success_ShouldCommitChanges(IsolationLevel isolationLevel)
     {
-        // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<CreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior, isolationLevel);
+        var name = Guid.NewGuid().ToString("N");
 
-        // Act
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
-        {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(isolationLevel.ToDataIsolation());
-            try
-            {
-                await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
-                    .Handle(command, CancellationToken.None);
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+        await host.SendAsync(new CreateTestEntityCommand { Name = name });
 
-        // Assert
-        var entity = await DbContext.TestEntities.FirstOrDefaultAsync(x => x.Name == command.Name);
+        host.IsolationCapture.LastStartedIsolationLevel.Should().Be(isolationLevel.ToDataIsolation());
+
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == name));
+
         entity.Should().NotBeNull();
     }
 }

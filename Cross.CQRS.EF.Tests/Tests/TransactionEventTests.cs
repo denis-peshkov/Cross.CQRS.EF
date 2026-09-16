@@ -1,72 +1,52 @@
 ﻿namespace Cross.CQRS.EF.Tests.Tests;
 
 [TestFixture]
-public class TransactionEventTests : HandlerTestsBase
+public class TransactionEventTests
 {
-    private Mock<ICommandEventQueueWriter> _commandEventsMock;
-
-    [SetUp]
-    public override void Setup()
-    {
-        base.Setup();
-        _commandEventsMock = new Mock<ICommandEventQueueWriter>();
-    }
-
     [Test]
-    public async Task TransactionWithEvents_Success_ShouldPublishEvents()
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenCommandSucceeds_ThenPublishesEventsAsync()
     {
-        // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<CreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var command = new CreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
 
-        // Act
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
-        {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
-            try
-            {
-                await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
-                    .Handle(command, CancellationToken.None);
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+        await host.SendAsync(command);
 
         command.CommandId.Should().NotBe(Guid.Empty);
-        _commandEventsMock.Verify(
-            x => x.Write(It.Is<ICommandEvent>(commandEvent => commandEvent.CommandId == command.CommandId)),
-            Times.Once);
+        host.PublishedEvents.Published.Should().ContainSingle(published => published.CommandId == command.CommandId);
     }
 
     [Test]
-    public async Task TransactionWithEvents_Failure_ShouldNotPublishEvents()
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenHandlerFails_ThenDoesNotPublishEventsAsync()
     {
-        // Arrange
-        var command = new FailingCreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<FailingCreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var command = new FailingCreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
 
-        // Act & Assert
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
-        {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
-            try
-            {
-                var handler = new FailingCreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext);
-                var act = () => handler.Handle(command, CancellationToken.None);
-                await act.Should().ThrowAsync<InvalidOperationException>();
-                await transaction.RollbackAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+        var act = () => host.SendAsync(command);
+        await act.Should().ThrowAsync<InvalidOperationException>();
 
-        _commandEventsMock.Verify(x => x.Write(It.IsAny<ICommandEvent>()), Times.Never);
+        host.PublishedEvents.Published.Should().BeEmpty();
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    public async Task GivenTransactionalBehavior_WhenCommitFails_ThenDoesNotPublishEventsAsync()
+    {
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.TransactionalBehavior);
+        var command = new CreateTestEntityCommand { Name = Guid.NewGuid().ToString("N") };
+        host.CommitFailure.FailNextCommit = true;
+
+        var act = () => host.SendAsync(command);
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("Simulated commit failure");
+
+        host.PublishedEvents.Published.Should().BeEmpty();
+
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == command.Name));
+
+        entity.Should().BeNull();
     }
 }

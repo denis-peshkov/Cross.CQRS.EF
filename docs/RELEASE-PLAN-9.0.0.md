@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **92** коммита · **172** файлов · **+12290 / −713**. Open: C0 H1 M1 L0
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → все закрыты в этом плане; skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → 2 открыты в плане (#H19, #M19).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -22,9 +22,17 @@
 
 ## Высокий (логика / licensing / auth model)
 
+### ⬜ H19. `ChangeTracker.Clear()` сносит чужой graph на scoped context
+
+`catch` после failed command делает `Clear()` — вместе с failed graph уходят Unchanged/pending сущности, которые были на том же scoped `DbContext` до команды. CR: чистить только command-owned / restore pre-command snapshot. (CR 2026-09-16)
+
 ---
 
 ## Средний (противоречия / баги контрактов)
+
+### ⬜ M19. `ExecuteAsync` без CancellationToken
+
+`UnifiedTransactionBehavior`: оба `executionStrategy.ExecuteAsync(...)` без overload с `cancellationToken` — отмена не прерывает retry delay / повтор. (CR 2026-09-16)
 
 ---
 
@@ -87,6 +95,9 @@
 | ✅ #L27 lock TCS | `TransactionLockTests`: TCS handshake; WAL tempfile; observer сравнивает original name, не tracked instance |
 | ✅ #H17 tracker cleanup | `Clear()` только в `catch`; `NoBehavior` не трогает ChangeTracker |
 | ✅ #H18 ExactTransaction isolation | probe оставляет `ReadCommitted`; assert — isolation, с которым EF начал tx, не SQLite-reported |
+| ✅ #H20 isolation TestCase | `IsolationCapture.LastStartedIsolationLevel` в parameterized isolation tests |
+| ✅ #H21 event pipeline | `TransactionEventTests` через MediatR; кейс commit-failure не публикует events |
+| ✅ #H22 lock timeout | `WaitAsync(5s)` на lock handshake / observer read (и ignored concurrent tests) |
 
 ---
 
@@ -101,5 +112,8 @@
 ---
 
 ## Приоритет фиксов
+
+1. **H19** — `Clear()` не должен сносить pre-command graph на scoped `DbContext`.
+2. **M19** — `ExecuteAsync(..., cancellationToken)`.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

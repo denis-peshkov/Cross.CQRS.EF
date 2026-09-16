@@ -107,9 +107,11 @@ public class TransactionLockTests : HandlerTestsBase
 
         try
         {
-            await writeSaved.Task;
+            await writeSaved.Task.WaitAsync(ConcurrentWaitTimeout);
 
-            var readEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
+            var readEntity = await _dbContext2.TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == entity.Id)
+                .WaitAsync(ConcurrentWaitTimeout);
             readEntity.Should().NotBeNull();
             readEntity!.Name.Should().Be(originalName);
         }
@@ -118,10 +120,12 @@ public class TransactionLockTests : HandlerTestsBase
             readFinished.TrySetResult();
         }
 
-        await updateTask;
+        await updateTask.WaitAsync(ConcurrentWaitTimeout);
         completed.Should().BeTrue();
 
-        var updatedEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
+        var updatedEntity = await _dbContext2.TestEntities.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == entity.Id)
+            .WaitAsync(ConcurrentWaitTimeout);
         updatedEntity.Should().NotBeNull();
         updatedEntity!.Name.Should().Be(updateCommand.Name);
     }
@@ -158,7 +162,7 @@ public class TransactionLockTests : HandlerTestsBase
 
         try
         {
-            await writeSaved.Task;
+            await writeSaved.Task.WaitAsync(ConcurrentWaitTimeout);
 
             var readTask = Task.Run(async () =>
             {
@@ -166,7 +170,7 @@ public class TransactionLockTests : HandlerTestsBase
                 return await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
             });
 
-            var timeoutTask = Task.Delay(5000);
+            var timeoutTask = Task.Delay(ConcurrentWaitTimeout);
             var completedTask = await Task.WhenAny(readTask, timeoutTask);
             completedTask.Should().Be(timeoutTask, "Read operation should be blocked");
         }
@@ -175,7 +179,7 @@ public class TransactionLockTests : HandlerTestsBase
             allowCommit.TrySetResult();
         }
 
-        await updateTask;
+        await updateTask.WaitAsync(ConcurrentWaitTimeout);
         completed.Should().BeTrue();
     }
 
@@ -210,7 +214,7 @@ public class TransactionLockTests : HandlerTestsBase
             }
         });
 
-        await firstWriteSaved.Task;
+        await firstWriteSaved.Task.WaitAsync(ConcurrentWaitTimeout);
 
         var updateTask2 = Task.Run(async () =>
         {
@@ -236,14 +240,14 @@ public class TransactionLockTests : HandlerTestsBase
 
         try
         {
-            await updateTask2;
+            await updateTask2.WaitAsync(ConcurrentWaitTimeout);
         }
         finally
         {
             allowFirstCommit.TrySetResult();
         }
 
-        await updateTask1;
+        await updateTask1.WaitAsync(ConcurrentWaitTimeout);
 
         secondUpdateException.Should().BeTrue("Second update should fail due to serialization conflict");
 
@@ -284,7 +288,7 @@ public class TransactionLockTests : HandlerTestsBase
             }
         });
 
-        await firstWriteSaved.Task;
+        await firstWriteSaved.Task.WaitAsync(ConcurrentWaitTimeout);
 
         var updateTask2 = Task.Run(async () =>
         {
@@ -313,14 +317,14 @@ public class TransactionLockTests : HandlerTestsBase
 
         try
         {
-            await updateTask2;
+            await updateTask2.WaitAsync(ConcurrentWaitTimeout);
         }
         finally
         {
             allowFirstCommit.TrySetResult();
         }
 
-        await updateTask1;
+        await updateTask1.WaitAsync(ConcurrentWaitTimeout);
 
         secondUpdateException.Should().BeTrue("Second update should fail due to serialization conflict");
 
@@ -328,6 +332,8 @@ public class TransactionLockTests : HandlerTestsBase
         finalEntity.Name.Should().Be(updateCommand1.Name);
     }
 
+
+    private static readonly TimeSpan ConcurrentWaitTimeout = TimeSpan.FromSeconds(5);
 
     private static TaskCompletionSource CreateSignal()
         => new(TaskCreationOptions.RunContinuationsAsynchronously);

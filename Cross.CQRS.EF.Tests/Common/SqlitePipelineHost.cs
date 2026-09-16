@@ -7,20 +7,28 @@ internal sealed class SqlitePipelineHost : IDisposable
 
     public IsolationCaptureInterceptor IsolationCapture { get; }
 
+    public CommitFailureInterceptor CommitFailure { get; }
+
+    public RecordingTestEventHandler PublishedEvents { get; }
+
     public SqlitePipelineHost(
         TransactionBehaviorEnum behavior = TransactionBehaviorEnum.TransactionalBehavior,
         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
     {
         IsolationCapture = new IsolationCaptureInterceptor();
+        CommitFailure = new CommitFailureInterceptor();
+        PublishedEvents = new RecordingTestEventHandler();
         _keepAlive = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         _keepAlive.Open();
 
         var services = new ServiceCollection();
         services.AddLogging();
+        services.AddSingleton(PublishedEvents);
+        services.AddSingleton<INotificationHandler<TestEvent>>(PublishedEvents);
         services.AddDbContext<TestDbContext>(options =>
         {
             options.UseSqlite(_keepAlive.ConnectionString);
-            options.AddInterceptors(IsolationCapture);
+            options.AddInterceptors(IsolationCapture, CommitFailure);
         });
         services
             .AddCQRS(cfg => cfg.RegisterFromAssemblyContaining<CreateTestEntityCommand>())

@@ -294,6 +294,8 @@ public class UnifiedTransactionBehaviorTests
 
         await host.SendAsync(new CreateTestEntityCommand { Name = name });
 
+        host.IsolationCapture.LastStartedIsolationLevel.Should().Be(isolationLevel.ToDataIsolation());
+
         var entity = await host.ExecuteAsync(sp =>
             sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Name == name));
