@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H4 M6 L4
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H3 M5 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H13. `TransactionLockTests` — shared SQLite connection
-
-Два DbContext делят один `_connection`; CR: named shared-memory connection string, каждый контекст со своим connection. (CR 2026-09-15)
 
 ### ⬜ H14. `TransactionBehaviorTests.DifferentBehaviors_*` всё ещё в обход пайплайна
 
@@ -49,10 +45,6 @@ CR: сверить `docs/BREAKING.md`, `RELEASE-PLAN-9.0.0.md` и `CHANGELOG.md`
 ### ⬜ M13. XML summary `AddEntityFrameworkIntegration` про assemblies
 
 Summary говорит «from the specified assemblies», хотя метод assemblies не принимает. (CR 2026-09-15)
-
-### ⬜ M14. `TransactionLockTests` — observation без `AsNoTracking`
-
-Pre-commit read на `_dbContext2` может кэшировать tracked entity. (CR 2026-09-15)
 
 ### ⬜ M15. `CreateTestEntityCommand.CommandId` всегда `Guid.Empty`
 
@@ -123,6 +115,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #H10 ConfigureAwait(false) | library awaits + `CA2007` убран из `NoWarn` |
 | ✅ #H11 Detach in finally | ChangeTracker cleanup в `finally` после `Get()` |
 | ✅ #H12 EF BeginTransactionAsync | `Database.BeginTransactionAsync(isolation, ct)` вместо raw connection / `UseTransactionAsync` |
+| ✅ #H13 lock tests connections | shared-memory URI; отдельный connection на каждый DbContext |
+| ✅ #M14 lock tests AsNoTracking | observation reads на `_dbContext2` через `AsNoTracking` |
 
 ---
 
@@ -140,7 +134,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 1. **M12** — unknown enum must not swallow the command.
 2. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
-3. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
+3. **L21** — убрать commented JWT; **H14**–**H15** / **M15**–**M17** — tests/sample hygiene.
 4. **M13** / **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

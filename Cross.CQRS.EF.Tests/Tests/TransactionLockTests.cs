@@ -1,19 +1,18 @@
-namespace Cross.CQRS.EF.Tests.Tests;
+﻿namespace Cross.CQRS.EF.Tests.Tests;
 
 public class TransactionLockTests : HandlerTestsBase
 {
     private TestDbContext _dbContext1;
     private TestDbContext _dbContext2;
-    private SqliteConnection _connection;
+    private SqliteConnection _keepAlive;
+    private string _connectionString;
     private Mock<ICommandEventQueueWriter> _commandEventsMock;
     private Mock<ILogger<UpdateTestEntityHandler>> _loggerMock;
-    private string _dbName;
 
     [OneTimeSetUp]
     public override void OneTimeSetUp()
     {
         base.OneTimeSetUp();
-        _dbName = "Filename=:memory:";
 
         _commandEventsMock = new Mock<ICommandEventQueueWriter>();
         _loggerMock = new Mock<ILogger<UpdateTestEntityHandler>>();
@@ -22,31 +21,32 @@ public class TransactionLockTests : HandlerTestsBase
     [SetUp]
     public new void Setup()
     {
-        // Открываем InMemory SQLite connection
-        _connection = new SqliteConnection(_dbName);
-        _connection.Open();
+        // Shared in-memory DB with a dedicated connection per context (SQLite connections are not thread-safe).
+        _connectionString = $"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared";
+        _keepAlive = new SqliteConnection(_connectionString);
+        _keepAlive.Open();
 
-        // Строим контекст с этой connection
-        var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseSqlite(_connection)
-            .EnableSensitiveDataLogging()
-            .Options;
-
-        _dbContext1 = (TestDbContext)Activator.CreateInstance(typeof(TestDbContext), options)!;
-        _dbContext2 = (TestDbContext)Activator.CreateInstance(typeof(TestDbContext), options)!;
-
-        // Важно: создать схему
+        _dbContext1 = CreateContext();
+        _dbContext2 = CreateContext();
         _dbContext1.Database.EnsureCreated();
     }
 
     [TearDown]
     public new void TearDown()
     {
-        _dbContext1.Database.EnsureDeleted();
         _dbContext1?.Dispose();
         _dbContext2?.Dispose();
-        _connection?.Close();
-        _connection?.Dispose();
+        _keepAlive?.Dispose();
+    }
+
+    private TestDbContext CreateContext()
+    {
+        var options = new DbContextOptionsBuilder<TestDbContext>()
+            .UseSqlite(_connectionString)
+            .EnableSensitiveDataLogging()
+            .Options;
+
+        return new TestDbContext(options);
     }
 
     [Test]
@@ -79,7 +79,7 @@ public class TransactionLockTests : HandlerTestsBase
         await Task.Delay(500); // Даем время начать транзакцию обновления
 
         // Assert - проверяем, что чтение не блокируется
-        var readEntity = await _dbContext2.TestEntities.FirstOrDefaultAsync(x => x.Id == entity.Id);
+        var readEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
         readEntity.Should().NotBeNull();
         readEntity.Name.Should().Be(entity.Name); // Должно вернуть старое значение
 
@@ -87,7 +87,7 @@ public class TransactionLockTests : HandlerTestsBase
         completed.Should().BeTrue();
 
         // Проверяем, что изменения применились после завершения транзакции
-        var updatedEntity = await _dbContext2.TestEntities.FirstOrDefaultAsync(x => x.Id == entity.Id);
+        var updatedEntity = await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
         updatedEntity.Name.Should().Be(updateCommand.Name);
     }
 
@@ -125,7 +125,7 @@ public class TransactionLockTests : HandlerTestsBase
         var readTask = Task.Run(async () =>
         {
             using var transaction = await _dbContext2.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead.ToDataIsolation());
-            return await _dbContext2.TestEntities.FirstOrDefaultAsync(x => x.Id == entity.Id);
+            return await _dbContext2.TestEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
         });
 
         var timeoutTask = Task.Delay(5000);
