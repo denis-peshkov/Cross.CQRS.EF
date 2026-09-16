@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H1 M5 L4
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H0 M5 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H16. BREAKING / plan / CHANGELOG расходятся по licensing 9.0.0
-
-CR: сверить `docs/BREAKING.md`, `RELEASE-PLAN-9.0.0.md` и `CHANGELOG.md` с фактической регистрацией (`EfLicenseProductInfo` only vs упоминания behavior/hosted validator). (CR 2026-09-15)
 
 ---
 
@@ -74,7 +70,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 ## Принято (осознанный trade-off)
 
-- Licensing: пакет регистрирует `EfLicenseProductInfo`; своего license pipeline / hosted validator нет.
+- Licensing: пакет регистрирует `EfLicenseProductInfo` (JWT type `Cross_CQRS_EF`).
 - Pagination / `IQueryableFilter` / `QueryableExtensions` убраны из этого пакета — не возвращать без отдельного product decision.
 - SemVer только `GitVersion.yml` (`next-version: 9.0.0`; digits в `release/*` игнорируются).
 - TFMs библиотеки и тестов: `net6.0`–`net10.0` (netstandard в этом пакете нет).
@@ -89,7 +85,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ UnifiedTransactionBehavior | три pipeline-класса → один `UnifiedTransactionBehavior` (order 10); enum значений сохранён |
 | ✅ ExactTransactionAttribute | `ExplicitTransactionAttribute` (opt-out) → `ExactTransactionAttribute(behavior, isolation)` |
 | ✅ Pagination APIs removed | `PaginationQuery*` / models / `QueryableExtensions` / `IQueryableFilter` scan удалены |
-| ✅ EF license SKU | `EfLicenseProductInfo` only. Removed `EfLicenseCheckBehavior` / `EfLicenseHostedValidator` |
+| ✅ EF license SKU | `EfLicenseProductInfo` only (JWT type `Cross_CQRS_EF`) |
 | ✅ TFMs net9/net10 | библиотека и nuspec: net6–net10; EF Core per-TFM |
 | ✅ Tests project | `Cross.CQRS.EF.Tests` + `UnifiedTransactionBehaviorTests` / `SqlitePipelineHost` (MediatR Send) |
 | ✅ slnx + nuspec | `.sln` → `.slnx`; pack `Cross.CQRS.EF/config.nuspec`; `_nuget/` убран |
@@ -111,6 +107,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #M14 lock tests AsNoTracking | observation reads на `_dbContext2` через `AsNoTracking` |
 | ✅ #H14 DifferentBehaviors pipeline | `DifferentBehaviors_*` через `SqlitePipelineHost` / MediatR |
 | ✅ #H15 event tests mock SetUp | `_commandEventsMock` создаётся в `[SetUp]`, не в `OneTimeSetUp` |
+| ✅ #H16 licensing docs | BREAKING / CHANGELOG / plan: только `EfLicenseProductInfo`, без чужого license pipeline |
 
 ---
 
@@ -127,7 +124,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 ## Приоритет фиксов
 
 1. **M12** — unknown enum must not swallow the command.
-2. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
+2. **L24** — CHANGELOG `v9.0.0` не должен выглядеть published до tag.
 3. **L21** — убрать commented JWT; **M15**–**M17** — tests/sample hygiene.
 4. **M13** / **L20** / **L23**.
 
