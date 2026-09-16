@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H3 M5 L4
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H1 M5 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,14 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H14. `TransactionBehaviorTests.DifferentBehaviors_*` всё ещё в обход пайплайна
-
-Несмотря на `UnifiedTransactionBehaviorTests`, старый `TestCase(TransactionBehaviorEnum.*)` по-прежнему вручную открывает транзакцию и вызывает handler. (CR 2026-09-15)
-
-### ⬜ H15. `TransactionEventTests` — mock в `OneTimeSetUp`
-
-`_commandEventsMock` создаётся один раз; assertions `Times.Never` могут течь между тестами. Нужен per-test `[SetUp]`. (CR 2026-09-15)
 
 ### ⬜ H16. BREAKING / plan / CHANGELOG расходятся по licensing 9.0.0
 
@@ -117,6 +109,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #H12 EF BeginTransactionAsync | `Database.BeginTransactionAsync(isolation, ct)` вместо raw connection / `UseTransactionAsync` |
 | ✅ #H13 lock tests connections | shared-memory URI; отдельный connection на каждый DbContext |
 | ✅ #M14 lock tests AsNoTracking | observation reads на `_dbContext2` через `AsNoTracking` |
+| ✅ #H14 DifferentBehaviors pipeline | `DifferentBehaviors_*` через `SqlitePipelineHost` / MediatR |
+| ✅ #H15 event tests mock SetUp | `_commandEventsMock` создаётся в `[SetUp]`, не в `OneTimeSetUp` |
 
 ---
 
@@ -134,7 +128,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 
 1. **M12** — unknown enum must not swallow the command.
 2. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
-3. **L21** — убрать commented JWT; **H14**–**H15** / **M15**–**M17** — tests/sample hygiene.
+3. **L21** — убрать commented JWT; **M15**–**M17** — tests/sample hygiene.
 4. **M13** / **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

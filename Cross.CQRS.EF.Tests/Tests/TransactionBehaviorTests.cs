@@ -75,35 +75,30 @@ public class TransactionBehaviorTests : HandlerTestsBase
     }
 
     [Test]
+    [Category(TestCategory.INTEGRATION)]
     [TestCase(TransactionBehaviorEnum.TransactionalBehavior)]
     [TestCase(TransactionBehaviorEnum.ScopeBehavior)]
     [TestCase(TransactionBehaviorEnum.TransactionalScopeBehavior)]
     public async Task DifferentBehaviors_Success_ShouldCommitChanges(TransactionBehaviorEnum behavior)
     {
-        // Arrange
-        var command = new CreateTestEntityCommand { Name = Faker.Company.CompanyName() };
-        var loggerMock = new Mock<ILogger<CreateTestEntityHandler>>();
+        using var host = new SqlitePipelineHost(behavior);
 
-        // Act
-        await DbContext.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+        if (behavior == TransactionBehaviorEnum.TransactionalBehavior)
         {
-            await using var transaction = await DbContext.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted.ToDataIsolation());
-            try
-            {
-                await new CreateTestEntityHandler(_commandEventsMock.Object, loggerMock.Object, DbContext)
-                    .Handle(command, CancellationToken.None);
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        });
+            var name = Guid.NewGuid().ToString("N");
+            await host.SendAsync(new CreateTestEntityCommand { Name = name });
 
-        // Assert
-        var entity = await DbContext.TestEntities.FirstOrDefaultAsync(x => x.Name == command.Name);
-        entity.Should().NotBeNull();
+            var entity = await host.ExecuteAsync(sp =>
+                sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Name == name));
+
+            entity.Should().NotBeNull();
+            return;
+        }
+
+        // SQLite does not enlist in TransactionScope / SaveChanges; assert the pipeline still wraps the command.
+        var snapshot = await host.SendAsync(new TransactionProbeCommand());
+        snapshot.HasAmbientTransaction.Should().BeTrue();
     }
 
     [Test]

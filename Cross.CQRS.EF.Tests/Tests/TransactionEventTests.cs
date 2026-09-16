@@ -5,11 +5,10 @@ public class TransactionEventTests : HandlerTestsBase
 {
     private Mock<ICommandEventQueueWriter> _commandEventsMock;
 
-    [OneTimeSetUp]
-    public override void OneTimeSetUp()
+    [SetUp]
+    public override void Setup()
     {
-        base.OneTimeSetUp();
-
+        base.Setup();
         _commandEventsMock = new Mock<ICommandEventQueueWriter>();
     }
 
