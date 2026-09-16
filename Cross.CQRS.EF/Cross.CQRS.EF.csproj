@@ -21,18 +21,18 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <MicrosoftEntityFrameworkCoreVersion>8.0.25</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>8.0.25</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreVersion>8.0.31</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>8.0.31</MicrosoftEntityFrameworkCoreRelationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <MicrosoftEntityFrameworkCoreVersion>9.0.14</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>9.0.14</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreVersion>9.0.20</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>9.0.20</MicrosoftEntityFrameworkCoreRelationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <MicrosoftEntityFrameworkCoreVersion>10.0.5</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.5</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreVersion>10.0.12</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>10.0.12</MicrosoftEntityFrameworkCoreRelationalVersion>
   </PropertyGroup>
 
   <ItemGroup>

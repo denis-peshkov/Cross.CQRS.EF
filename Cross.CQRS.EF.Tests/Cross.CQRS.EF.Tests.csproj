@@ -27,26 +27,26 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <MicrosoftDataSqliteVersion>8.0.25</MicrosoftDataSqliteVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>8.0.25</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>8.0.25</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftDataSqliteVersion>8.0.31</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>8.0.31</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>8.0.31</MicrosoftEntityFrameworkCoreSqliteVersion>
     <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <MicrosoftDataSqliteVersion>9.0.14</MicrosoftDataSqliteVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>9.0.14</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>9.0.14</MicrosoftEntityFrameworkCoreSqliteVersion>
-    <MicrosoftExtensionsConfigurationVersion>9.0.14</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftDataSqliteVersion>9.0.20</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>9.0.20</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>9.0.20</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>9.0.20</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <MicrosoftDataSqliteVersion>10.0.5</MicrosoftDataSqliteVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.5</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>10.0.5</MicrosoftEntityFrameworkCoreSqliteVersion>
-    <MicrosoftExtensionsConfigurationVersion>10.0.5</MicrosoftExtensionsConfigurationVersion>
+    <MicrosoftDataSqliteVersion>10.0.12</MicrosoftDataSqliteVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>10.0.12</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>10.0.12</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftExtensionsConfigurationVersion>10.0.12</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftNETTestSdkVersion>18.3.0</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 
