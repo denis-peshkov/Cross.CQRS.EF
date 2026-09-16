@@ -188,7 +188,6 @@ import { Observable } from 'rxjs';
 ## При правках
 
 - новые компоненты: standalone, явный `imports`, обязательный template
-- `private readonly` для DI; `protected` для template API; без `any` в публичных DTO
 - hotspots: `core/` (HTTP, guards, runtime-config, validators), identity/account, checkout/Stripe — не логировать payment data; корректные return URLs
 - публичные routes / API contracts — согласовать с backend и README
 - ключи i18n — синхронизировать все локали
