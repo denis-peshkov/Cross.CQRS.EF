@@ -270,13 +270,15 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
-    public async Task GivenNoBehaviorGlobally_WhenHandlerHasExactTransactionAttribute_ThenOpensEfTransactionAsync()
+    public async Task GivenNoBehaviorAndSerializableGlobally_WhenExactTransactionRequestsReadCommitted_ThenBeginsWithReadCommittedAsync()
     {
-        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);
+        using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior, IsolationLevel.Serializable);
 
         var snapshot = await host.SendAsync(new ExactTransactionProbeCommand());
 
         snapshot.HasEfTransaction.Should().BeTrue();
+        // SQLite reports Serializable on GetDbTransaction(); assert the isolation EF was asked to start.
+        host.IsolationCapture.LastStartedIsolationLevel.Should().Be(System.Data.IsolationLevel.ReadCommitted);
     }
 
     [Test]

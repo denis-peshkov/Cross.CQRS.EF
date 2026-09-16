@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H1 M0 L0
+> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open C/H/M/L пустые.
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → 1 открыт в плане (#H18); skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → все закрыты в этом плане; skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H18. `ExactTransaction` ReadCommitted на SQLite-probe
-
-`ExactTransactionProbeCommandHandler` фиксирует `ReadCommitted`, хост SQLite. Isolation в snapshot/GetDbTransaction на SQLite не отличим от Serializable — exact-level assertion на этом провайдере ложная. (CR 2026-09-16)
 
 ---
 
@@ -90,6 +86,7 @@
 | ✅ #L26 TearDown finally | `HandlerTestsBase`: `EnsureDeleted` null-safe; Dispose в `finally` |
 | ✅ #L27 lock TCS | `TransactionLockTests`: TCS handshake; WAL tempfile; observer сравнивает original name, не tracked instance |
 | ✅ #H17 tracker cleanup | `Clear()` только в `catch`; `NoBehavior` не трогает ChangeTracker |
+| ✅ #H18 ExactTransaction isolation | probe оставляет `ReadCommitted`; assert — isolation, с которым EF начал tx, не SQLite-reported |
 
 ---
 
@@ -104,7 +101,5 @@
 ---
 
 ## Приоритет фиксов
-
-1. **H18** — ExactTransaction probe vs SQLite isolation.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

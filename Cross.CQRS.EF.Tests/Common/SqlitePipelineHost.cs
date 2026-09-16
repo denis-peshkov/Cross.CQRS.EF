@@ -5,16 +5,23 @@ internal sealed class SqlitePipelineHost : IDisposable
     private readonly SqliteConnection _keepAlive;
     private readonly ServiceProvider _provider;
 
+    public IsolationCaptureInterceptor IsolationCapture { get; }
+
     public SqlitePipelineHost(
         TransactionBehaviorEnum behavior = TransactionBehaviorEnum.TransactionalBehavior,
         IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
     {
+        IsolationCapture = new IsolationCaptureInterceptor();
         _keepAlive = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         _keepAlive.Open();
 
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddDbContext<TestDbContext>(options => options.UseSqlite(_keepAlive.ConnectionString));
+        services.AddDbContext<TestDbContext>(options =>
+        {
+            options.UseSqlite(_keepAlive.ConnectionString);
+            options.AddInterceptors(IsolationCapture);
+        });
         services
             .AddCQRS(cfg => cfg.RegisterFromAssemblyContaining<CreateTestEntityCommand>())
             .AddEntityFrameworkIntegration<TestDbContext>(behavior, isolationLevel);
@@ -23,6 +30,7 @@ internal sealed class SqlitePipelineHost : IDisposable
 
         using var scope = _provider.CreateScope();
         scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
+        IsolationCapture.Reset();
     }
 
     public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)

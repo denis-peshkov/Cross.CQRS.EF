@@ -3,6 +3,7 @@
 global using System;
 global using System.Collections.Generic;
 global using System.Data;
+global using System.Data.Common;
 global using System.Globalization;
 global using System.IO;
 global using System.Linq;
@@ -40,6 +41,7 @@ global using FluentAssertions;
 global using MediatR;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
