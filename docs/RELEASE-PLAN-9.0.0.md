@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **93** коммита · **174** файлов · **+12302 / −713**. Open: C0 H0 M1 L0
+> Дельта: `origin/master...HEAD` — **94** коммита · **174** файлов · **+12374 / −713**. Open C/H/M/L пустые.
 
-**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → 1 открыт в плане (#M19).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-105*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 5 findings (0 Critical, 4 Major, 1 Minor) → все закрыты в этом плане.
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -25,10 +25,6 @@
 ---
 
 ## Средний (противоречия / баги контрактов)
-
-### ⬜ M19. `ExecuteAsync` без CancellationToken
-
-`UnifiedTransactionBehavior`: оба `executionStrategy.ExecuteAsync(...)` без overload с `cancellationToken` — отмена не прерывает retry delay / повтор. (CR 2026-09-16)
 
 ---
 
@@ -95,6 +91,7 @@
 | ✅ #H21 event pipeline | `TransactionEventTests` через MediatR; кейс commit-failure не публикует events |
 | ✅ #H22 lock timeout | `WaitAsync(5s)` на lock handshake / observer read (и ignored concurrent tests) |
 | ✅ #H19 tracker restore | `catch` восстанавливает pre-command snapshot; graph упавшей команды Detach, чужой Unchanged/pending остаётся |
+| ✅ #M19 ExecuteAsync CT | оба `executionStrategy.ExecuteAsync` — overload `Func<CancellationToken, Task>` + `cancellationToken` |
 
 ---
 
@@ -109,7 +106,5 @@
 ---
 
 ## Приоритет фиксов
-
-1. **M19** — `ExecuteAsync(..., cancellationToken)`.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).

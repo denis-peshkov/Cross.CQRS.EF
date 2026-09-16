@@ -344,4 +344,25 @@ public class UnifiedTransactionBehaviorTests
 
         entity.Should().NotBeNull();
     }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
+    [TestCase(TransactionBehaviorEnum.TransactionalBehavior)]
+    [TestCase(TransactionBehaviorEnum.TransactionalScopeBehavior)]
+    public async Task GivenExecutionStrategy_WhenCancellationRequested_ThenDoesNotCommitAsync(TransactionBehaviorEnum behavior)
+    {
+        using var host = new SqlitePipelineHost(behavior);
+        var name = Guid.NewGuid().ToString("N");
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+
+        var act = () => host.SendAsync(new CreateTestEntityCommand { Name = name }, cancellation.Token);
+        await act.Should().ThrowAsync<OperationCanceledException>();
+
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == name));
+
+        entity.Should().BeNull();
+    }
 }

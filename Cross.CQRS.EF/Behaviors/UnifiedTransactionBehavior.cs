@@ -103,17 +103,17 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
 
-        await executionStrategy.ExecuteAsync(async () =>
-        {
-            var transaction = await dbContext.Database
-                .BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken)
-                .ConfigureAwait(false);
-            await using (transaction.ConfigureAwait(false))
+        await executionStrategy.ExecuteAsync(async ct =>
             {
-                response = await next().ConfigureAwait(false);
-                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }).ConfigureAwait(false);
+                var transaction = await dbContext.Database
+                    .BeginTransactionAsync(isolationLevel.ToDataIsolation(), ct)
+                    .ConfigureAwait(false);
+                await using (transaction.ConfigureAwait(false))
+                {
+                    response = await next().ConfigureAwait(false);
+                    await transaction.CommitAsync(ct).ConfigureAwait(false);
+                }
+            }, cancellationToken).ConfigureAwait(false);
 
         return response;
     }
@@ -141,18 +141,20 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
 
-        await executionStrategy.ExecuteAsync(async () =>
-        {
-            var transactionOptions = new TransactionOptions
+        await executionStrategy.ExecuteAsync(async ct =>
             {
-                IsolationLevel = isolationLevel,
-                Timeout = TimeSpan.FromSeconds(60)
-            };
+                ct.ThrowIfCancellationRequested();
 
-            using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-            response = await next().ConfigureAwait(false);
-            transactionScope.Complete();
-        }).ConfigureAwait(false);
+                var transactionOptions = new TransactionOptions
+                {
+                    IsolationLevel = isolationLevel,
+                    Timeout = TimeSpan.FromSeconds(60)
+                };
+
+                using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
+                response = await next().ConfigureAwait(false);
+                transactionScope.Complete();
+            }, cancellationToken).ConfigureAwait(false);
 
         return response;
     }
