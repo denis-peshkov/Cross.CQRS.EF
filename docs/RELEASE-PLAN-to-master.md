@@ -17,7 +17,7 @@
 | # | Item | Status |
 |---|---|---|
 | P1 | Target version agreed (GitVersion / tag `vX.Y.Z`) | ✅ GitVersion `MajorMinorPatch` = `9.0.0`; git tag `v9.0.0` нет |
-| P2 | Version plan `docs/RELEASE-PLAN-X.Y.Z.md` filled | ✅ [`RELEASE-PLAN-9.0.0.md`](RELEASE-PLAN-9.0.0.md) (Open C/H/M/L пустые) |
+| P2 | Version plan `docs/RELEASE-PLAN-X.Y.Z.md` filled | ✅ [`RELEASE-PLAN-9.0.0.md`](RELEASE-PLAN-9.0.0.md) (`closed`; Open C/H/M/L пустые) |
 | P3 | `docs/TO-DO.md` — no unexpected C/H blockers | ✅ open C/H/M/L пустые |
 | P4 | Branch policy understood (`CONTRIBUTING.md`) | ✅ stable tags только `master` / `release/*` / `hotfix/*`; `dev` не тегает |
 

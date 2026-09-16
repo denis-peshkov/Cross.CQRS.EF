@@ -1,6 +1,6 @@
 ﻿Ниже — **проблемы внутри библиотеки**, по уровню критичности. Аудит по дельте ветки относительно базовой ветки (обычно `master`).
 
-> **Версия:** `9.0.0` · **ветка:** `release/9.0.0-Transaction-Configuration-and-Behavior-Refactor` · **база:** `origin/master` (`v8.4.1`) · **дата:** `2026-09-16`
+> **Версия:** `9.0.0` (closed) · **ветка:** `release/9.0.0-Transaction-Configuration-and-Behavior-Refactor` · **база:** `origin/master` (`v8.4.1`) · **дата:** `2026-09-16`
 >
 > **Релиз (если есть):** https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.0.0
 >
@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **98** коммита · **176** файлов · **+12577 / −713**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **99** коммита · **176** файлов · **+12594 / −713**. Open C/H/M/L пустые (план закрыт).
 
 **CodeRabbit:**
 - `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → все закрыты в этом плане.
@@ -112,4 +112,4 @@
 
 ## Приоритет фиксов
 
-Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
+_(пусто — релиз `9.0.0` опубликован; открытый backlog → [`TO-DO.md`](TO-DO.md).)_
