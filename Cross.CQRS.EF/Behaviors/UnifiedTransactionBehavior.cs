@@ -1,4 +1,4 @@
-namespace Cross.CQRS.EF.Behaviors;
+﻿namespace Cross.CQRS.EF.Behaviors;
 
 internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class, IRequest<TResponse>
@@ -18,7 +18,7 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
     {
         if (request is not ICommand<TResponse>)
         {
-            return await next();
+            return await next().ConfigureAwait(false);
         }
 
         var behavior = _options.Value.Behavior;
@@ -42,12 +42,12 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         var response = behavior switch
         {
-            TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken),
-            TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel),
-            TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken),
+            TransactionBehaviorEnum.TransactionalBehavior => await HandleTransactionalBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
+            TransactionBehaviorEnum.ScopeBehavior => await HandleScopeBehaviorAsync(next, isolationLevel).ConfigureAwait(false),
+            TransactionBehaviorEnum.TransactionalScopeBehavior => await HandleTransactionalScopeBehaviorAsync(next, isolationLevel, dbContext, cancellationToken).ConfigureAwait(false),
             TransactionBehaviorEnum.NoBehavior =>
                 // Skip behavior if not correspond the TransactionBehaviorEnum or not set.
-                await next(),
+                await next().ConfigureAwait(false),
             _ => default
         };
 
@@ -71,14 +71,18 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
 
         await executionStrategy.ExecuteAsync(async () =>
         {
-            await dbContext.Database.OpenConnectionAsync(cancellationToken);
-            await using var transaction = await dbContext.Database
+            await dbContext.Database.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            var transaction = await dbContext.Database
                 .GetDbConnection()
-                .BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken);
-            await dbContext.Database.UseTransactionAsync(transaction, cancellationToken);
-            response = await next();
-            await transaction.CommitAsync(cancellationToken);
-        });
+                .BeginTransactionAsync(isolationLevel.ToDataIsolation(), cancellationToken)
+                .ConfigureAwait(false);
+            await using (transaction.ConfigureAwait(false))
+            {
+                await dbContext.Database.UseTransactionAsync(transaction, cancellationToken).ConfigureAwait(false);
+                response = await next().ConfigureAwait(false);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }).ConfigureAwait(false);
 
         return response;
     }
@@ -94,7 +98,7 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
         };
 
         using var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-        response = await next();
+        response = await next().ConfigureAwait(false);
         scope.Complete();
 
         return response;
@@ -115,9 +119,9 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
             };
 
             using var transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions, TransactionScopeAsyncFlowOption.Enabled);
-            response = await next();
+            response = await next().ConfigureAwait(false);
             transactionScope.Complete();
-        });
+        }).ConfigureAwait(false);
 
         return response;
     }

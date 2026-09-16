@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H7 M6 L4
+> Дельта: `origin/master...HEAD` — **69** коммита · **168** файлов · **+11994 / −708**. Open: C0 H6 M6 L4
 
 **CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
 
@@ -21,10 +21,6 @@
 ---
 
 ## Высокий (логика / licensing / auth model)
-
-### ⬜ H10. `CA2007` в `NoWarn` библиотеки
-
-В `Cross.CQRS.EF.csproj` `CA2007` подавлен; library awaits без `ConfigureAwait(false)`. CR: убрать NoWarn и добавить `ConfigureAwait(false)` в библиотечном коде. (CR 2026-09-15)
 
 ### ⬜ H11. Detach ChangeTracker не в `finally`
 
@@ -132,6 +128,7 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 | ✅ #L25 to-master без H8 gates | Q1/Q2/Q5/N1/G2 без ссылок на закрытый H8; B2 = PR #9 |
 | ✅ #H9 isolation defaults | `TransactionBehaviorOptions.IsolationLevel` = `Serializable` (как у extension / `ExactTransaction`) |
 | ✅ #L22 behavior defaults | `TransactionBehaviorOptions.Behavior` = `TransactionalBehavior` (как у extension) |
+| ✅ #H10 ConfigureAwait(false) | library awaits + `CA2007` убран из `NoWarn` |
 
 ---
 
@@ -148,9 +145,8 @@ README всё ещё про «.NET 8 from version 8.0» и не описывае
 ## Приоритет фиксов
 
 1. **H11** / **H12** / **M12** — transaction behavior correctness (finally, BeginTransactionAsync, unknown enum).
-2. **H10** — CA2007 / ConfigureAwait в library.
-3. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
-4. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
-5. **M13** / **L20** / **L23**.
+2. **H16** / **L24** — docs consistency (BREAKING/CHANGELOG).
+3. **L21** — убрать commented JWT; **H13**–**H15** / **M14**–**M17** — tests/sample hygiene.
+4. **M13** / **L20** / **L23**.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
