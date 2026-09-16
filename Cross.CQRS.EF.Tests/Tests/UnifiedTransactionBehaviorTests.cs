@@ -133,6 +133,24 @@ public class UnifiedTransactionBehaviorTests
 
     [Test]
     [Category(TestCategory.INTEGRATION)]
+    public async Task GivenUnknownTransactionBehavior_WhenCommandSent_ThenThrowsAndDoesNotExecuteHandlerAsync()
+    {
+        using var host = new SqlitePipelineHost((TransactionBehaviorEnum)99);
+        var name = Guid.NewGuid().ToString("N");
+
+        var act = () => host.SendAsync(new CreateTestEntityCommand { Name = name });
+        await act.Should().ThrowAsync<ArgumentOutOfRangeException>()
+            .WithParameterName("behavior");
+
+        var entity = await host.ExecuteAsync(sp =>
+            sp.GetRequiredService<TestDbContext>().TestEntities.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Name == name));
+
+        entity.Should().BeNull();
+    }
+
+    [Test]
+    [Category(TestCategory.INTEGRATION)]
     public async Task GivenNoBehavior_WhenHandlerFailsAfterSave_ThenChangesRemainAsync()
     {
         using var host = new SqlitePipelineHost(TransactionBehaviorEnum.NoBehavior);

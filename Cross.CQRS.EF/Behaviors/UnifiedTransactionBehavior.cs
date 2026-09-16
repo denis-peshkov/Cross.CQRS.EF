@@ -50,7 +50,7 @@ internal sealed class UnifiedTransactionBehavior<TRequest, TResponse> : IPipelin
                 TransactionBehaviorEnum.NoBehavior =>
                     // Skip behavior if not correspond the TransactionBehaviorEnum or not set.
                     await next().ConfigureAwait(false),
-                _ => default
+                _ => throw new ArgumentOutOfRangeException(nameof(behavior), behavior, null)
             };
         }
         finally
