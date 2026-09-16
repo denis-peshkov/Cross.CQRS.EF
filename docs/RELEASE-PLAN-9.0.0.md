@@ -8,9 +8,9 @@
 >
 > **Предыдущий план:** —
 >
-> Дельта: `origin/master...HEAD` — **80** коммита · **168** файлов · **+11983 / −708**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **87** коммита · **169** файлов · **+12000 / −713**. Open: C0 H2 M1 L2
 
-**CodeRabbit:** `2026-09-15` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260915-174*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 16 findings (0 Critical, 9 Major, 7 Minor) → 14 открыты в плане (#H10–#H16, #M13–#M17, #L24–#L25); skipped 2 (dup #M12, #L21).
+**CodeRabbit:** `2026-09-16` · logs `.cursor/skills/coderabbit/.cache/cr-*-20260916-0949*.jsonl` (dirs: `Cross.CQRS.EF`, `Cross.CQRS.EF.Tests`, `SampleWebApp`, `docs`) · 9 findings (0 Critical, 5 Major, 4 Minor) → 5 открыты в плане (#H17, #H18, #M18, #L26, #L27); skipped 3 (dup #L21 JWT, CHANGELOG dated-by-design, header rewritten this turn).
 
 **PR:** [#9](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/9) (`BREAKING:` Unify EF transaction behavior and ship Cross.CQRS.EF 9.0.0).
 
@@ -22,13 +22,33 @@
 
 ## Высокий (логика / licensing / auth model)
 
+### ⬜ H17. ChangeTracker cleanup всегда, в т.ч. success / `NoBehavior`
+
+`finally` после `Get()` снимает Added/Modified/Deleted даже после успешного commit и при `NoBehavior`. CR: чистить только после сбоя транзакции; для `NoBehavior` не трогать tracker; на failure — `ChangeTracker.Clear()`, не фильтр по state. (CR 2026-09-16)
+
+### ⬜ H18. `ExactTransaction` ReadCommitted на SQLite-probe
+
+`ExactTransactionProbeCommandHandler` фиксирует `ReadCommitted`, хост SQLite. Isolation в snapshot/GetDbTransaction на SQLite не отличим от Serializable — exact-level assertion на этом провайдере ложная. (CR 2026-09-16)
+
 ---
 
 ## Средний (противоречия / баги контрактов)
 
+### ⬜ M18. Остальные test-команды с `CommandId` = `Empty`
+
+После #M15/#M16 тот же getter без `Guid.NewGuid()` / без `: Command` у `UpdateTestEntityCommand`, `FailingCreateTestEntityCommand`, `FailingAddWithoutSaveCommand`, `ExactTransactionProbeCommand`, `TransactionProbeCommand`; у `TransactionProbeQuery` — `QueryId`. (CR 2026-09-16)
+
 ---
 
 ## Низкий (техдолг / несогласованности)
+
+### ⬜ L26. `HandlerTestsBase.TearDown` без защиты partial setup
+
+`EnsureDeleted()` без null-check; `Dispose` не в `finally` — при исключении cleanup соединения может не выполниться. (CR 2026-09-16)
+
+### ⬜ L27. Lock-тесты на `Task.Delay`
+
+`TransactionLockTests` синхронизирует concurrent update/read через фиксированные delay (500/2000 ms), не через `TaskCompletionSource`. Гонка на медленной машине. (CR 2026-09-16)
 
 ---
 
@@ -96,5 +116,10 @@
 ---
 
 ## Приоритет фиксов
+
+1. **H17** — ChangeTracker cleanup не должен сносить graph после success / `NoBehavior`.
+2. **H18** — ExactTransaction probe vs SQLite isolation.
+3. **M18** — оставшиеся test CommandId/QueryId.
+4. **L26** / **L27** — teardown и lock-test sync.
 
 Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
