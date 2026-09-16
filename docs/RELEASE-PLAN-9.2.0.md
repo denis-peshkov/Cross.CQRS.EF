@@ -1,6 +1,6 @@
 ﻿Ниже — **проблемы внутри библиотеки**, по уровню критичности. Аудит по дельте ветки относительно базовой ветки (обычно `master`).
 
-> **Версия:** `9.2.0` · **ветка:** `release/9.2.0-EF-Core-SourceLink` · **база:** `origin/master` (`v9.0.0`) · **дата:** `2026-09-16`
+> **Версия:** `9.2.0` (closed) · **ветка:** `release/9.2.0-EF-Core-SourceLink` · **база:** `origin/master` (`v9.0.0`) · **дата:** `2026-09-16`
 >
 > **Релиз (если есть):** https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.2.0
 >
@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** [RELEASE-PLAN-9.0.0.md](RELEASE-PLAN-9.0.0.md)
 >
-> Дельта: `origin/master...HEAD` — **18** коммита · **32** файлов · **+538 / −284**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **19** коммита · **32** файлов · **+538 / −284**. Open C/H/M/L пустые (план закрыт).
 
 **CodeRabbit:**
 - `2026-09-16` · pasted finding (TransactionLockTests ~L149) · 1 findings (0 Critical, 0 Major, 1 Minor) → все закрыты в этом плане.
@@ -78,4 +78,4 @@
 
 ## Приоритет фиксов
 
-Открытый backlog вне этой дельты: [`TO-DO.md`](TO-DO.md).
+_(пусто — релиз `9.2.0` опубликован; открытый backlog → [`TO-DO.md`](TO-DO.md).)_
