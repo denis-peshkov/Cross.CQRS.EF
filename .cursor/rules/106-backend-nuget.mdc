@@ -1,0 +1,31 @@
+---
+description: NuGet pack — multi-targeting, nuspec, BREAKING и CHANGELOG
+globs:
+  - "**/*.nuspec"
+  - "**/*.csproj"
+  - "**/*.sln"
+  - "**/*.slnx"
+  - "**/docs/BREAKING.md"
+  - "**/docs/CHANGELOG.md"
+  - "**/README.md"
+alwaysApply: false
+---
+
+# NuGet packaging и multi-targeting
+
+## Target frameworks
+
+- `TargetFrameworks` библиотеки совпадают с группами `lib\` и `<dependencies>` в `config.nuspec`.
+- Per-TFM версии PackageReference в `.csproj` совпадают с nuspec (core CQRS, EF Core, Relational, Hosting abstractions и прочие объявленные зависимости).
+- Test TFMs держать выровненными с библиотекой; TFM-specific polyfills — только пока нужны.
+
+## Pack assets
+
+- Pack включает Release binaries и документированные assets (README / icon / LICENSE по pack flow).
+- Не возвращать удалённые public APIs без явного product decision и синхронизации docs/nuspec.
+
+## Consumer docs
+
+- Breaking для NuGet consumers → `docs/BREAKING.md`; PR title с префиксом `BREAKING:` при необходимости.
+- Обновлять `docs/CHANGELOG.md`; `config.nuspec` `releaseNotes` — краткое summary + ссылки, не полный дубликат CHANGELOG.
+- XML docs / remarks на public host-facing API должны соответствовать фактическому поведению (без stale ссылок на removed APIs / wrong orders).

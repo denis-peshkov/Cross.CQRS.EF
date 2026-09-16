@@ -1,0 +1,35 @@
+---
+description: Формат ответа агента — имена EN, commit EN, i18n для пользователя
+alwaysApply: true
+---
+
+# Формат ответа агента
+
+Не стиль конкретного языка (отступ, кавычки, декораторы). Это что агент пишет в генерируемом коде и в commit message.
+
+## Variable and method naming
+
+- идентификаторы на английском
+- смысл в имени, без аббревиатур
+
+```
+// ❌ v, id, tmp
+// ✅ vacancy, vacancyId
+```
+
+## Code formatting
+
+- строки, которые видит пользователь, — через переводы/i18n, не хардкод в коде
+- технические логи — на английском
+
+## Git commit messages
+
+- на английском
+- что изменилось и зачем
+
+```
+Add vacancy ID passing via routing
+
+- Extended Vacancy interface for detail page
+- Updated vacancy.component to fetch data by ID
+```
