@@ -25,13 +25,14 @@ description: >-
 | Head | current branch, or `branch <name>` if given |
 | Language | English (GitHub-facing) |
 | Output | title + full body in one markdown block; do **not** open the PR unless asked |
+| Shell | always `required_permissions: ["all"]` (no sandbox) for every Shell call in this skill — git/gh, secret scan, `dotnet build`, `dotnet test` |
 
 ## Workflow
 
 ### Phase 1 — Context
 
 1. Read `.github/PULL_REQUEST_TEMPLATE.md` (source of truth for section order and wording).
-2. Resolve `BASE` / `HEAD`:
+2. Resolve `BASE` / `HEAD` (Shell with `required_permissions: ["all"]`):
 
 ```bash
 git rev-parse --abbrev-ref HEAD
@@ -42,7 +43,7 @@ git diff --name-status "$BASE...$HEAD"
 git diff --shortstat "$BASE...$HEAD"
 ```
 
-3. Optional: `gh pr list --head "$HEAD" --json number,url,baseRefName` — if a PR already exists, say so and still draft/update the body text.
+3. Optional: `gh pr list --head "$HEAD" --json number,url,baseRefName` — if a PR already exists, say so and still draft/update the body text (same full permissions).
 4. Skim delta hotspots (library API, tests, SampleWebApp, docs/BREAKING, LICENSE/secrets).
 
 ### Phase 2 — Draft body
@@ -64,6 +65,8 @@ Fill **every** template section. Keep HTML comments out of the user-facing draft
 
 Run checks that are cheap and conclusive. **Do not** mark a box unless evidence exists in this turn. On failure/skip → leave `[ ]` and note why under Risks or after the draft.
 
+**Shell:** every command below — always with `required_permissions: ["all"]`. Do not run `dotnet build` / `dotnet test` in the sandbox (SQLite lock / testhost can hang).
+
 #### Test plan
 
 | Box | Auto `[x]` when |
@@ -72,7 +75,7 @@ Run checks that are cheap and conclusive. **Do not** mark a box unless evidence 
 | `dotnet build Cross.CQRS.EF.slnx` — green locally | Command succeeds in this turn |
 | `dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj` — green locally | Command succeeds in this turn (prefer all TFMs; at least one TFM if time-constrained — note partial) |
 
-Preferred commands:
+Preferred commands (full permissions):
 
 ```bash
 dotnet build Cross.CQRS.EF.slnx
@@ -98,10 +101,19 @@ dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj
 
 ### Phase 4 — Reply
 
-1. Propose **Title** on its own line.
-2. Paste the full **Body** as one markdown block (copy-paste ready).
+1. **Title** — alone in a fenced markdown code block (copy-paste ready), same as body:
+
+````markdown
+```text
+Prepare 9.2.0: …
+```
+````
+
+2. **Body** — full template in one fenced markdown code block (copy-paste ready).
 3. One short line: base←head, which boxes were auto-checked, which left unchecked (and blockers if build/test failed).
 4. **Do not** `gh pr create` / push unless the user explicitly asks.
+
+Do **not** put the title only as plain prose outside a fence — both title and body must be easy to select/copy.
 
 ## Quality bar
 
@@ -110,3 +122,5 @@ dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj
 - [ ] Scope numbers match `git diff --shortstat`
 - [ ] No `[x]` without evidence from this turn
 - [ ] Did not create the GitHub PR unless asked
+- [ ] Title and body each in their own copy-paste fenced block
+- [ ] All Shell calls used `required_permissions: ["all"]` (no sandbox for build/test)
