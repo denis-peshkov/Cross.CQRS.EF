@@ -256,7 +256,7 @@ ${rules}
 
 Return ONLY a single JSON object (no markdown prose) with this schema:
 {
-  "category": "feature|bug|enhancement|security|docs|chore|question",
+  "category": "feature|bug|enhancement|security|docs|chore",
   "priority": "critical|high|medium|low",
   "confidence": <integer 0-100>,
   "summary": "<2-4 sentences English: what the PR does and triage takeaway>",

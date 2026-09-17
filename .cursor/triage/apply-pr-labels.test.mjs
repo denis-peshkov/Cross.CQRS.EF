@@ -14,6 +14,7 @@ describe('normalizeCategoryLabel', () => {
   it('accepts known categories', () => {
     assert.equal(normalizeCategoryLabel('Enhancement'), 'enhancement');
     assert.equal(normalizeCategoryLabel('bug'), 'bug');
+    assert.equal(normalizeCategoryLabel('docs'), 'docs');
   });
 
   it('rejects unknown', () => {
