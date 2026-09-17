@@ -25,14 +25,14 @@ description: >-
 | Head | current branch, or `branch <name>` if given |
 | Language | English (GitHub-facing) |
 | Output | title + full body in one markdown block; do **not** open the PR unless asked |
-| Shell | always `required_permissions: ["all"]` (no sandbox) for every Shell call in this skill — git/gh, secret scan, `dotnet build`, `dotnet test` |
+| Shell | least privilege: default sandbox; elevate only when needed (`network` / `full_network` / `git_write` / `all`), smallest scope |
 
 ## Workflow
 
 ### Phase 1 — Context
 
 1. Read `.github/PULL_REQUEST_TEMPLATE.md` (source of truth for section order and wording).
-2. Resolve `BASE` / `HEAD` (Shell with `required_permissions: ["all"]`):
+2. Resolve `BASE` / `HEAD`. Local `git` read/diff — sandbox. `git fetch` / `gh` — request `network` or `full_network` (smallest that works); do **not** use `all` unless those fail for a concrete sandbox reason:
 
 ```bash
 git rev-parse --abbrev-ref HEAD
@@ -43,7 +43,7 @@ git diff --name-status "$BASE...$HEAD"
 git diff --shortstat "$BASE...$HEAD"
 ```
 
-3. Optional: `gh pr list --head "$HEAD" --json number,url,baseRefName` — if a PR already exists, say so and still draft/update the body text (same full permissions).
+3. Optional: `gh pr list --head "$HEAD" --json number,url,baseRefName` — if a PR already exists, say so and still draft/update the body text (`network` / `full_network` as needed).
 4. Skim delta hotspots (library API, tests, SampleWebApp, docs/BREAKING, LICENSE/secrets).
 
 ### Phase 2 — Draft body
@@ -65,21 +65,21 @@ Fill **every** template section. Keep HTML comments out of the user-facing draft
 
 Run checks that are cheap and conclusive. **Do not** mark a box unless evidence exists in this turn. On failure/skip → leave `[ ]` and note why under Risks or after the draft.
 
-**Shell:** every command below — always with `required_permissions: ["all"]`. Do not run `dotnet build` / `dotnet test` in the sandbox (SQLite lock / testhost can hang).
+**Shell:** `dotnet build` / `dotnet test` — **sandbox** (no elevated permissions). Secret-scan / local `git diff` — sandbox. Elevate only for commands that need it (`gh`, `git fetch` → `network` / `full_network`; git writes → `git_write`). Use `all` only after a smaller scope fails for a documented sandbox reason.
 
 #### Test plan
 
 | Box | Auto `[x]` when |
 |---|---|
 | New or updated tests cover the changed behavior | Diff touches `**/*Tests*` / `**/*Test*` with meaningful test changes **or** production change is docs/rules-only (then still `[x]` only if no behavior change — otherwise leave `[ ]` if prod code changed without tests) |
-| `dotnet build Cross.CQRS.EF.slnx` — green locally | Command succeeds in this turn |
-| `dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj` — green locally | Command succeeds in this turn (prefer all TFMs; at least one TFM if time-constrained — note partial) |
+| `dotnet build Cross.CQRS.slnx` — green locally | Command succeeds in this turn |
+| `dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj` — green locally | Command succeeds in this turn (prefer all TFMs; at least one TFM if time-constrained — note partial) |
 
-Preferred commands (full permissions):
+Preferred commands (sandbox):
 
 ```bash
-dotnet build Cross.CQRS.EF.slnx
-dotnet test Cross.CQRS.EF.Tests/Cross.CQRS.EF.Tests.csproj
+dotnet build Cross.CQRS.slnx
+dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj
 ```
 
 #### Checklist
@@ -123,4 +123,4 @@ Do **not** put the title only as plain prose outside a fence — both title and 
 - [ ] No `[x]` without evidence from this turn
 - [ ] Did not create the GitHub PR unless asked
 - [ ] Title and body each in their own copy-paste fenced block
-- [ ] All Shell calls used `required_permissions: ["all"]` (no sandbox for build/test)
+- [ ] Shell least privilege: sandbox for `dotnet build` / `dotnet test` and local reads; elevated only when required, smallest scope

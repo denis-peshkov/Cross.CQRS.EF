@@ -51,7 +51,7 @@
 | # | Item | Status |
 |---|---|---|
 | N1 | `config.nuspec` metadata | ✅ TFMs/deps EF bump; releaseNotes = ссылки (#L29) |
-| N2 | Secrets `NUGET_API_KEY`, `TAGTOKEN` | ⬜ проверить перед publish |
+| N2 | Secret `TAGTOKEN` | ⬜ проверить перед publish |
 | N3 | Tag + NuGet push from CI | ⬜ нет `v9.2.0` |
 | N4 | GitHub Release notes | ⬜ для `v9.2.0` |
 
