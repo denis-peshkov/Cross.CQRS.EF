@@ -1,6 +1,6 @@
 ﻿namespace SampleWebApp.Modules.Some.Handlers;
 
-public class SomeQuery : Query<IEnumerable<string>>
+public sealed record SomeQuery : Query<IEnumerable<string>>
 {
     public SomeQuery()
     {

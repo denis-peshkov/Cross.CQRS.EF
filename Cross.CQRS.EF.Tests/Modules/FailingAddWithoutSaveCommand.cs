@@ -1,6 +1,6 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class FailingAddWithoutSaveCommand : Command
+public sealed record FailingAddWithoutSaveCommand : Command
 {
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

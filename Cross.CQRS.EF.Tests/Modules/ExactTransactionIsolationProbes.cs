@@ -1,6 +1,6 @@
-namespace Cross.CQRS.EF.Tests.Modules;
+﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public sealed class ExactTransactionReadUncommittedProbeCommand : Command<TransactionSnapshot>
+public sealed record ExactTransactionReadUncommittedProbeCommand : Command<TransactionSnapshot>
 {
 }
 
@@ -25,7 +25,7 @@ public sealed class ExactTransactionReadUncommittedProbeCommandHandler
         => Task.FromResult(TransactionSnapshotFactory.Capture(_dbContext));
 }
 
-public sealed class ExactTransactionRepeatableReadProbeCommand : Command<TransactionSnapshot>
+public sealed record ExactTransactionRepeatableReadProbeCommand : Command<TransactionSnapshot>
 {
 }
 
@@ -50,7 +50,7 @@ public sealed class ExactTransactionRepeatableReadProbeCommandHandler
         => Task.FromResult(TransactionSnapshotFactory.Capture(_dbContext));
 }
 
-public sealed class ExactTransactionSerializableProbeCommand : Command<TransactionSnapshot>
+public sealed record ExactTransactionSerializableProbeCommand : Command<TransactionSnapshot>
 {
 }
 

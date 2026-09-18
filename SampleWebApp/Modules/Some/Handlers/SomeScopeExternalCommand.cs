@@ -1,6 +1,6 @@
 ﻿namespace SampleWebApp.Modules.Some.Handlers;
 
-public class SomeScopeExternalCommand : Command
+public sealed record SomeScopeExternalCommand : Command
 {
     public SomeScopeExternalCommand()
     {

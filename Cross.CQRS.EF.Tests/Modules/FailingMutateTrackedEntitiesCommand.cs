@@ -1,5 +1,5 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class FailingMutateTrackedEntitiesCommand : Command
+public sealed record FailingMutateTrackedEntitiesCommand : Command
 {
 }
