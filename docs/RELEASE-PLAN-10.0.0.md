@@ -1,6 +1,6 @@
 ﻿Ниже — **проблемы внутри библиотеки**, по уровню критичности. Аудит по дельте ветки относительно базовой ветки (обычно `master`).
 
-> **Версия:** `10.0.0` · **ветка:** `release/nuspec-CrossCQRS-align` · **база:** `origin/master` (`v9.2.2`) · **дата:** `2026-09-18`
+> **Версия:** `10.0.0` (closed) · **ветка:** `release/nuspec-CrossCQRS-align` · **база:** `origin/master` (`v9.2.2`) · **дата:** `2026-09-18`
 >
 > **Релиз (если есть):** https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v10.0.0
 >
@@ -8,7 +8,7 @@
 >
 > **Предыдущий план:** [RELEASE-PLAN-9.2.2.md](RELEASE-PLAN-9.2.2.md)
 >
-> Дельта: `origin/master...HEAD` — **2** коммита · **35** файлов · **+384 / −88**. Open C/H/M/L пустые.
+> Дельта: `origin/master...HEAD` — **3** коммита · **37** файлов · **+417 / −89**. Open C/H/M/L пустые (план закрыт).
 
 **CodeRabbit:**
 - не запускался.
@@ -69,6 +69,4 @@
 
 ## Приоритет фиксов
 
-1. Локальный `dotnet build` / `dotnet test` перед publish.
-2. Tag `v10.0.0` + NuGet push (OIDC) + GitHub Release.
-3. Кросс-версионный backlog: [`TO-DO.md`](TO-DO.md).
+_(пусто — релиз `10.0.0` опубликован; открытый backlog → [`TO-DO.md`](TO-DO.md).)_

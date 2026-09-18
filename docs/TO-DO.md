@@ -45,3 +45,4 @@
 - `SkipNetCoreApp31Tests` в agent skills — только если свойство объявлено в test csproj.
 - Планируемый unpublished `9.3.0` (nuspec align) свёрнут в major `10.0.0` (Cross.CQRS **11.3.1**); отдельного `RELEASE-PLAN-9.3.0` нет.
 - SampleWebApp / Tests: `sealed record` для commands/queries/events — host style, не контракт NuGet.
+- Consumer major при bump Cross.CQRS floor с секцией BREAKING (как `9.2.2` → `10.0.0`, Cross.CQRS **11.3.1**).
