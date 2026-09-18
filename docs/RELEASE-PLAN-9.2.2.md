@@ -38,7 +38,7 @@
 - NuGet push с `master` / `release/*` / `hotfix/*` / `dev` — OIDC `NuGet/login`, не secret `NUGET_API_KEY`.
 - Снимок GitHub labels в `.github/LABELS.yml` + `.github/LABELS.md` — репозиторий, не пакет.
 - Maintainer kit (`.cursor` triage / `pr-message`) — не NuGet.
-- `Cross.CQRS` PackageReference `11.2.0` без секции `BREAKING.md` (нет смены public API этого пакета); расхождение nuspec → закрыто в `9.3.0` #H26.
+- `Cross.CQRS` PackageReference `11.2.0` без секции `BREAKING.md` (нет смены public API этого пакета); nuspec groups ещё `11.1.2` (расхождение вне этой дельты).
 
 ---
 
@@ -46,7 +46,7 @@
 
 | # | Суть |
 |---|---|
-| ✅ Cross.CQRS csproj 11.2.0 | `PackageReference` `11.2.0`; nuspec groups остались `11.1.2` (закрыто #H26 в `9.3.0`) |
+| ✅ Cross.CQRS csproj 11.2.0 | `PackageReference` `11.2.0`; nuspec groups остались `11.1.2` |
 | ✅ NuGet OIDC login | `.github/workflows/dotnet.yml`: `id-token: write` + `NuGet/login@v1` → push |
 | ✅ GitHub labels snapshot | `.github/LABELS.yml` / `.github/LABELS.md` |
 | ✅ triage label apply | `apply-pr-labels` + comment template |

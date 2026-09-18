@@ -47,7 +47,7 @@
 | ✅ IsolationLevelIntegrationTests | commit/rollback, Scope / TransactionalScope ambient, `ExactTransaction` overrides ReadUncommitted–Serializable |
 | ✅ ExactTransactionIsolationProbes | общий probe-хелпер для матрицы isolation |
 | ✅ README wiki TODO | struck through «Add integration tests for different isolation levels» |
-| ✅ CHANGELOG isolation tests | секция `v9.2.1`; bullet убран из `v9.2.0` (docs pass `9.3.0`) |
+| ✅ CHANGELOG isolation tests | секция `v9.2.1`; bullet убран из `v9.2.0` |
 
 ---
 

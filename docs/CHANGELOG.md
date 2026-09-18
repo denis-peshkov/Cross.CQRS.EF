@@ -6,19 +6,24 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
-## v9.3.0 — 18 Sep 2026
+## v10.0.0 — 18 Sep 2026
 
 ### Dependencies
 
-- Aligned `config.nuspec` Cross.CQRS dependency groups to `11.3.1` (matches `PackageReference` in csproj; closes #H26).
+- Bumped Cross.CQRS to **11.3.1** (`PackageReference` + all `config.nuspec` groups; closes #H26).
 
 ### Versioning
 
-- `GitVersion.yml` `next-version: 9.3.0` (retarget from planned patch `9.2.3`).
+- `GitVersion.yml` `next-version: 10.0.0` (major after `9.2.2`; planned unpublished `9.3.0` / patch `9.2.3` folded into this release).
+
+### Samples / Tests
+
+- SampleWebApp and test modules: commands, queries, and events are `sealed record` types.
 
 ### Documentation
 
-- Added version plans `9.2.1` / `9.2.2` / `9.3.0`; CHANGELOG sections for shipped `9.2.1` and `9.2.2` (isolation tests moved out of `v9.2.0`).
+- Added version plans `9.2.1` / `9.2.2` / `10.0.0`; CHANGELOG for shipped `9.2.1` / `9.2.2`.
+- Consumer notes: `docs/BREAKING.md` **From 9.2.2 to 10.0.0**.
 
 ### Repository tooling
 
@@ -32,7 +37,7 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ### Dependencies
 
-- Bumped `Cross.CQRS` PackageReference to `11.2.0` (nuspec aligned later in `9.3.0` — was `11.1.2`, now `11.3.1` with csproj).
+- Bumped `Cross.CQRS` PackageReference to `11.2.0` (nuspec still lagged at `11.1.2` until `10.0.0`).
 
 ### CI / release process
 

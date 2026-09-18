@@ -2,7 +2,7 @@
 
 Нерешённые пункты вне дельты version plan + кросс-версионные принятые trade-off’ы.
 
-**Id high-water (не переиспользовать ≤):** `C0` `H25` `M22` `L30`
+**Id high-water (не переиспользовать ≤):** `C0` `H26` `M22` `L30`
 
 ---
 
@@ -42,3 +42,6 @@
 - SampleWebApp `LicenseKey = "YOUR_LICENSE_KEY"` — канонический placeholder, не секрет и не баг.
 - `Microsoft.SourceLink.GitHub` `1.1.1` (`PrivateAssets=All`) — достаточно, пока нет отдельного product bump.
 - `config.nuspec` `releaseNotes` — только ссылки на CHANGELOG и BREAKING, без summary в nuspec.
+- `SkipNetCoreApp31Tests` в agent skills — только если свойство объявлено в test csproj.
+- Планируемый unpublished `9.3.0` (nuspec align) свёрнут в major `10.0.0` (Cross.CQRS **11.3.1**); отдельного `RELEASE-PLAN-9.3.0` нет.
+- SampleWebApp / Tests: `sealed record` для commands/queries/events — host style, не контракт NuGet.
