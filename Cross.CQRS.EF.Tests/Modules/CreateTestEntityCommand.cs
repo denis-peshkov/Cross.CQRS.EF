@@ -1,6 +1,6 @@
-namespace Cross.CQRS.EF.Tests.Modules;
+﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class CreateTestEntityCommand : Command
+public sealed record CreateTestEntityCommand : Command
 {
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

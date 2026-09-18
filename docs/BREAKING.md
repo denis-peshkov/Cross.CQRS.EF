@@ -5,11 +5,30 @@ Sections are **newest first** (top) → **oldest last** (bottom). When skipping 
 
 | Upgrade path | Section |
 |---|---|
+| `9.2.2` → `10.0.0+` | [From 9.2.2 to 10.0.0](#from-922-to-1000) |
 | `8.4.1` → `9.0.0+` | [From 8.4.1 to 9.0.0](#from-841-to-900) |
 
 Breaking-change details live **only** in this file. [`Cross.CQRS.EF/config.nuspec`](../Cross.CQRS.EF/config.nuspec) `releaseNotes` should link here and must not duplicate the versioned sections.
 
 When shipping a new breaking change: insert a **From X.Y.Z to A.B.C** section **at the top** of the versioned sections (and a matching TOC row), and prefix the **PR title** with `BREAKING:`.
+
+---
+
+## From 9.2.2 to 10.0.0
+
+Release: [v10.0.0](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v10.0.0).
+
+### Licensing / core dependency
+
+| Area | Was (9.2.x) | Now (10.0.0) |
+|---|---|---|
+| Cross.CQRS | **11.2.0** (csproj; nuspec groups could lag at `11.1.2` on `9.2.2`) | **11.3.1** all TFMs (csproj + `config.nuspec`) |
+
+**Action:** upgrade the host to Cross.CQRS **11.3.1** before restoring this package.
+
+### Sample / host style (not library API)
+
+SampleWebApp and test fixtures use `sealed record` for commands, queries, and events. This does **not** change public types in Cross.CQRS.EF; adopt the pattern in the host if aligning with Cross.CQRS 11.3 guidance.
 
 ---
 

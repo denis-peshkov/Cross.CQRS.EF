@@ -40,4 +40,4 @@
 - `skills/coderabbit/` — CodeRabbit CLI → текущий RELEASE-PLAN
 - `skills/pr-message/` — текст PR по `.github/PULL_REQUEST_TEMPLATE.md` + авточеки
 
-DbUp / SQL-соглашения — в `rules/102-backend-efcore.mdc` (отдельного skill `db-scripts` в этом репо нет).
+DbUp / SQL-соглашения — в `rules/102-backend-efcore.mdc`. Отдельный skill `db-scripts` — только если он есть в репозитории.

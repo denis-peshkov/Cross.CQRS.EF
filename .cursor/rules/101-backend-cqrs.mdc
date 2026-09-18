@@ -103,7 +103,7 @@ public class SubmitResumeDto
 Где нормализовать:
 
 1. **Примитивы** — `InputNormalizer` (`NormalizeTrimmedText` и расширения по мере надобности). Типичный путь хоста: `server/Web.Api/Common/InputNormalizer.cs`.
-2. **Применение** — `IRequestFilter<TCommand>` / `*CommandRequestFilter` рядом с командой; цепочка Cross.CQRS: `RequestFilterBehavior` **до** `ValidationBehavior`.
+2. **Применение** — `IRequestFilter<TCommand>` / `*CommandRequestFilter` рядом с командой; в MediatR-пайплайне CQRS: `RequestFilterBehavior` **до** `ValidationBehavior`.
 3. **Не в handler** — нормализация до валидации, чтобы `NotEmpty` / `EmailAddress` видели уже очищенные строки.
 
 Исключения:

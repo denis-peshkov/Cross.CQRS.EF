@@ -1,3 +1,12 @@
 namespace SampleWebApp.Modules.Some.Handlers;
 
-public record InternalEvent(Guid CommandId, string Message) : ICommandEvent;
+public sealed record InternalEvent : CommandEvent
+{
+    public InternalEvent(Guid commandId, string message)
+        : base(commandId)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}

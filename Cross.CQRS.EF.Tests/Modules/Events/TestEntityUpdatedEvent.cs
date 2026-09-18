@@ -1,8 +1,13 @@
 namespace Cross.CQRS.EF.Tests.Modules.Events;
 
-public class TestEntityUpdatedEvent : ICommandEvent
+public sealed record TestEntityUpdatedEvent : CommandEvent
 {
-    public Guid CommandId { get; init; }
+    public TestEntityUpdatedEvent(Guid commandId)
+        : base(commandId)
+    {
+    }
+
     public int Id { get; set; }
+
     public string Name { get; set; }
 }

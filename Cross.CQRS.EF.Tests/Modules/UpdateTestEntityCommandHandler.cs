@@ -26,9 +26,8 @@ public class UpdateTestEntityHandler : CommandHandler<UpdateTestEntityCommand>
         entity.Name = command.Name;
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        CommandEvents.Write(new TestEntityUpdatedEvent
+        CommandEvents.Write(new TestEntityUpdatedEvent(command.CommandId)
         {
-            CommandId = command.CommandId,
             Id = entity.Id,
             Name = entity.Name
         });

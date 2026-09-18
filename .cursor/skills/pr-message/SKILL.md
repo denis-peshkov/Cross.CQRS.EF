@@ -44,7 +44,11 @@ git diff --shortstat "$BASE...$HEAD"
 ```
 
 3. Optional: `gh pr list --head "$HEAD" --json number,url,baseRefName` — if a PR already exists, say so and still draft/update the body text (`network` / `full_network` as needed).
-4. Skim delta hotspots (library API, tests, SampleWebApp, docs/BREAKING, LICENSE/secrets).
+4. Skim delta hotspots (library / src API, tests, sample host, docs/BREAKING, LICENSE/secrets).
+5. Resolve build/test targets for Phase 3 (**repo-agnostic**):
+   - Prefer commands already written in the template Test plan (`dotnet build …` / `dotnet test …`).
+   - Else discover: root `*.slnx` or `*.sln` (prefer `.slnx`); primary test project `**/*Tests*.csproj` / `**/*Test*.csproj` nearest the library (not under `node_modules`).
+   - Do **not** hardcode a product name (solution / test csproj) in this skill.
 
 ### Phase 2 — Draft body
 
@@ -61,6 +65,8 @@ Fill **every** template section. Keep HTML comments out of the user-facing draft
 | **AI assistance** | `[x]` + one line what AI did / what was verified, when this skill ran in an agent session; else `[ ]` |
 | **License** | Keep the template license footer verbatim |
 
+**No release version in PR message:** не писать SemVer / `vX.Y.Z` / «ship N.N.N» в title и body (версия — в tag / CHANGELOG / release plan). Исключение: путь к уже versioned-файлу.
+
 ### Phase 3 — Auto-check (only when verifiable)
 
 Run checks that are cheap and conclusive. **Do not** mark a box unless evidence exists in this turn. On failure/skip → leave `[ ]` and note why under Risks or after the draft.
@@ -72,21 +78,22 @@ Run checks that are cheap and conclusive. **Do not** mark a box unless evidence 
 | Box | Auto `[x]` when |
 |---|---|
 | New or updated tests cover the changed behavior | Diff touches `**/*Tests*` / `**/*Test*` with meaningful test changes **or** production change is docs/rules-only (then still `[x]` only if no behavior change — otherwise leave `[ ]` if prod code changed without tests) |
-| `dotnet build Cross.CQRS.slnx` — green locally | Command succeeds in this turn |
-| `dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj` — green locally | Command succeeds in this turn (prefer all TFMs; at least one TFM if time-constrained — note partial) |
+| Template `dotnet build …` — green locally | Command from template (or discovered solution) succeeds in this turn |
+| Template `dotnet test …` — green locally | Command from template (or discovered test csproj) succeeds in this turn (prefer all TFMs; at least one TFM if time-constrained — note partial) |
 
-Preferred commands (sandbox):
+Preferred commands (sandbox). Keep the **exact** build/test lines from the PR template when present. Skill [`release-plan`](../release-plan/SKILL.md) → **Локальный `dotnet test`**.
 
 ```bash
-dotnet build Cross.CQRS.slnx
-dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj
+# Examples only — replace with targets from the template / discovery:
+dotnet build <solution.slnx|sln>
+dotnet test <TestProject>/<TestProject>.csproj
 ```
 
 #### Checklist
 
 | Box | Auto `[x]` when |
 |---|---|
-| Read CONTRIBUTING | Always leave `[ ]` (human attestation) unless user says they read it |
+| Read CONTRIBUTING | Always leave `[ ]` (human attestation) unless user says they read it **or** authored `CONTRIBUTING.md` |
 | No other open PR for same fix/feature | `gh pr list --state open` shows no overlapping head/title/topic; if `gh` unavailable → `[ ]` |
 | One PR = one feature/fix | Leave `[ ]` unless delta is clearly single-purpose (then `[x]`) |
 | `.editorconfig` / no secrets | Spot-check diff: no live JWT/`eyJ…` license blobs, passwords, API keys; BOM/editorconfig not violated in touched files → `[x]`; on suspicion → `[ ]` + Risks note |
@@ -105,7 +112,7 @@ dotnet test Cross.CQRS.Tests/Cross.CQRS.Tests.csproj
 
 ````markdown
 ```text
-Prepare 9.2.0: …
+BREAKING: rename public API surface for consumers
 ```
 ````
 

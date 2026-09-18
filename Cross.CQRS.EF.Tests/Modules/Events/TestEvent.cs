@@ -1,6 +1,9 @@
 namespace Cross.CQRS.EF.Tests.Modules.Events;
 
-public class TestEvent : ICommandEvent
+public sealed record TestEvent : CommandEvent
 {
-    public Guid CommandId { get; init; }
+    public TestEvent(Guid commandId)
+        : base(commandId)
+    {
+    }
 }

@@ -6,6 +6,62 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
+## v10.0.0 — 18 Sep 2026
+
+### Dependencies
+
+- Bumped Cross.CQRS to **11.3.1** (`PackageReference` + all `config.nuspec` groups; closes #H26).
+
+### Versioning
+
+- `GitVersion.yml` `next-version: 10.0.0` (major after `9.2.2`; planned unpublished `9.3.0` / patch `9.2.3` folded into this release).
+
+### Samples / Tests
+
+- SampleWebApp and test modules: commands, queries, and events are `sealed record` types.
+
+### Documentation
+
+- Added version plans `9.2.1` / `9.2.2` / `10.0.0`; CHANGELOG for shipped `9.2.1` / `9.2.2`.
+- Consumer notes: `docs/BREAKING.md` **From 9.2.2 to 10.0.0**.
+
+### Repository tooling
+
+- GitVersion resolve uses `/nofetch` + `MajorMinorPatch` (avoids remote-fetch hang).
+- release-plan / pr-message: local `dotnet test` note (`SkipNetCoreApp31Tests` only when the test csproj defines it); repo-agnostic build/test discovery.
+- Cursor README, CQRS request-filter wording, changelog/triage unit tests aligned to generic paths.
+
+---
+
+## v9.2.2 — 18 Sep 2026
+
+### Dependencies
+
+- Bumped `Cross.CQRS` PackageReference to `11.2.0` (nuspec still lagged at `11.1.2` until `10.0.0`).
+
+### CI / release process
+
+- NuGet push authenticates via `NuGet/login` OIDC instead of `NUGET_API_KEY`.
+- Added GitHub labels snapshot `.github/LABELS.yml` / `.github/LABELS.md`.
+
+### Repository tooling
+
+- PR triage label apply / comment template and `pr-message` skill updates.
+
+---
+
+## v9.2.1 — 16 Sep 2026
+
+### Tests
+
+- Added `IsolationLevelIntegrationTests` and `ExactTransaction` probes: commit/rollback, Scope/TransactionalScope ambient isolation, overrides across ReadUncommitted–Serializable.
+
+### Documentation
+
+- README: struck through the wiki TODO for isolation-level integration tests.
+
+---
+
 ## v9.2.0 — 16 Sep 2026
 
 ### Dependencies
@@ -24,7 +80,6 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Tests
 
 - Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS; writer `BEGIN EXCLUSIVE` without nested EF transactions.
-- `IsolationLevelIntegrationTests`: commit/rollback, Scope/TransactionalScope ambient isolation, and `ExactTransaction` overrides across ReadUncommitted–Serializable.
 
 ### Samples
 

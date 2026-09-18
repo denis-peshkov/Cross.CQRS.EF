@@ -104,7 +104,8 @@ gitversion_major_minor_patch() {
     echo "error: GitVersion CLI not found (install: dotnet tool install -g gitversion.tool)" >&2
     return 1
   fi
-  "$gv" /output json 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("MajorMinorPatch") or "")'
+  # /nofetch avoids remote fetch / credential prompts that hang (sandboxed agents, no TTY).
+  GIT_TERMINAL_PROMPT=0 "$gv" /nofetch /showvariable MajorMinorPatch 2>/dev/null | tr -d '\r' | head -n1
 }
 
 LATEST="$(latest_published)"

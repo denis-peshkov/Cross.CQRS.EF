@@ -4,17 +4,16 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { globToRegExp, matchGlob, parseMdcFrontmatter, ruleMatchesPaths, loadMatchedRules } from './load-review-rules.mjs';
+import { matchGlob, parseMdcFrontmatter, ruleMatchesPaths, loadMatchedRules } from './load-review-rules.mjs';
 
-test('globToRegExp matches ** and *', () => {
-  assert.equal(matchGlob('**/*.cs', 'Cross.CQRS.EF/Foo.cs'), true);
-  assert.equal(matchGlob('**/*Tests/**/*.cs', 'Cross.CQRS.EF.Tests/Tests/A.cs'), true);
+test('matchGlob covers ** * prefix and nested segments', () => {
+  assert.equal(matchGlob('**/*.cs', 'src/Foo.cs'), true);
+  assert.equal(matchGlob('**/*Tests/**/*.cs', 'Project.Tests/Unit/A.cs'), true);
+  assert.equal(matchGlob('**/*Test/**/*.cs', 'Project.Test/Bar.cs'), true);
   assert.equal(matchGlob('client/**/*.ts', 'client/app/x.ts'), true);
   assert.equal(matchGlob('client/**/*.ts', 'server/x.ts'), false);
-  assert.equal(matchGlob('**/MainContext.cs', 'src/MainContext.cs'), true);
-  assert.equal(matchGlob('**/Modules/**/*.cs', 'SampleWebApp/Modules/Some/Handlers/SomeQuery.cs'), true);
-  assert.equal(matchGlob('**/*Test/**/*.cs', 'Foo.Test/Bar.cs'), true);
-  assert.ok(globToRegExp('a/b').test('a/b'));
+  assert.equal(matchGlob('**/Modules/**/*.cs', 'src/Modules/Feature/Handlers/GetById.cs'), true);
+  assert.equal(matchGlob('**/*Context.cs', 'src/MainContext.cs'), true);
 });
 
 test('parseMdcFrontmatter reads alwaysApply and globs', () => {
@@ -96,7 +95,7 @@ test('loadMatchedRules returns empty when no rule matches', () => {
     );
     const hit = loadMatchedRules({
       rulesDir: dir,
-      paths: ['Cross.CQRS.EF/Foo.cs'],
+      paths: ['src/Foo.cs'],
     });
     assert.deepEqual(hit.matched, []);
     assert.equal(hit.text, '');

@@ -20,27 +20,27 @@ Breaking: https://github.com/denis-peshkov/Cross.CQRS.EF/blob/master/docs/BREAKI
 ]]></releaseNotes>
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="Cross.CQRS" version="11.1.2" />
+        <dependency id="Cross.CQRS" version="11.3.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="6.0.36" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="6.0.36" />
       </group>
       <group targetFramework="net7.0">
-        <dependency id="Cross.CQRS" version="11.1.2" />
+        <dependency id="Cross.CQRS" version="11.3.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="7.0.20" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="7.0.20" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Cross.CQRS" version="11.1.2" />
+        <dependency id="Cross.CQRS" version="11.3.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="8.0.31" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="8.0.31" />
       </group>
       <group targetFramework="net9.0">
-        <dependency id="Cross.CQRS" version="11.1.2" />
+        <dependency id="Cross.CQRS" version="11.3.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="9.0.20" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="9.0.20" />
       </group>
       <group targetFramework="net10.0">
-        <dependency id="Cross.CQRS" version="11.1.2" />
+        <dependency id="Cross.CQRS" version="11.3.1" />
         <dependency id="Microsoft.EntityFrameworkCore" version="10.0.12" />
         <dependency id="Microsoft.EntityFrameworkCore.Relational" version="10.0.12" />
       </group>

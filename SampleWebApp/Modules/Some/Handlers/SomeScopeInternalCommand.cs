@@ -2,7 +2,7 @@
 
 
 
-public class SomeScopeInternalCommand : Command
+public sealed record SomeScopeInternalCommand : Command
 {
     public SomeScopeInternalCommand()
     {
