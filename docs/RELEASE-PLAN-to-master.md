@@ -2,13 +2,13 @@
 
 > **Purpose:** checklist before merging into `master` for a NuGet release.
 > **Product:** Cross.CQRS.EF
-> **Current target:** `9.2.0` · [`release/9.2.0-EF-Core-SourceLink`](https://github.com/denis-peshkov/Cross.CQRS.EF/tree/release/9.2.0-EF-Core-SourceLink) · [`RELEASE-PLAN-9.2.0.md`](RELEASE-PLAN-9.2.0.md)
+> **Current target:** `9.3.0` · [`release/9.3.0-nuspec-CrossCQRS-align`](https://github.com/denis-peshkov/Cross.CQRS.EF/tree/release/9.3.0-nuspec-CrossCQRS-align) · [`RELEASE-PLAN-9.3.0.md`](RELEASE-PLAN-9.3.0.md)
 > **Legend:** ⬜ open · ✅ done · 🟨 partial · ❌ blocker
 > **Related:** [`BREAKING.md`](BREAKING.md) · [`CHANGELOG.md`](CHANGELOG.md) · [`TO-DO.md`](TO-DO.md)
-> **Updated:** 2026-09-16
-> **HEAD:** `664a8e7` (local, ahead 5 of origin) · PR [#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) head `7e37133` → `master` · база `origin/master` = [`v9.0.0`](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.0.0)
+> **Updated:** 2026-09-18
+> **HEAD:** `da37c85` = [`v9.2.2`](https://github.com/denis-peshkov/Cross.CQRS.EF/releases/tag/v9.2.2) · база `origin/master` · предыдущие планы [`9.2.1`](RELEASE-PLAN-9.2.1.md) / [`9.2.2`](RELEASE-PLAN-9.2.2.md) published
 
-**Change summary:** **22** items — ✅ **11** (50%) · 🟨 **5** (23%) · ⬜ **6** (27%) · ❌ **0** (0%)
+**Change summary:** **22** items — ✅ **10** (45%) · 🟨 **5** (23%) · ⬜ **7** (32%) · ❌ **0** (0%)
 
 ---
 
@@ -16,8 +16,8 @@
 
 | # | Item | Status |
 |---|---|---|
-| P1 | Target version agreed (GitVersion / tag `vX.Y.Z`) | ✅ `GitVersion.yml` `next-version: 9.2.0`; tag `v9.2.0` нет |
-| P2 | Version plan `docs/RELEASE-PLAN-X.Y.Z.md` filled | ✅ [`RELEASE-PLAN-9.2.0.md`](RELEASE-PLAN-9.2.0.md) (Open C/H/M/L пустые) |
+| P1 | Target version agreed (GitVersion / tag `vX.Y.Z`) | 🟨 `next-version: 9.3.0`; tags `v9.2.0`–`v9.2.2`; `v9.3.0` нет |
+| P2 | Version plan `docs/RELEASE-PLAN-X.Y.Z.md` filled | ✅ [`RELEASE-PLAN-9.3.0.md`](RELEASE-PLAN-9.3.0.md) (Open C/H/M/L пустые) |
 | P3 | `docs/TO-DO.md` — no unexpected C/H blockers | ✅ open C/H/M/L пустые |
 | P4 | Branch policy understood (`CONTRIBUTING.md`) | ✅ stable tags; `dev` не тегает |
 
@@ -27,10 +27,10 @@
 
 | # | Item | Status |
 |---|---|---|
-| B1 | Consumer breaks in `docs/BREAKING.md` | ✅ нет API-break 9.0.0 → 9.2.0 (только EF patch deps) |
-| B2 | PR title `BREAKING:` where applicable | ✅ N/A ([#10](https://github.com/denis-peshkov/Cross.CQRS.EF/pull/10) `chore:`) |
-| B3 | `config.nuspec` `releaseNotes` → BREAKING | ✅ только ссылки CHANGELOG / BREAKING (#L29) |
-| B4 | `docs/CHANGELOG.md` updated | ✅ `## v9.2.0` |
+| B1 | Consumer breaks in `docs/BREAKING.md` | ✅ нет API-break 9.2.2 → 9.3.0 |
+| B2 | PR title `BREAKING:` where applicable | ✅ N/A (нет PR на `9.3.0`) |
+| B3 | `config.nuspec` `releaseNotes` → BREAKING | ✅ только ссылки CHANGELOG / BREAKING |
+| B4 | `docs/CHANGELOG.md` updated | ✅ `## v9.3.0` (+ `v9.2.1` / `v9.2.2`) |
 
 ---
 
@@ -38,11 +38,11 @@
 
 | # | Item | Status |
 |---|---|---|
-| Q1 | `dotnet build` Release | 🟨 PR #10 `.NET` SUCCESS на `7e37133`; local tip `664a8e7` ещё не на origin |
-| Q2 | `dotnet test` Release | 🟨 тот же job на `7e37133` |
-| Q3 | CI `.NET` green on release branch | 🟨 PR SHA green; tip CI нет (ahead 5) |
-| Q4 | SonarCloud / quality gate | 🟨 SonarCloud SUCCESS на PR #10 (`7e37133`) |
-| Q5 | SampleWebApp smoke | 🟨 SQLite in-memory + endpoints; placeholder LicenseKey принято (#M21) |
+| Q1 | `dotnet build` Release | ⬜ не гонялся на working tree `9.3.0` |
+| Q2 | `dotnet test` Release | ⬜ не гонялся на working tree `9.3.0` |
+| Q3 | CI `.NET` green on release branch | 🟨 `master` @ `v9.2.2`; `9.3.0` ещё не запушен |
+| Q4 | SonarCloud / quality gate | 🟨 как на последнем `master` push |
+| Q5 | SampleWebApp smoke | 🟨 SQLite in-memory + endpoints; placeholder LicenseKey принято |
 
 ---
 
@@ -50,10 +50,10 @@
 
 | # | Item | Status |
 |---|---|---|
-| N1 | `config.nuspec` metadata | ✅ TFMs/deps EF bump; releaseNotes = ссылки (#L29) |
-| N2 | Secret `TAGTOKEN` | ⬜ проверить перед publish |
-| N3 | Tag + NuGet push from CI | ⬜ нет `v9.2.0` |
-| N4 | GitHub Release notes | ⬜ для `v9.2.0` |
+| N1 | `config.nuspec` metadata | ✅ Cross.CQRS groups `11.3.1` = csproj (#H26) |
+| N2 | Secret `TAGTOKEN` | ⬜ проверить перед publish (`NUGET_API_KEY` заменён OIDC) |
+| N3 | Tag + NuGet push from CI | ⬜ нет `v9.3.0` |
+| N4 | GitHub Release notes | ⬜ для `v9.3.0` |
 
 ---
 
@@ -61,9 +61,9 @@
 
 | # | Item | Status |
 |---|---|---|
-| A1 | Back-merge `master` → `dev` | ⬜ after land |
-| A2 | Hosts on Cross.CQRS **11.1.2** + этот пакет | ⬜ после NuGet `9.2.0` |
-| A3 | Leftover TO-DO C/H/M/L | ✅ open пуст (работа дельты в version plan) |
+| A1 | Back-merge `master` → `dev` | ⬜ after `v9.3.0` |
+| A2 | Hosts on Cross.CQRS **11.3.1** + этот пакет | ⬜ после NuGet `9.3.0` |
+| A3 | Leftover TO-DO C/H/M/L | ✅ open пуст; #H26 закрыт в `9.3.0` |
 
 ---
 
@@ -71,8 +71,8 @@
 
 | # | Item | Status |
 |---|---|---|
-| G1 | Go / No-Go recorded | ⬜ PR #10 `mergeable_state=blocked` (reviews) |
-| G2 | Publish blockers cleared | ✅ version plan C/H/M/L пустые; H25 = `next-version: 9.2.0` |
+| G1 | Go / No-Go recorded | 🟨 pack metadata ok; Q1/Q2/N2–N4 ещё open |
+| G2 | Publish blockers cleared | ✅ #H26 закрыт; остальное — pre-publish checklist |
 
-- **Date:** 2026-09-16
-- **Notes:** Дельта 18 коммитов vs `origin/master` (`v9.0.0`). Local ahead 5 of `origin/release/9.2.0-EF-Core-SourceLink`. Open C/H/M/L пустые. PR #10 CI green на `7e37133` (CodeQL / Sonar / CodeRabbit / `.NET`).
+- **Date:** 2026-09-18
+- **Notes:** `master` = `v9.2.2`. Планы `9.2.1`/`9.2.2` published/closed. Текущий `9.3.0` (retarget с `9.2.3`): Open C/H/M/L пустые; nuspec Cross.CQRS = `11.3.1`. Working tree — docs + `.cursor` + nuspec.

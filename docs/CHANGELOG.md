@@ -6,6 +6,57 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 
 ---
 
+## v9.3.0 — 18 Sep 2026
+
+### Dependencies
+
+- Aligned `config.nuspec` Cross.CQRS dependency groups to `11.3.1` (matches `PackageReference` in csproj; closes #H26).
+
+### Versioning
+
+- `GitVersion.yml` `next-version: 9.3.0` (retarget from planned patch `9.2.3`).
+
+### Documentation
+
+- Added version plans `9.2.1` / `9.2.2` / `9.3.0`; CHANGELOG sections for shipped `9.2.1` and `9.2.2` (isolation tests moved out of `v9.2.0`).
+
+### Repository tooling
+
+- GitVersion resolve uses `/nofetch` + `MajorMinorPatch` (avoids remote-fetch hang).
+- release-plan / pr-message: local `dotnet test` note (`SkipNetCoreApp31Tests` only when the test csproj defines it); repo-agnostic build/test discovery.
+- Cursor README, CQRS request-filter wording, changelog/triage unit tests aligned to generic paths.
+
+---
+
+## v9.2.2 — 18 Sep 2026
+
+### Dependencies
+
+- Bumped `Cross.CQRS` PackageReference to `11.2.0` (nuspec aligned later in `9.3.0` — was `11.1.2`, now `11.3.1` with csproj).
+
+### CI / release process
+
+- NuGet push authenticates via `NuGet/login` OIDC instead of `NUGET_API_KEY`.
+- Added GitHub labels snapshot `.github/LABELS.yml` / `.github/LABELS.md`.
+
+### Repository tooling
+
+- PR triage label apply / comment template and `pr-message` skill updates.
+
+---
+
+## v9.2.1 — 16 Sep 2026
+
+### Tests
+
+- Added `IsolationLevelIntegrationTests` and `ExactTransaction` probes: commit/rollback, Scope/TransactionalScope ambient isolation, overrides across ReadUncommitted–Serializable.
+
+### Documentation
+
+- README: struck through the wiki TODO for isolation-level integration tests.
+
+---
+
 ## v9.2.0 — 16 Sep 2026
 
 ### Dependencies
@@ -24,7 +75,6 @@ Breaking upgrade notes for NuGet consumers: [`BREAKING.md`](BREAKING.md).
 ### Tests
 
 - Aligned test package versions (`6.0.36` on net6); dropped `Async` suffix on test method names; `TransactionLockTests` isolation/WAL/TCS; writer `BEGIN EXCLUSIVE` without nested EF transactions.
-- `IsolationLevelIntegrationTests`: commit/rollback, Scope/TransactionalScope ambient isolation, and `ExactTransaction` overrides across ReadUncommitted–Serializable.
 
 ### Samples
 
