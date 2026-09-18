@@ -1,5 +1,5 @@
 ﻿namespace Cross.CQRS.EF.Tests.Modules;
 
-public class TransactionProbeCommand : Command<TransactionSnapshot>
+public sealed record TransactionProbeCommand : Command<TransactionSnapshot>
 {
 }

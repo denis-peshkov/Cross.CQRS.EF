@@ -1,3 +1,12 @@
 namespace SampleWebApp.Modules.Some.Handlers;
 
-public record ExternalEvent(Guid CommandId, string Message) : ICommandEvent;
+public sealed record ExternalEvent : CommandEvent
+{
+    public ExternalEvent(Guid commandId, string message)
+        : base(commandId)
+    {
+        Message = message;
+    }
+
+    public string Message { get; }
+}

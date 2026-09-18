@@ -18,7 +18,7 @@ public class CreateTestEntityHandler : CommandHandler<CreateTestEntityCommand>
             CreatedOn = DateTime.UtcNow
         };
 
-        CommandEvents.Write(new TestEvent { CommandId = command.CommandId });
+        CommandEvents.Write(new TestEvent(command.CommandId));
 
         await _dbContext.TestEntities.AddAsync(entity, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
