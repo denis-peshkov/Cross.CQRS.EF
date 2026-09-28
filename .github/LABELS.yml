@@ -1,8 +1,16 @@
-# Cross.CQRS.EF — GitHub labels snapshot
+﻿# Cross.DataFilter — GitHub labels snapshot
 # Source of truth for repo labels (sync to GitHub with --force).
 # Human-readable table: LABELS.md
 # Restore: gh label create "NAME" --color COLOR --description "DESC" --force
 # Compatible with crazy-max/ghaction-github-labeler (list of maps).
+
+- name: "breaking-approved"
+  color: "0e8a16"
+  description: "Owner approved consumer-breaking change (unblocks breaking-gate)"
+
+- name: "breaking-changes"
+  color: "b60205"
+  description: "Consumer-breaking signals detected (BREAKING: title and/or docs/BREAKING.md)"
 
 - name: "bug"
   color: "e8372a"
@@ -58,7 +66,7 @@
 
 - name: "security"
   color: "5319e7"
-  description: "🔒 Auth/JWT/OAuth, secrets, licensing, PII, payment, or token security"
+  description: "🔒 Secrets, licensing, PII, or unsafe filter/query handling"
 
 - name: "wontfix"
   color: "080808"

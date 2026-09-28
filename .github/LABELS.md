@@ -1,4 +1,4 @@
-# Cross.CQRS.EF — лейблы GitHub
+﻿# Cross.DataFilter — лейблы GitHub
 
 Снимок настроенных лейблов репозитория. Машиночитаемый файл: [`LABELS.yml`](LABELS.yml).
 
@@ -49,6 +49,8 @@ Priority (`critical`…`low`) — **отдельная ось**, не путат
 
 | Label | Color | Description (GitHub) | По-русски | Triage |
 |---|---|---|---|---|
+| `breaking-approved` | `#0e8a16` | Owner approved consumer-breaking change (unblocks breaking-gate) | Owner одобрил breaking (снимает blocking gate) | — |
+| `breaking-changes` | `#b60205` | Consumer-breaking signals detected (BREAKING: title and/or docs/BREAKING.md) | Обнаружены consumer-breaking сигналы (ставит CI) | — |
 | `bug` | `#e8372a` | Something is broken | Что-то сломано / дефект | category |
 | `chore` | `#1d76db` | Build, CI, tooling, deps | Сборка, CI, tooling, зависимости | category |
 | `docs` | `#006b75` | Improvements or additions to documentation | Доработки / дополнения документации | category |
@@ -62,8 +64,5 @@ Priority (`critical`…`low`) — **отдельная ось**, не путат
 | `priority:low` | `#fbca04` | Triage priority: low | Приоритет triage: низкий | priority |
 | `priority:medium` | `#fb8500` | Triage priority: medium | Приоритет triage: средний | priority |
 | `question` | `#d876e3` | Further information is requested | Нужны уточнения / вопрос | — |
-| `security` | `#5319e7` | 🔒 Auth/JWT/OAuth, secrets, licensing, PII, payment, or token security | Безопасность: auth, секреты, лицензия, ПДн и т.п. | category |
+| `security` | `#5319e7` | 🔒 Secrets, licensing, PII, or unsafe filter/query handling | Безопасность: секреты, лицензия, ПДн, опасные фильтры | category |
 | `wontfix` | `#080808` | This will not be worked on | Не будем делать | — |
-
-Note: triage пишет **`docs`** (не `documentation`).
-`question` остаётся **ручным** лейблом GitHub; это **не** категория PR-triage.
