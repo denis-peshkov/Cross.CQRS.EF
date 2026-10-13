@@ -1,14 +1,19 @@
 {
-  "name": "Protect release tags",
-  "target": "tag",
+  "name": "Restrict upstream branch creation",
+  "target": "branch",
   "source_type": "Repository",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
       "include": [
-        "refs/tags/v*"
+        "~ALL"
       ],
-      "exclude": []
+      "exclude": [
+        "refs/heads/master",
+        "refs/heads/dev",
+        "refs/heads/release/*",
+        "refs/heads/hotfix/*"
+      ]
     }
   },
   "rules": [

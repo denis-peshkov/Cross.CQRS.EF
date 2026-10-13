@@ -1,12 +1,12 @@
 {
-  "name": "Protect master",
+  "name": "Protect dev",
   "target": "branch",
   "source_type": "Repository",
   "enforcement": "active",
   "conditions": {
     "ref_name": {
       "include": [
-        "refs/heads/master"
+        "refs/heads/dev"
       ],
       "exclude": []
     }
@@ -17,9 +17,6 @@
     },
     {
       "type": "non_fast_forward"
-    },
-    {
-      "type": "update"
     },
     {
       "type": "pull_request",
@@ -38,7 +35,10 @@
         "do_not_enforce_on_create": false,
         "required_status_checks": [
           {
-            "context": "build"
+            "context": "Test"
+          },
+          {
+            "context": "Branch policy"
           }
         ]
       }
